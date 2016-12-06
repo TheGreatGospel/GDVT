@@ -20,23 +20,21 @@ function options_Validate() {
         "The \"Population Size\" has an invalid input! <br>",
         inpObj.popSize < 50 || inpObj.popSize > 500,
         "The \"Population Size\" has an invalid input! <br>");
-
-    if (isNaN(inpObj.numOfPop)) {
-        errorMsg += "The \"Number of Populations\" has an invalid input! <br>";
-        if (inpObj.popSize < 50 || inpObj.popSize > 500) {
-            errorMsg += "The \"Population Size\" has an invalid input! <br>";
-        } else {
-            settings.popSize = inpObj.popSize;
-        }
-    }
-
-    if (isNaN(inpObj.init)) {
-        errorMsg += "The \"Initial Number of Simulations\" has an invalid input! <br>";
-    }
+    
+    errorMsg += conditionHack(isNaN(inpObj.numOfPop),
+        "The \"Number of Populations\" has an invalid input! <br>",
+        inpObj.numOfPop < 1 || inpObj.popSize > 10,
+        "The \"Number of Populations\" has an invalid input! <br>");
+    
+    errorMsg += conditionHack(isNaN(inpObj.init),
+        "The \"Initial Number of Simulations\" has an invalid input! <br>",
+        inpObj.init < 1,
+        "The \"Initial Number of Simulations\" has an invalid input! <br>");
 
     document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
         typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
         inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
+    document.getElementById("demo2").innerHTML = "hi <br>" + errorMsg;
     
     /*if (flag === true) {
         document.getElementById("demo").innerHTML =  "proceed";
