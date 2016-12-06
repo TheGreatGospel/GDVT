@@ -6,10 +6,9 @@ function options_Validate() {
         init: Number($("#options_init").val())
     };
 
-
-
     document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
-        typeof inpObj.numOfPop + " " + typeof inpObj.init;
+        typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
+        inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
     
     /*if (flag === true) {
         document.getElementById("demo").innerHTML =  "proceed";
