@@ -1,7 +1,3 @@
-function loadOptions() {
-    $("#jsBody").load("dynamicPages/options.html");
-}
-
 function options_Validate() {
     var inpObj = {
         popSize: $("#options_popSize").val(),
