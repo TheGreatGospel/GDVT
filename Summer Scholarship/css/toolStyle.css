@@ -1,0 +1,54 @@
+body {
+    font-family: sans-serif;
+}
+
+.main {
+    padding: 10px;
+}
+
+#header {
+    font-size: 24pt;
+    font-weight: bold;
+}
+
+#subheading {
+    font-size: 16pt;
+}
+
+#toolbar {
+    font-size: 16pt;
+    background-color: slategrey;
+}
+
+#jsBody {
+    font-size: 12pt;
+}
+
+.jsBody_Child {
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
+
+#copyright {
+    font-size: 8pt;
+    text-align: center;
+}
+
+.button {
+    font-size: 12pt;
+}
+
+/* Options */
+
+#options_hold {
+    display: flex;
+}
+
+#options_lTable {
+    line-height: 2;
+}
+
+#options_rTable {
+    line-height: 2;
+    flex-grow: 1;
+}
