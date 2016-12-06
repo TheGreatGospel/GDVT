@@ -6,7 +6,9 @@ function options_Validate() {
         init: $("#options_init").val()
     };
 
-    document.getElementById("demo").innerHTML =  inpObj.popSize;
+
+
+    document.getElementById("demo").innerHTML =  typeof inpObj.popSize;
     
     /*if (flag === true) {
         document.getElementById("demo").innerHTML =  "proceed";
