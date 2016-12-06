@@ -1,13 +1,3 @@
-function conditionHack(cnd1, msg1, cnd2, msg2) {
-    if (cnd1) {
-        return msg1;
-    } else if (cnd2) {
-        return msg2;
-    } else {
-        return "";
-    }
-}
-
 function options_Validate() {
     var errorMsg = "";
     var inpObj = {
@@ -31,8 +21,17 @@ function options_Validate() {
         inpObj.init < 1,
         "The \"Initial Number of Simulations\" has an invalid input! <br>");
 
-    //document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
-    //    typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
-    //    inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
-    document.getElementById("demo2").innerHTML = "hi <br>" + errorMsg;
+    if (errorMsg === "") {
+        settings = inpObj;
+        loadSimulation();
+    } else {
+        alert(errorMsg);
+    }
 }
+
+/*
+document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
+    typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
+    inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
+document.getElementById("demo2").innerHTML = "hi <br>" + errorMsg;
+*/
