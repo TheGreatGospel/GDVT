@@ -23,7 +23,7 @@ function options_Validate() {
     
     errorMsg += conditionHack(isNaN(inpObj.numOfPop),
         "The \"Number of Populations\" has an invalid input! <br>",
-        inpObj.numOfPop < 1 || inpObj.popSize > 10,
+        inpObj.numOfPop < 1 || inpObj.numOfPop > 10,
         "The \"Number of Populations\" has an invalid input! <br>");
     
     errorMsg += conditionHack(isNaN(inpObj.init),
@@ -31,15 +31,8 @@ function options_Validate() {
         inpObj.init < 1,
         "The \"Initial Number of Simulations\" has an invalid input! <br>");
 
-    document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
-        typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
-        inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
+    //document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
+    //    typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
+    //    inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
     document.getElementById("demo2").innerHTML = "hi <br>" + errorMsg;
-    
-    /*if (flag === true) {
-        document.getElementById("demo").innerHTML =  "proceed";
-    } else {
-       document.getElementById("demo").innerHTML =  JSON.stringify(inpObj);
-        alert("Alert!");
-    }*/
 }
