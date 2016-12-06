@@ -7,13 +7,19 @@
         Number of Populations: <br>
         Initial Number of Simulations: <br>
     </div>
-        <div id="options_rTable">
-        <input id="options_popSize" value=settings.popSize> <div class="tooltip">*
-        <div class="tooltiptext">Input a value from 50-500.</div></div> <br>
-        <input id="options_numOfPop" value=settings.numOfPop> <div class="tooltip">*
-        <div class="tooltiptext">Input a value from 1-10.</div></div> <br>
-        <input id="options_init" value=settings.init> <div class="tooltip">*
-        <div class="tooltiptext">Input a value greater than 0.</div></div> <br>
+    <div id="options_rTable">
+        <input id="options_popSize" value=50 type="number" min=50 max=500> 
+            <div class="tooltip">
+                * <div class="tooltiptext">Input a value from 50-500.</div>
+            </div> <br>
+        <input id="options_numOfPop" value=5 type="number" min=1 max=10> 
+            <div class="tooltip">
+                * <div class="tooltiptext">Input a value from 1-10.</div>
+            </div> <br>
+        <input id="options_init" value=1 type="number" min=1>
+            <div class="tooltip">
+                * <div class="tooltiptext">Input a value greater than 0.</div>
+            </div> <br>
     </div>
 </div>
 <div class="jsBody_Child">
