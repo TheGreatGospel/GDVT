@@ -1,14 +1,15 @@
 function options_Validate() {
     var flag = true;
     var inpObj = {
-        popSize: $("#options_popSize").val(),
-        numOfPop: $("#options_numOfPop").val(),
-        init: $("#options_init").val()
+        popSize: Number($("#options_popSize").val()),
+        numOfPop: Number($("#options_numOfPop").val()),
+        init: Number($("#options_init").val())
     };
 
 
 
-    document.getElementById("demo").innerHTML =  typeof inpObj.popSize;
+    document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
+        typeof inpObj.numOfPop + " " + typeof inpObj.init;
     
     /*if (flag === true) {
         document.getElementById("demo").innerHTML =  "proceed";
