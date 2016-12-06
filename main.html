@@ -28,16 +28,13 @@
     &copy 2016 David Chan
 </div>
 
-<div class="main" id="demo">
-    Debug Zone
-</div>
-
 <script>
     var settings = {
         popSize: 50,
         numOfPop: 10,
         init: 1
     }; 
+    var currentGen = 1;
 
     function loadOptions() {
         $("#jsBody").load("dynamicPages/options.html");
@@ -45,6 +42,36 @@
 
     loadOptions();
 </script>
+
+<!--Testing Block-->
+<!--
+<div class="main" id="demo">
+    <div id="subheading" class="jsBody_Child">
+        Generation: <span id="displayCurrentGen"></span>
+    </div>
+    <div id="subtoolbar" class="jsBody_Child">
+        Simulate next n generations: <br>
+        <button id="n.eq.1">
+            n = 1 
+        </button> 
+        <button id="n.eq.10">
+            n = 10
+        </button>
+        <button id="n.eq.x">
+            n =
+        </button>
+        <input maxlength=4 size=1 value=100 id="n.eq.x_Child">
+    </div>
+    <div id="hold" class="jsBody_Child">
+
+    </div>
+</div>
+
+<script>
+    $("#displayCurrentGen").html(currentGen);
+</script>
+-->
+<!--End Testing Block-->
 
 </body>
 </html>
