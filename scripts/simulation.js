@@ -12,10 +12,21 @@ function chooseParents(parentGen) {
     return location;
 }
 
-function assignAllele_Unif(possibleAlleles) {
-    if (possibleAlleles instanceof Array) {
-        
+function assignAlleles(possibleAlleles, allelesDist) {
+    var rng = Math.floor(Math.random() * 101) / 100;
+    var cnd = [0];
+    var i;
+    
+    for (i = 0; i < allelesDist.length(); i++) {
+        cnd.push(cnd[i] + allelesDist[i]);
     }
+    
+    for (i = allelesDist.length() - 1; i > 0; i--) {
+        if (cnd[i] < rng < cnd[i+1]) {
+            break;
+        }
+    }
+    return possibleAlleles[i];
 }
 
 function member(alleleA, alleleB) {
@@ -34,19 +45,25 @@ function member(alleleA, alleleB) {
 
 function generation(genNum, genSize, parentGen) {
     var uprLim = genSize - 1;
+    var i;
     this.genNum = genNum;
     this.genSize = genSize;
     this.genPop = [];
     
+    var testAlleles = ["A", "B", "C", "D", "E", "F"];
+    var testAllelesDist = [0.2, 0.2, 0.2, 0.2, 0.2];
+    
     if (typeof arguments[2] === "undefined") {
         for (i = 0; i < uprLim; i++) {
-            this.genPop.push(new human()); // Needs arguments
+            this.genPop.push(new human(assignAlleles(testAlleles, testAllelesDist),
+                                       assignAlleles(testAlleles, testAllelesDist));
         }
     } else {
         var parents;
         for (i = 0; i < uprLim; i++) {
             parents = parentGen.genPop[chooseParents(parentGen)];
-            this.genPop.push(new member(parents[0].chooseAllele_Unif()), parents[1].chooseAllele_Unif()));
+            this.genPop.push(new member(parents[0].chooseAllele_Unif()), 
+                                        parents[1].chooseAllele_Unif()));
         } 
     }
 }
