@@ -1,69 +1,59 @@
-function chooseParents(parentGen) {
-    var location = [];
+function alleleObj(allelesPool) {
+    this.allelesPool = allelesPool;
 
-    location.push(Math.floor(Math.random() * parentGen.genSize));
-    location.push(Math.floor(Math.random() * parentGen.genSize));
-    
-    while (location[0] == location[1]) {
-        location.pop();
-        location.push(Math.floor(Math.random() * parentGen.genSize));
-    }
+    this.grabAlleles_Unif = function() {
+        var toReturn = [];
 
-    return location;
-}
-
-function assignAlleles(possibleAlleles, allelesDist) {
-    var rng = Math.floor(Math.random() * 101) / 100;
-    var cnd = [0];
-    var i;
-    
-    for (i = 0; i < allelesDist.length(); i++) {
-        cnd.push(cnd[i] + allelesDist[i]);
-    }
-    
-    for (i = allelesDist.length() - 1; i > 0; i--) {
-        if (cnd[i] < rng < cnd[i+1]) {
-            break;
+        for (i = 0; i < 2; i++) {
+            toReturn.push(allelesPool[Math.floor(Math.random() * this.allelesPool.length())]);
         }
+
+        return toReturn;
     }
-    return possibleAlleles[i];
 }
 
-function member(alleleA, alleleB) {
-    this.alleleA = alleleA;
-    this.alleleB = alleleB;
+function member(allelesPool) {
+    this.allelesPool = allelesPool;
 
-    this.chooseAllele_Unif = function() {
-        var rng = Math.floor(Math.random() * 101) / 100;
+    this.reproduceAlleles_Unif = function() {
+        var rng = Math.random();
         if (rng < 0.5) {
-            return this.alleleA;
+            return this.allelePool[0];
         } else {
-            return this.alleleB;
+            return this.allelePool[1];
         }
     }
 }
 
-function generation(genNum, genSize, parentGen) {
-    var uprLim = genSize - 1;
-    var i;
-    this.genNum = genNum;
+function generation(genID, genSize) {
+    this.genID = genID;
     this.genSize = genSize;
-    this.genPop = [];
-    
-    var testAlleles = ["A", "B", "C", "D", "E", "F"];
-    var testAllelesDist = [0.2, 0.2, 0.2, 0.2, 0.2];
-    
-    if (typeof arguments[2] === "undefined") {
-        for (i = 0; i < uprLim; i++) {
-            this.genPop.push(new human(assignAlleles(testAlleles, testAllelesDist),
-                                       assignAlleles(testAlleles, testAllelesDist));
+    this.genPopMakeUp = [];
+
+    this.new = function() {
+        for (i = 0; i < this.genSize; i++) {
+            this.genPopMakeUp.push(new member(allelesPool.grabAlleles_Unif()));
         }
-    } else {
-        var parents;
-        for (i = 0; i < uprLim; i++) {
-            parents = parentGen.genPop[chooseParents(parentGen)];
-            this.genPop.push(new member(parents[0].chooseAllele_Unif()), 
-                                        parents[1].chooseAllele_Unif()));
-        } 
+    }
+
+    this.breed = function(parentGen) {
+        var whoTo;
+        for (i = 0; i < this.genSize; i++) {
+            
+        }
+    }
+
+    this.chooseTwo = function() {
+        var location = [];
+
+        location.push(Math.floor(Math.random() * parentGen.genSize));
+        location.push(Math.floor(Math.random() * parentGen.genSize));
+        
+        while (location[0] == location[1]) {
+            location.pop();
+            location.push(Math.floor(Math.random() * parentGen.genSize));
+        }
+
+        return location;
     }
 }
