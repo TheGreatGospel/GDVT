@@ -1,9 +1,9 @@
 function options_Validate() {
     var errorMsg = "";
     var inpObj = {
-        popSize: Number($("#options_popSize").val()),
-        numOfPop: Number($("#options_numOfPop").val()),
-        init: Number($("#options_init").val())
+        popSize: parseInt($("#options_popSize").val(), 10),
+        numOfPop: parseInt($("#options_numOfPop").val(), 10),
+        init: parseInt($("#options_init").val(), 10)
     };
 
     errorMsg += conditionHack(isNaN(inpObj.popSize),

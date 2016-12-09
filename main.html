@@ -37,7 +37,8 @@
         init: 1
     }; 
     var currentGen = 1;
-    var allelesPool = alleleObj(["A", "B", "C", "D", "E"]);
+    var rng = new pseudoRandom();
+    var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
 
     function loadOptions() {
         $("#jsBody").load("dynamicPages/options.html");
@@ -74,9 +75,25 @@
     </div>
 </div>
 
+<div id="demo2"></div>
+
 <script>
-    
     $("#displayCurrentGen").html(currentGen);
+    $("#demo2").html(alleles.grab_Unif());
+    
+
+    //$("#demo2").html(alleles.grab_Unif());
+    var hi = new generation(1, 500);
+    $("#demo2").html("HI");
+    hi.create();
+    $("#demo2").html("HI 2");
+    var sad = new generation(2, 500);
+    $("#demo2").html("HI 3");
+    sad.procreate(hi);
+    $("#demo2").html(sad.genSize);
+
+    $("#demo2").html(hi.summaryStats().alleles.toString() +
+    "<br>" + sad.summaryStats().alleles.toString());
 </script>
 -->
 <!--End Testing Block-->

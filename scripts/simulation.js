@@ -1,59 +1,76 @@
-function alleleObj(allelesPool) {
-    this.allelesPool = allelesPool;
+function alleleObj(pool) {
+    this.pool = pool;
 
-    this.grabAlleles_Unif = function() {
-        var toReturn = [];
+    this.grab_Unif = function() {
+        var i = 0, 
+            toReturn = [];
 
         for (i = 0; i < 2; i++) {
-            toReturn.push(allelesPool[Math.floor(Math.random() * this.allelesPool.length())]);
+            toReturn.push(this.pool[
+                getRandomInt(0, 4)
+            ]);
         }
-
-        return toReturn;
+        return toReturn.toString();
     }
 }
 
-function member(allelesPool) {
-    this.allelesPool = allelesPool;
+function member(alleles) {
+    this.pool = alleles;
 
-    this.reproduceAlleles_Unif = function() {
-        var rng = Math.random();
-        if (rng < 0.5) {
-            return this.allelePool[0];
-        } else {
-            return this.allelePool[1];
-        }
+    this.reciprocate_Bit = function() {
+        return this.pool[rng.bop()].toString();
     }
 }
 
 function generation(genID, genSize) {
     this.genID = genID;
     this.genSize = genSize;
-    this.genPopMakeUp = [];
+    this.genPop = [];
 
-    this.new = function() {
+    this.create = function() {
+        var i = 0;
         for (i = 0; i < this.genSize; i++) {
-            this.genPopMakeUp.push(new member(allelesPool.grabAlleles_Unif()));
+            this.genPop.push(new member(alleles.grab_Unif()));
         }
     }
 
-    this.breed = function(parentGen) {
-        var whoTo;
+    this.procreate = function(parentGen) {
+        var i = 0,
+            parents = [],
+            inherit = [];
         for (i = 0; i < this.genSize; i++) {
-            
+            parents = parentGen.chooseTwo_Unif();
+            inherit.push(parentGen.genPop[parents[0]].reciprocate_Bit());
+            inherit.push(parentGen.genPop[parents[1]].reciprocate_Bit());
+            this.genPop.push(new member(inherit));
         }
     }
 
-    this.chooseTwo = function() {
+    this.chooseTwo_Unif = function() {
         var location = [];
 
-        location.push(Math.floor(Math.random() * parentGen.genSize));
-        location.push(Math.floor(Math.random() * parentGen.genSize));
+        location.push(Math.floor(Math.random() * this.genSize));
+        location.push(Math.floor(Math.random() * this.genSize));
         
         while (location[0] == location[1]) {
             location.pop();
-            location.push(Math.floor(Math.random() * parentGen.genSize));
+            location.push(Math.floor(Math.random() * this.genSize));
         }
 
         return location;
+    }
+
+    this.summaryStats = function() {
+        var toReturn = {
+            alleles: [0, 0, 0, 0, 0]
+            },
+            i = 0;
+
+        for (i = 0; i < this.genSize; i++) {
+            toReturn.alleles[translate(this.genPop[i].pool[0])] += 1;
+            toReturn.alleles[translate(this.genPop[i].pool[1])] += 1;
+        }
+
+        return toReturn;
     }
 }
