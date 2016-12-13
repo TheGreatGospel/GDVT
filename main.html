@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/tooltipStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js1"></script>
     <script src="scripts/utils.js"></script>
     
     <script src="scripts/options.js"></script>
@@ -39,6 +40,7 @@
     var currentGen = 1;
     var rng = new pseudoRandom();
     var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
+    var simStore = [];
 
     function loadOptions() {
         $("#jsBody").load("dynamicPages/options.html");
@@ -79,18 +81,13 @@
 
 <script>
     $("#displayCurrentGen").html(currentGen);
-    $("#demo2").html(alleles.grab_Unif());
     
-
-    //$("#demo2").html(alleles.grab_Unif());
     var hi = new generation(1, 500);
-    $("#demo2").html("HI");
     hi.create();
-    $("#demo2").html("HI 2");
+    
     var sad = new generation(2, 500);
-    $("#demo2").html("HI 3");
     sad.procreate(hi);
-    $("#demo2").html(sad.genSize);
+    $("#demo2").html(sad.genPop[0].pool.toString());
 
     $("#demo2").html(hi.summaryStats().alleles.toString() +
     "<br>" + sad.summaryStats().alleles.toString());

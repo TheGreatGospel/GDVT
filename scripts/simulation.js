@@ -7,10 +7,10 @@ function alleleObj(pool) {
 
         for (i = 0; i < 2; i++) {
             toReturn.push(this.pool[
-                getRandomInt(0, 4)
+                getRandomInt(0, this.pool.length)
             ]);
-        }
-        return toReturn.toString();
+        };
+        return toReturn;
     }
 }
 
@@ -18,7 +18,7 @@ function member(alleles) {
     this.pool = alleles;
 
     this.reciprocate_Bit = function() {
-        return this.pool[rng.bop()].toString();
+        return this.pool[rng.bop()];
     }
 }
 
@@ -31,7 +31,7 @@ function generation(genID, genSize) {
         var i = 0;
         for (i = 0; i < this.genSize; i++) {
             this.genPop.push(new member(alleles.grab_Unif()));
-        }
+        };
     }
 
     this.procreate = function(parentGen) {
@@ -39,11 +39,12 @@ function generation(genID, genSize) {
             parents = [],
             inherit = [];
         for (i = 0; i < this.genSize; i++) {
+            inherit = [];
             parents = parentGen.chooseTwo_Unif();
             inherit.push(parentGen.genPop[parents[0]].reciprocate_Bit());
             inherit.push(parentGen.genPop[parents[1]].reciprocate_Bit());
             this.genPop.push(new member(inherit));
-        }
+        };
     }
 
     this.chooseTwo_Unif = function() {
@@ -69,7 +70,7 @@ function generation(genID, genSize) {
         for (i = 0; i < this.genSize; i++) {
             toReturn.alleles[translate(this.genPop[i].pool[0])] += 1;
             toReturn.alleles[translate(this.genPop[i].pool[1])] += 1;
-        }
+        };
 
         return toReturn;
     }

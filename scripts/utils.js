@@ -19,7 +19,7 @@ function translate(input) {
         return 3;
     } else if (input == "E") {
         return 4;
-    }
+    };
 }
 
 function getRandomInt(min, max) {
