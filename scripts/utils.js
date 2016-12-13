@@ -8,25 +8,9 @@ function conditionHack(cnd1, msg1, cnd2, msg2) {
     }
 }
 
-function translate(input) {
-    if (input == "A") {
-        return 0;
-    } else if (input == "B") {
-        return 1;
-    } else if (input == "C") {
-        return 2;
-    } else if (input == "D") {
-        return 3;
-    } else if (input == "E") {
-        return 4;
-    };
-}
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-/* Pseudo Random functionality */
 
 function pseudoRandom() {
     this.base = getRandomInt(-2147483648, 2147483647);

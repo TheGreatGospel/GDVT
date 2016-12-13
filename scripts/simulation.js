@@ -7,7 +7,7 @@ function alleleObj(pool) {
 
         for (i = 0; i < 2; i++) {
             toReturn.push(this.pool[
-                getRandomInt(0, this.pool.length)
+                getRandomInt(0, this.pool.length - 1)
             ]);
         };
         return toReturn;
@@ -22,55 +22,72 @@ function member(alleles) {
     }
 }
 
-function generation(genID, genSize) {
-    this.genID = genID;
+function species(genSize) {
+    this.genNumber = 1;
+    this.tree = [];
     this.genSize = genSize;
-    this.genPop = [];
 
-    this.create = function() {
-        var i = 0;
-        for (i = 0; i < this.genSize; i++) {
-            this.genPop.push(new member(alleles.grab_Unif()));
-        };
+    var initGen = [],
+        i = 0,
+        j = 0;
+
+    for (i = 0; i < this.genSize; i++) {
+        initGen.push(new member(alleles.grab_Unif()));
     }
 
-    this.procreate = function(parentGen) {
+    this.tree.push(initGen);
+
+    this.mate = function(numOfTimes) {
         var i = 0,
-            parents = [],
-            inherit = [];
-        for (i = 0; i < this.genSize; i++) {
-            inherit = [];
-            parents = parentGen.chooseTwo_Unif();
-            inherit.push(parentGen.genPop[parents[0]].reciprocate_Bit());
-            inherit.push(parentGen.genPop[parents[1]].reciprocate_Bit());
-            this.genPop.push(new member(inherit));
+            j = 0,
+            parentGen = [],
+            childGen = [],
+            inherit = [],
+            parentIndices;
+        for (i = 0; i < numOfTimes; i++) {
+            parentGen = this.tree[this.genNumber - 1];
+            childGen = [];
+            for (j = 0; j < this.genSize; j++) {
+                inherit = [];
+                parentIndices = this.rollIndices();
+                inherit.push(parentGen[parentIndices[0]].reciprocate_Bit());
+                inherit.push(parentGen[parentIndices[1]].reciprocate_Bit());
+                childGen.push(new member(inherit));
+            };
+            this.tree.push(childGen);
+            this.genNumber++;
         };
     }
 
-    this.chooseTwo_Unif = function() {
-        var location = [];
+    this.rollIndices = function() {
+        var toReturn = [];
 
-        location.push(Math.floor(Math.random() * this.genSize));
-        location.push(Math.floor(Math.random() * this.genSize));
+        toReturn.push(getRandomInt(0, this.genSize - 1));
+        toReturn.push(getRandomInt(0, this.genSize - 1));
         
-        while (location[0] == location[1]) {
-            location.pop();
-            location.push(Math.floor(Math.random() * this.genSize));
+        while (toReturn[0] == toReturn[1]) {
+            toReturn.pop();
+            toReturn.push(getRandomInt(0, this.genSize - 1));
         }
 
-        return location;
+        return toReturn;
     }
 
-    this.summaryStats = function() {
-        var toReturn = {
-            alleles: [0, 0, 0, 0, 0]
-            },
-            i = 0;
-
-        for (i = 0; i < this.genSize; i++) {
-            toReturn.alleles[translate(this.genPop[i].pool[0])] += 1;
-            toReturn.alleles[translate(this.genPop[i].pool[1])] += 1;
+    this.summaryStats = function(whichGen = 1) {
+        var i = 0,
+            toReturn = [];
+        if (whichGen < 1 || whichGen > this.genNumber) {
+            whichGen = this.genNumber;
+        }
+        whichGen--;
+        for (i = 0; i < alleles.pool.length; i++) {
+            toReturn.push(0);
         };
+
+        for(i = 0; i < this.genSize; i++) {
+            toReturn[alleles.pool.indexOf(this.tree[whichGen][i].pool[0])] += 1;
+            toReturn[alleles.pool.indexOf(this.tree[whichGen][i].pool[1])] += 1;
+        }
 
         return toReturn;
     }

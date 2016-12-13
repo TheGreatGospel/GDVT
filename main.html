@@ -23,13 +23,15 @@
 </div>
 
 <div class="main" id="jsBody">
-    To Test
+    Loading. . .
 </div>
 
 <div class="main" id="copyright">
     Genetic Drift Visualisation Tool ver 0.1 <br>
     &copy 2016 David Chan
 </div>
+
+<div class="main" id = "demo">Debug</div>
 
 <script>
     var settings = {
@@ -40,7 +42,7 @@
     var currentGen = 1;
     var rng = new pseudoRandom();
     var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
-    var simStore = [];
+    var allSpecies = [];
 
     function loadOptions() {
         $("#jsBody").load("dynamicPages/options.html");
