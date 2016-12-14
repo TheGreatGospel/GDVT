@@ -57,15 +57,16 @@
 
         for (i = 0; i < settings.numOfPop; i++) {
             allSpecies.push(new species(settings.popSize));
-            dummyData.push(i+1);
+            dummyData.push(i + 1);
             if (settings.init > 1) {
                 allSpecies[i].mate(settings.init - 1);
             }
         }
 
         $("#jsBody").load("dynamicPages/simulation.html");
+        
         $("#demo2").html("Hi");
-        /*ctx = document.getElementById("#simulationChart").getContext("2d");
+        ctx = document.getElementById("#simulationChart").getContext("2d");
         newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
@@ -102,7 +103,8 @@
                 }
             }
         });
-        simGraphUpdate();*/
+        $("#demo2").html("Hi Again");
+        //simGraphUpdate();
     };
 
     loadOptions();
