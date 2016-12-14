@@ -66,7 +66,8 @@
         $("#jsBody").load("dynamicPages/simulation.html");
         
         $("#demo2").html("Hi 3");
-        ctx = document.getElementById("#simulationChart").getContext("2d");
+        ctx = document.getElementById("simulationChart").getContext("2d");
+        $("#demo2").html("Hi Again");
         newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
@@ -103,7 +104,7 @@
                 }
             }
         });
-        $("#demo2").html("Hi Again");
+        
         //simGraphUpdate();
     };
 
