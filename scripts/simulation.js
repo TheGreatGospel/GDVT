@@ -92,3 +92,57 @@ function species(genSize) {
         return toReturn;
     }
 }
+
+function simGraphUpdate() {
+    var i = 0,
+        j = 0,
+        allelesLen = alleles.pool.length,
+        currentGen = allSpecies[0].genNumber,
+        tempArray = [],
+        newData = [];
+    for (i = 0; i < alleles.pool.length; i++) {
+        tempArray = [];
+        for (j = 0; j < settings.numOfPop; j++) {
+            tempArray.push(allSpecies[j].summaryStats(currentGen)[i]);
+        }
+        newData.push(tempArray);
+        simGraph.data.datasets[i].data = tempArray;
+    };
+    simGraph.update(); 
+    $("#displayCurrentGen").html(currentGen);
+}
+
+function sim_n1() {
+    var i = 0;
+    for (i = 0; i < settings.numOfPop; i++) {
+        allSpecies[i].mate(1);
+    };
+    simGraphUpdate();
+}
+
+function sim_n10() {
+    var i = 0;
+    for (i = 0; i < settings.numOfPop; i++) {
+        allSpecies[i].mate(10);
+    };
+    simGraphUpdate();
+}
+
+function sim_nX() {
+    var howMany = parseInt($("#sim_input").val(), 10),
+        errorMsg = "",
+        i = 0;
+
+    errorMsg += conditionHack(isNaN(howMany),
+        "\"n =\" has an invalid input! \n",
+        howMany < 1,
+        "\"n =\" has an invalid input! \n");
+    if (errorMsg === "") {
+        for (i = 0; i < settings.numOfPop; i++) {
+            allSpecies[i].mate(howMany);
+        };
+        simGraphUpdate();
+    } else {
+        alert(errorMsg);
+    }
+}

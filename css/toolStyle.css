@@ -58,3 +58,10 @@ body {
     line-height: 2;
     flex-grow: 1;
 }
+
+/* Simulation */
+
+#sim_hold {
+    width: 800px;
+    height: 800px;
+}

@@ -31,105 +31,78 @@
     &copy 2016 David Chan
 </div>
 
-<div class="main" id = "demo">Debug</div>
-
 <script>
     var settings = {
         popSize: 50,
         numOfPop: 10,
         init: 1
     }; 
-    var currentGen = 1;
     var rng = new pseudoRandom();
     var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
     var allSpecies = [];
+    var ctx = null;
+    var simGraph = null;
 
     function loadOptions() {
         $("#jsBody").load("dynamicPages/options.html");
     }
 
     function loadSimulation() {
-        var i = 0;
+        var i = 0,
+            j = 0,
+            newData = {},
+            dummyData = [];
         for (i = 0; i < settings.numOfPop; i++) {
-            allSpecies.push(species(settings.popSize));
+            allSpecies.push(new species(settings.popSize));
+            dummyData.push(i+1);
             if (settings.init > 1) {
                 allSpecies[i].mate(settings.init - 1);
             }
         }
+        ctx = document.getElementById("simulationChart").getContext("2d");
+        newData.labels = dummyData;
+        newData.datasets = [];
+            newData.datasets.push({label: "A",
+                                data: dummyData,
+                                backgroundColor: "rgba(127,201,127,1)"
+            });
+            newData.datasets.push({label: "B",
+                                data: dummyData,
+                                backgroundColor: "rgba(190,174,212,1)"
+            });
+            newData.datasets.push({label: "C",
+                                data: dummyData,
+                                backgroundColor: "rgba(253,192,134,1)"
+            });
+            newData.datasets.push({label: "D",
+                                data: dummyData,
+                                backgroundColor: "rgba(255,255,153,1)"
+            });
+            newData.datasets.push({label: "E",
+                                data: dummyData,
+                                backgroundColor: "rgba(56,108,176,1)"
+            });
+        simGraph = new Chart(ctx, {
+            type: 'bar',
+            data: newData,
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true   
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+        });
+
         $("#jsBody").load("dynamicPages/simulation.html");
+        simGraphUpdate();
     }
 
     loadOptions();
 </script>
-
-<!--Testing Block-->
-
-<div class="main" id="demo">
-    <div id="subheading" class="jsBody_Child">
-        Generation: <span id="displayCurrentGen"></span>
-    </div>
-    <div id="subtoolbar" class="jsBody_Child">
-        Simulate next <i>n</i> generations: <br>
-        <button id="n.eq.1">
-            n = 1 
-        </button> 
-        <button id="n.eq.10">
-            n = 10
-        </button>
-        <button id="n.eq.x">
-            n =
-        </button>
-        <input maxlength=4 size=1 value=100 id="n.eq.x_Child">
-    </div>
-    <div id="hold" class="jsBody_Child">
-        <canvas id="simulationChart"></canvas>
-        
-    </div>
-</div>
-
-
-<script>
-    loadSimulation();
-    var ctx = document.getElementById("simulationChart").getContext("2d");
-    var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-</script>
-
-<!--End Testing Block-->
 
 </body>
 </html>

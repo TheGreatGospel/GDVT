@@ -3,17 +3,17 @@
 </div>
 <div id="subtoolbar" class="jsBody_Child">
     Simulate next <i>n</i> generations: <br>
-    <button id="n.eq.1">
+    <button id="n.eq.1" class="button" onclick="sim_n1()">
         n = 1 
     </button> 
-    <button id="n.eq.10">
+    <button id="n.eq.10" class="button" onclick="sim_n10()">
         n = 10
     </button>
-    <button id="n.eq.x">
+    <button id="n.eq.x" class="button" onclick="sim_nX()">
         n =
     </button>
-    <input maxlength=4 size=1 value=100 id="n.eq.x_Child">
+    <input maxlength=4 size=1 value=100 id="sim_input">
 </div>
-<div id="hold" class="jsBody_Child">
+<div id="sim_hold" class="jsBody_Child">
     <canvas id="simulationChart"></canvas>
 </div>
