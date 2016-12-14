@@ -23,10 +23,7 @@ function options_Validate() {
 
         if (errorMsg === "") {
             settings = inpObj;
-            $("#demo2").html("ASDF" + "<br>" + settings.popSize.toString() + "<br>" +
-                             settings.numOfPop.toString() + "<br>" + 
-                             settings.init.toString() + "<br>" +
-                             "Hi again");
+            loadSimulation();
         } else {
             alert(errorMsg);
         }

@@ -54,8 +54,6 @@
             j = 0,
             newData = {},
             dummyData = [];
-            
-        $("#jsBody").load("dynamicPages/simulation.html");
 
         for (i = 0; i < settings.numOfPop; i++) {
             allSpecies.push(new species(settings.popSize));
@@ -64,7 +62,10 @@
                 allSpecies[i].mate(settings.init - 1);
             }
         }
-        ctx = document.getElementById("#simulationChart").getContext("2d");
+
+        $("#jsBody").load("dynamicPages/simulation.html");
+        $("#demo2").html("Hi");
+        /*ctx = document.getElementById("#simulationChart").getContext("2d");
         newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
@@ -101,7 +102,7 @@
                 }
             }
         });
-        simGraphUpdate();
+        simGraphUpdate();*/
     };
 
     loadOptions();
