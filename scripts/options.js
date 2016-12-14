@@ -1,12 +1,12 @@
 function options_Validate() {
         var errorMsg = "";
         var inpObj = {
-            popSize: parseInt($("#options_popSize").val(), 10),
-            numOfPop: parseInt($("#options_numOfPop").val(), 10),
-            init: parseInt($("#options_init").val(), 10)
+            popSize: parseInt($("#option_popSize").val(), 10),
+            numOfPop: parseInt($("#option_numOfPop").val(), 10),
+            init: parseInt($("#option_init").val(), 10)
         };
 
-        /*errorMsg += conditionHack(isNaN(inpObj.popSize),
+        errorMsg += conditionHack(isNaN(inpObj.popSize),
             "The \"Population Size\" has an invalid input! \n",
             inpObj.popSize < 50 || inpObj.popSize > 500,
             "The \"Population Size\" has an invalid input! \n");
@@ -19,7 +19,7 @@ function options_Validate() {
         errorMsg += conditionHack(isNaN(inpObj.init),
             "The \"Initial Number of Simulations\" has an invalid input! \n",
             inpObj.init < 1,
-            "The \"Initial Number of Simulations\" has an invalid input! \n");*/
+            "The \"Initial Number of Simulations\" has an invalid input! \n");
 
         if (errorMsg === "") {
             $("#demo2").html("hi");

@@ -31,7 +31,7 @@
     &copy 2016 David Chan
 </div>
 
-<div id="demo2">Debug2</div> 
+<div id="demo2">Debug3</div> 
 
 <script>
     var settings = {
@@ -54,6 +54,9 @@
             j = 0,
             newData = {},
             dummyData = [];
+            
+        $("#jsBody").load("dynamicPages/simulation.html");
+
         for (i = 0; i < settings.numOfPop; i++) {
             allSpecies.push(new species(settings.popSize));
             dummyData.push(i+1);
@@ -98,8 +101,6 @@
                 }
             }
         });
-
-        $("#jsBody").load("dynamicPages/simulation.html");
         simGraphUpdate();
     };
 
