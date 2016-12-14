@@ -30,7 +30,7 @@
 </div>
 
 <div class="main" id="copyright">
-    Genetic Drift Visualisation Tool ver 0.1.1 <br>
+    Genetic Drift Visualisation Tool ver 0.1.0 <br>
     &copy 2016 David Chan
 </div>
 
@@ -49,7 +49,7 @@
     var simGraph = null;
 
     function loadOptions() {
-        $("#jsChart_Container").css({display: "none"});
+        //$("#jsChart_Container").css({display: "none"});
         $("#jsBody_Content").load("dynamicPages/options.html");
     };
 
@@ -67,8 +67,7 @@
             }
         }
 
-        
-        setTimeout(function() {$("#jsChart_Container").css({display: "inline"})}, 1);
+        //$("#jsChart_Container").css({display: "inline"});
         $("#jsBody_Content").load("dynamicPages/simulation.html");
         
         newData.labels = dummyData;
@@ -107,6 +106,7 @@
                 }
             }
         });
+        
         simGraphUpdate();
     };
 
