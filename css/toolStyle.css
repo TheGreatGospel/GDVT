@@ -58,10 +58,3 @@ body {
     line-height: 2;
     flex-grow: 1;
 }
-
-/* Simulation */
-
-#render {
-    width: 800px;
-    height: 800px;
-}
