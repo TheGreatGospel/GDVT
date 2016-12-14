@@ -23,7 +23,7 @@ function options_Validate() {
 
         if (errorMsg === "") {
             $("#demo2").html("hi");
-            //settings = inpObj;
+            settings = inpObj;
             $("#demo2").html(settings.popSize + "<br>" +
                              settings.numOfPop + "<br>" + 
                              settings.init);
