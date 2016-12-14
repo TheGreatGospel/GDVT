@@ -24,7 +24,7 @@ function options_Validate() {
         if (errorMsg === "") {
             $("#demo2").html("hi");
             //settings = inpObj;
-            $("#demo2").html("hi2");
+            $("#demo2").html(settings.length);
             loadSimulation();
         } else {
             alert(errorMsg);
