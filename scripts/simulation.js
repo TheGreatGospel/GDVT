@@ -100,6 +100,7 @@ function simGraphUpdate() {
         currentGen = allSpecies[0].genNumber,
         tempArray = [],
         newData = [];
+
     for (i = 0; i < alleles.pool.length; i++) {
         tempArray = [];
         for (j = 0; j < settings.numOfPop; j++) {
@@ -109,7 +110,7 @@ function simGraphUpdate() {
         simGraph.data.datasets[i].data = tempArray;
     };
     
-    $("#displayCurrentGen").html(allSpecies[0].genNumber);
+    setTimeout(function() {$("#displayCurrentGen").html(allSpecies[0].genNumber)}, 1);
     simGraph.update(); 
 }
 
