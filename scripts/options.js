@@ -26,7 +26,7 @@ function options_Validate() {
             settings = inpObj;
             $("#demo2").html(settings.popSize + "<br>" +
                              settings.numOfPop + "<br>" + 
-                             settings.init);
+                             settings.init + "<br> asdf");
         } else {
             alert(errorMsg);
         }
