@@ -16,8 +16,9 @@ body {
 }
 
 #toolbar {
-    font-size: 16pt;
-    background-color: slategrey;
+    font-size: 14pt;
+    border-top: thin solid black;
+    border-bottom: thin solid black;
 }
 
 #subtoolbar {
@@ -33,6 +34,13 @@ body {
 
 .jsBody_Child {
     padding: 1px 0 1px 0;
+}
+
+#jsChart {
+    font-size: 12pt;
+    padding: 1px 0 1px 0;
+    height: 400px;
+    width: 800px;
 }
 
 #copyright {

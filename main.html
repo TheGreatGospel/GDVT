@@ -23,15 +23,14 @@
 </div>
 
 <div class="main" id="jsBody">
-    Loading. . .
-</div>
-
-<div class="main">
-    <canvas id="sim_Chart"></canvas>
+    <div id="jsBody_Content"></div>
+    <div class="jsBody_Child" id="jsChart_Container">
+        <canvas id="jsChart"></canvas>
+    </div>
 </div>
 
 <div class="main" id="copyright">
-    Genetic Drift Visualisation Tool ver 0.1 <br>
+    Genetic Drift Visualisation Tool ver 0.1.1 <br>
     &copy 2016 David Chan
 </div>
 
@@ -46,11 +45,12 @@
     var rng = new pseudoRandom();
     var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
     var allSpecies = [];
-    var ctx = null;
+    var ctx = $("#jsChart");
     var simGraph = null;
 
     function loadOptions() {
-        $("#jsBody").load("dynamicPages/options.html");
+        $("#jsChart_Container").css({display: "none"});
+        $("#jsBody_Content").load("dynamicPages/options.html");
     };
 
     function loadSimulation() {
@@ -67,9 +67,9 @@
             }
         }
 
-        $("#jsBody").load("dynamicPages/simulation.html");
+        $("#jsChart_Container").css({display: "inline"});
+        $("#jsBody_Content").load("dynamicPages/simulation.html");
         
-        ctx = $("#sim_Chart");
         newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
