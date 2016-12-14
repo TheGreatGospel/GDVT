@@ -61,7 +61,7 @@ body {
 
 /* Simulation */
 
-#sim_hold {
+#render {
     width: 800px;
     height: 800px;
 }
