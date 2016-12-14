@@ -24,8 +24,10 @@ function options_Validate() {
         if (errorMsg === "") {
             $("#demo2").html("hi");
             //settings = inpObj;
-            $("#demo2").html(settings.length);
-            loadSimulation();
+            $("#demo2").html(settings.popSize + "<br>" +
+                             settings.numOfPop + "<br>" + 
+                             settings.init + "<br>");
+            //loadSimulation();
         } else {
             alert(errorMsg);
         }
