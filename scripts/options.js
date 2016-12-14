@@ -22,11 +22,11 @@ function options_Validate() {
             "The \"Initial Number of Simulations\" has an invalid input! \n");
 
         if (errorMsg === "") {
-            $("#demo2").html("hi");
             settings = inpObj;
             $("#demo2").html(settings.popSize + "<br>" +
                              settings.numOfPop + "<br>" + 
-                             settings.init + "<br> asdf");
+                             settings.init + "<br>" +
+                             "Hi again");
         } else {
             alert(errorMsg);
         }
