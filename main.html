@@ -49,7 +49,7 @@
     var simGraph = null;
 
     function loadOptions() {
-        //$("#jsChart_Container").css({display: "none"});
+        $("#jsChart_Container").css({display: "none"});
         $("#jsBody_Content").load("dynamicPages/options.html");
     };
 
@@ -67,8 +67,8 @@
             }
         }
 
-        //$("#jsChart_Container").css({display: "inline"});
-        $("#jsBody_Content").load("dynamicPages/simulation.html");
+        $("#jsChart_Container").css({display: "inline"});
+        /*$("#jsBody_Content").load("dynamicPages/simulation.html");
         
         newData.labels = dummyData;
         newData.datasets = [];
@@ -107,7 +107,7 @@
             }
         });
         
-        simGraphUpdate();
+        simGraphUpdate();*/
     };
 
     loadOptions();
