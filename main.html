@@ -65,7 +65,6 @@
 
         $("#jsBody").load("dynamicPages/simulation.html");
         
-        $("#demo2").html("Hi 4");
         ctx = $("#sim_Chart");
         $("#demo2").html("Hi Again");
         newData.labels = dummyData;
@@ -90,6 +89,7 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
+        $("#demo2").html("Hi Again for Debug");
         simGraph = new Chart(ctx, {
             type: 'bar',
             data: newData,
