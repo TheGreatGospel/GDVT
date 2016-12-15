@@ -34,7 +34,7 @@
     &copy 2016 David Chan
 </div>
 
-<div id="demo2">DebugF</div> 
+<div id="demo2">DebugG</div> 
 
 <script>
     var settings = {
@@ -66,10 +66,9 @@
             }
         }
 
-        $("#jsBody_Content").load("dynamicPages/simulation.html");
-        //$("#jsChart_Container").css({display: "inline"});
+        $("#jsChart_Container").css({display: "inline"});
         
-        newData.labels = dummyData;
+        /*newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
                                 data: dummyData,
@@ -106,8 +105,8 @@
             }
 
         });
-        //loadSimulation_Child(newData);
-        simGraphUpdate();
+        
+        simGraphUpdate();*/
     };
 
     $("#jsBody_Content").load("dynamicPages/options.html", loadOptions());

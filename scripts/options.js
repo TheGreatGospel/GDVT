@@ -23,7 +23,7 @@ function options_Validate() {
 
         if (errorMsg === "") {
             settings = inpObj;
-            loadSimulation();
+            $("#jsBody_Content").load("dynamicPages/simulation.html", loadSimulation());
         } else {
             alert(errorMsg);
         }
