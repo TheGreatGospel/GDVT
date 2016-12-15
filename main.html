@@ -38,15 +38,15 @@
 
 <script>
     var settings = {
-        popSize: 50,
-        numOfPop: 10,
-        init: 1
-    }; 
-    var rng = new pseudoRandom();
-    var alleles = new alleleObj(["A", "B", "C", "D", "E"]);
-    var allSpecies = [];
-    var ctx = $("#jsChart");
-    var simGraph = null;
+            popSize: 50,
+            numOfPop: 10,
+            init: 1
+        },
+        rng = new pseudoRandom(),
+        alleles = new alleleObj(["A", "B", "C", "D", "E"]),
+        allSpecies = [],
+        ctx = null,
+        simGraph = null;
 
     function loadOptions() {
         $("#jsChart_Container").css({display: "none"});
@@ -67,7 +67,8 @@
         }
 
         $("#jsChart_Container").css({display: "inline"});
-        
+        ctx = $("#jsChart");
+
         newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
@@ -90,6 +91,8 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
+        
+        $("#demo2").html(typeof ctx);
         simGraph = new Chart(ctx, {
             type: 'bar',
             data: newData,
