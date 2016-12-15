@@ -69,7 +69,7 @@
         $("#jsChart_Container").css({display: "inline"});
         ctx = $("#jsChart");
 
-        newData.labels = dummyData;
+        /*newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
                                 data: dummyData,
@@ -107,10 +107,8 @@
                 }
             }
 
-        });
-        $("#demo2").html(typeof simGraph);
+        });*/
         simGraphUpdate();
-        $("#demo2").html("Do I work");
     };
 
     $("#jsBody_Content").load("dynamicPages/options.html", loadOptions());

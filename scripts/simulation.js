@@ -111,7 +111,7 @@ function simGraphUpdate() {
     };
     
     $("#displayCurrentGen").text(allSpecies[0].genNumber);
-    simGraph.update(); 
+    //simGraph.update(); 
 }
 
 function sim_n1() {
