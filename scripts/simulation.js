@@ -107,7 +107,7 @@ function simGraphUpdate() {
             tempArray.push(allSpecies[j].summaryStats(currentGen)[i]);
         }
         newData.push(tempArray);
-        simGraph.data.datasets[i].data = tempArray;
+        //simGraph.data.datasets[i].data = tempArray;
     };
     
     $("#displayCurrentGen").text(allSpecies[0].genNumber);
