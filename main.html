@@ -70,7 +70,7 @@
         $("#jsBody_Content").load("dynamicPages/simulation.html");
         $("#jsChart_Container").css({display: "inline"});
         
-        /*newData.labels = dummyData;
+        newData.labels = dummyData;
         newData.datasets = [];
             newData.datasets.push({label: "A",
                                 data: dummyData,
@@ -92,7 +92,7 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
-        simGraph = new Chart(ctx, {
+        /*simGraph = new Chart(ctx, {
             type: 'bar',
             data: newData,
             options: {
