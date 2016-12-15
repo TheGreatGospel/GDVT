@@ -50,8 +50,7 @@
     var newData = {};
 
     function loadOptions() {
-        //$("#jsChart_Container").css({display: "none"});
-        $("#jsBody_Content").load("dynamicPages/options.html");
+        $("#jsChart_Container").css({display: "none"});
     };
 
     function loadSimulation() {
@@ -111,7 +110,7 @@
         simGraphUpdate();
     };
 
-    loadOptions();
+     $("#jsBody_Content").load("dynamicPages/options.html", loadOptions());
 </script>
 
 </body>
