@@ -54,10 +54,6 @@
         $("#jsBody_Content").load("dynamicPages/options.html");
     };
 
-    function loadSimulation_Child() {
- 
-    }
-
     function loadSimulation() {
         var i = 0,
             j = 0,
@@ -96,7 +92,6 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
-        //
         simGraph = new Chart(ctx, {
             type: 'bar',
             data: newData,
@@ -113,7 +108,7 @@
 
         });
         //loadSimulation_Child(newData);
-        setTimeout(simGraphUpdate(), 1);
+        simGraphUpdate();
     };
 
     loadOptions();
