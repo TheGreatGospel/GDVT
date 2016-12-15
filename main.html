@@ -25,7 +25,9 @@
 <div class="main" id="jsBody">
     <div id="jsBody_Content"></div>
     <div class="jsBody_Child" id="jsChart_Container">
-        <canvas id="jsChart"></canvas>
+        <canvas id="jsChart">
+            
+        </canvas>
     </div>
 </div>
 
@@ -67,7 +69,7 @@
         }
 
         $("#jsChart_Container").css({display: "inline"});
-        $("#displayCurrentGen").html(allSpecies[0].genNumber).delay(1);
+        $("#demo2").html(allSpecies[0].genNumber);
         //ctx = $("#jsChart");
 
         /*newData.labels = dummyData;

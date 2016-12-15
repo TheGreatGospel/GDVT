@@ -2,6 +2,8 @@ body {
     font-family: sans-serif;
 }
 
+canvas{ border: 1px solid black; }
+
 .main {
     padding: 10px;
 }
@@ -25,7 +27,6 @@ body {
     font-size: 12pt;
     line-height: 1.5;
     padding: 0 0 10px 0;
-    border-bottom: thin solid black;
 }
 
 #jsBody {
@@ -41,7 +42,6 @@ body {
     padding: 1px 0 1px 0;
     height: 400px;
     width: 800px;
-    background-color: yellow;
 }
 
 #copyright {
