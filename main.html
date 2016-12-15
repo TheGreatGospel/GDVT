@@ -95,7 +95,7 @@
         $("#demo2").html(typeof ctx);
         simGraph = new Chart(ctx, {
             type: 'bar',
-            data: newData,
+            //data: newData,
             options: {
                 scales: {
                     xAxes: [{
@@ -108,7 +108,7 @@
             }
 
         });
-        
+        $("#demo2").html("complete");
         //simGraphUpdate();
     };
 
