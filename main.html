@@ -53,6 +53,24 @@
         $("#jsBody_Content").load("dynamicPages/options.html");
     };
 
+    function loadSimulation_Child(newData) {
+        simGraph = new Chart(ctx, {
+            type: 'bar',
+            data: newData,
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true   
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+
+        });
+    }
+
     function loadSimulation() {
         var i = 0,
             j = 0,
@@ -92,22 +110,8 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
-        simGraph = new Chart(ctx, {
-            type: 'bar',
-            data: newData,
-            options: {
-                scales: {
-                    xAxes: [{
-                        stacked: true   
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                }
-            }
-
-        });
         
+        loadSimulation_Child(newData);
         //simGraphUpdate();
     };
 
