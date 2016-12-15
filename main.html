@@ -47,6 +47,7 @@
     var allSpecies = [];
     var ctx = $("#jsChart");
     var simGraph = null;
+    var newData = {};
 
     function loadOptions() {
         $("#jsChart_Container").css({display: "none"});
@@ -74,7 +75,6 @@
     function loadSimulation() {
         var i = 0,
             j = 0,
-            newData = {},
             dummyData = [];
 
         for (i = 0; i < settings.numOfPop; i++) {
@@ -110,7 +110,7 @@
                                 data: dummyData,
                                 backgroundColor: "rgba(56,108,176,1)"
             });
-        //setTimeout(loadSimulation_Child(newData), 0);
+        setTimeout(loadSimulation_Child(), 1);
 
         //loadSimulation_Child(newData);
         //simGraphUpdate();
