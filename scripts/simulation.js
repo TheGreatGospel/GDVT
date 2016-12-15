@@ -110,7 +110,7 @@ function simGraphUpdate() {
         simGraph.data.datasets[i].data = tempArray;
     };
     
-    $("#displayCurrentGen").html(allSpecies[0].genNumber)
+    $("#displayCurrentGen").text(allSpecies[0].genNumber);
     simGraph.update(); 
 }
 
