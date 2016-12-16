@@ -3,7 +3,8 @@ function options_Validate() {
         var inpObj = {
             popSize: parseInt($("#option_popSize").val(), 10),
             numOfPop: parseInt($("#option_numOfPop").val(), 10),
-            init: parseInt($("#option_init").val(), 10)
+            init: parseInt($("#option_init").val(), 10),
+            numOfAlleles: 8
         };
 
         errorMsg += conditionHack(isNaN(inpObj.popSize),

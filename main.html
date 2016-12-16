@@ -70,7 +70,7 @@
     <div class="jsBody_Child" id="subheading">
         Generation: <span id="displayCurrentGen"></span>
     </div>
-    <div  class="jsBody_Child" id="subtoolbar">
+    <div class="jsBody_Child" id="subtoolbar">
         Simulate next <i>n</i> generations: <br>
         <button id="n.eq.1" onclick="sim_n1()">
             n = 1 
@@ -90,7 +90,7 @@
 
 <!-- Bottom Matter HTML (Start) -->
 <div class="main" id="copyright">
-    Genetic Drift Visualisation Tool ver 0.1.0 <br>
+    Genetic Drift Visualisation Tool ver 0.1.1 <br>
     &copy 2016 David Chan
 </div>
 <!-- Bottom Matter HTML (End) -->
@@ -99,18 +99,19 @@
 <script>
     var settings = {
             popSize: 50,
-            numOfPop: 10,
-            init: 1
+            numOfPop: 5,
+            init: 1,
+            numOfAlleles: 5
         },
+        alleles = new alleleObj(),
         rng = new pseudoRandom(),
-        alleles = new alleleObj(["A", "B", "C", "D", "E"]),
         allSpecies = [],
         ctx = $("#jsChart_alleleDens"),
         simGraph = null;
     
-    $("#jsBody_Simulation").css({display: "none"})
+    alleles.create(settings.numOfAlleles);
 </script>
-<!-- Initialisation JS (End) -->
+<!-- Initialisation JS (End)f -->
 
 </body>
 </html>

@@ -7,8 +7,6 @@ button {
     font-size: 12pt;
 }
 
-canvas{ border: 1px solid black; }
-
 .main {
     padding: 10px;
 }
@@ -37,11 +35,6 @@ canvas{ border: 1px solid black; }
     padding: 1px 0 1px 0;
 }
 
-#jsChart {
-    height: 400px;
-    width: 800px;
-}
-
 #copyright {
     font-size: 8pt;
     text-align: center;
@@ -60,4 +53,8 @@ canvas{ border: 1px solid black; }
 #options_rTable {
     line-height: 2;
     flex-grow: 1;
+}
+
+#jsBody_Simulation {
+    display: none;
 }

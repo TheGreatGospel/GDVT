@@ -1,5 +1,29 @@
-function alleleObj(pool) {
-    this.pool = pool;
+function alleleObj() {
+    var fullPool = [
+        {code: "A", colour: "rgba(127, 201, 127, 1)"}, 
+        {code: "B", colour: "rgba(190, 174, 212, 1)"}, 
+        {code: "C", colour: "rgba(253, 192, 134, 1)"}, 
+        {code: "D", colour: "rgba(255, 255, 153, 1)"}, 
+        {code: "E", colour: "rgba(56, 108, 176, 1)"}, 
+        {code: "F", colour: "rgba(240, 2, 127, 1)"}, 
+        {code: "G", colour: "rgba(191, 91, 23, 1)"}, 
+        {code: "H", colour: "rgba(102, 102, 102 ,1)"}
+    ];
+
+    this.pool = [];
+    this.colours = [];
+    
+    this.create = function(poolSize) {
+        var i = 0;
+        if (poolSize > 8) {
+            poolSize = 8;
+        };
+
+        for (i = 0; i < poolSize; i++) {
+            this.pool.push(fullPool[i].code);
+            this.colours.push(fullPool[i].colour);
+        };
+    };
 
     this.grab_Unif = function() {
         var i = 0, 
@@ -11,7 +35,7 @@ function alleleObj(pool) {
             ]);
         };
         return toReturn;
-    }
+    };
 }
 
 function member(alleles) {
@@ -96,7 +120,7 @@ function species(genSize) {
 function simGraphUpdate() {
     var i = 0,
         j = 0,
-        allelesLen = alleles.pool.length,
+        allelesLen = settings.numOfAlleles,
         currentGen = allSpecies[0].genNumber,
         tempArray = [],
         newData = [];
@@ -154,7 +178,7 @@ function simulation_Init() {
         j = 0,
         dummyData = [],
         newData = {};
-    
+
     for (i = 0; i < settings.numOfPop; i++) {
         allSpecies.push(new species(settings.popSize));
         dummyData.push(i + 1);
@@ -162,31 +186,22 @@ function simulation_Init() {
             allSpecies[i].mate(settings.init - 1);
         }
     };
-
+    
     
         newData.labels = dummyData;
-        newData.datasets = [];
-            newData.datasets.push({label: "A",
-                                data: dummyData,
-                                backgroundColor: "rgba(127,201,127,1)"
-            });
-            newData.datasets.push({label: "B",
-                                data: dummyData,
-                                backgroundColor: "rgba(190,174,212,1)"
-            });
-            newData.datasets.push({label: "C",
-                                data: dummyData,
-                                backgroundColor: "rgba(253,192,134,1)"
-            });
-            newData.datasets.push({label: "D",
-                                data: dummyData,
-                                backgroundColor: "rgba(255,255,153,1)"
-            });
-            newData.datasets.push({label: "E",
-                                data: dummyData,
-                                backgroundColor: "rgba(56,108,176,1)"
-            });
         
+        newData.datasets = [];
+    
+    for (i = 0; i < settings.numOfAlleles; i++) {
+        newData.datasets.push({
+            label: alleles.pool[i],
+            data: dummyData,
+            backgroundColor: alleles.colours[i]
+        });
+    };
+    
+        ctx[0].height = 400;
+        ctx[0].width = 800;
         simGraph = new Chart(ctx, {
             type: 'bar',
             data: newData,
@@ -198,10 +213,11 @@ function simulation_Init() {
                     yAxes: [{
                         stacked: true
                     }]
-                }
+                },
+                responsive: false
             }
 
         });
-
-              simGraphUpdate();
+        
+            simGraphUpdate();
 }
