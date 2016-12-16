@@ -23,7 +23,9 @@ function options_Validate() {
 
         if (errorMsg === "") {
             settings = inpObj;
-            $("#jsBody_Content").load("dynamicPages/simulation.html", loadSimulation());
+            $("#jsBody_Options").css({display: "none"});
+            $("#jsBody_Simulation").css({display: "block"});
+            simulation_Init();
         } else {
             alert(errorMsg);
         }

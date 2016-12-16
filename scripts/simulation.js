@@ -107,11 +107,11 @@ function simGraphUpdate() {
             tempArray.push(allSpecies[j].summaryStats(currentGen)[i]);
         }
         newData.push(tempArray);
-        //simGraph.data.datasets[i].data = tempArray;
+        simGraph.data.datasets[i].data = tempArray;
     };
     
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
-    //simGraph.update(); 
+    simGraph.update(); 
 }
 
 function sim_n1() {
@@ -147,4 +147,61 @@ function sim_nX() {
     } else {
         alert(errorMsg);
     }
+}
+
+function simulation_Init() {
+    var i = 0,
+        j = 0,
+        dummyData = [],
+        newData = {};
+    
+    for (i = 0; i < settings.numOfPop; i++) {
+        allSpecies.push(new species(settings.popSize));
+        dummyData.push(i + 1);
+        if (settings.init > 1) {
+            allSpecies[i].mate(settings.init - 1);
+        }
+    };
+
+    
+        newData.labels = dummyData;
+        newData.datasets = [];
+            newData.datasets.push({label: "A",
+                                data: dummyData,
+                                backgroundColor: "rgba(127,201,127,1)"
+            });
+            newData.datasets.push({label: "B",
+                                data: dummyData,
+                                backgroundColor: "rgba(190,174,212,1)"
+            });
+            newData.datasets.push({label: "C",
+                                data: dummyData,
+                                backgroundColor: "rgba(253,192,134,1)"
+            });
+            newData.datasets.push({label: "D",
+                                data: dummyData,
+                                backgroundColor: "rgba(255,255,153,1)"
+            });
+            newData.datasets.push({label: "E",
+                                data: dummyData,
+                                backgroundColor: "rgba(56,108,176,1)"
+            });
+        
+        simGraph = new Chart(ctx, {
+            type: 'bar',
+            data: newData,
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true   
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+
+        });
+
+              simGraphUpdate();
 }
