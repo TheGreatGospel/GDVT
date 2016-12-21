@@ -13,22 +13,18 @@ function getRandomInt(min, max) {
 }
 
 function pseudoRandom() {
-    this.base = getRandomInt(-2147483648, 2147483647);
-    this.baseBit = this.base.toString(2);
-    this.baseBit = this.baseBit.replace("-", "");
-    this.bitSize = this.baseBit.length;
-    this.bitArray = this.baseBit.split("");
+    var index = 0;
+    this.base = getRandomInt(0, 2147483647);
 
     this.bop = function() {
-        var x = this.bitArray.pop();
-        this.bitSize -= 1;
-        if (this.bitSize < 1) {
-            this.base = getRandomInt(-2147483648, 2147483647);
-            this.baseBit = this.base.toString(2);
-            this.baseBit = this.baseBit.replace("-", "");
-            this.bitSize = this.baseBit.length;
-            this.bitArray = this.baseBit.split("");
-        }
-        return x;
+        var toReturn = this.base & 1;
+        if (index % 32 === 0) {
+            this.base = getRandomInt(0, 2147483647);
+            index = 0;
+        } else {
+            this.base >>= 1;
+            index++;
+        }   
+        return toReturn;
     }
 }

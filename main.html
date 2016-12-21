@@ -5,19 +5,17 @@
     Genetic Drift Visualisation Tool
 </title>
 
-<!-- CSS and JS (Start) -->
+<!-- CSS and JS Libraries (Start) -->
 <head>
     <link rel="stylesheet" type="text/css" href="css/toolStyle.css">
     <link rel="stylesheet" type="text/css" href="css/tooltipStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="scripts/utils.js"></script>
-    
-    <script src="scripts/options.js"></script>
-    <script src="scripts/simulation.js"></script>
 </head>
-<!-- CSS and JS (End) -->
+<!-- CSS and JS Libraries (End) -->
 
 <body>
 
@@ -38,27 +36,40 @@
     </div>
     <div class="jsBody_Child" id="options_hold">
         <div id="options_lTable">
-            Population Size: <br>
-            Number of Populations: <br>
-            Initial Number of Simulations: <br>
+            <div class="tooltip">
+                Population Size:
+                <div class="tooltiptext" id="popSizeTip">
+                    Input a value between 50-500.
+                </div>
+            </div> <br>
+            <div class="tooltip">
+                Number of Populations: 
+                <div class="tooltiptext" id="numOfPopTip">
+                    Input a value between 1-10.
+                </div>
+            </div> <br>
+            <div class="tooltip">
+                Number of Alleles: 
+                <div class="tooltiptext" id="numOfAllelesTip">
+                    Input a value between 2-8.
+                </div>
+            </div> <br>
+            <div class="tooltip">
+                Initial Number of Simulations: 
+                <div class="tooltiptext" id="initTip">
+                    Input a value greater than 0.
+                </div>
+            </div> <br>
         </div>
         <div id="options_rTable">
-            <input id="option_popSize" value=50 maxlength=4 size=5> 
-                <div class="tooltip">
-                    * <div class="tooltiptext">Input a value from 50-500.</div>
-                </div> <br>
-            <input id="option_numOfPop" value=5 maxlength=4 size=5> 
-                <div class="tooltip">
-                    * <div class="tooltiptext">Input a value from 1-10.</div>
-                </div> <br>
-            <input id="option_init" value=1 maxlength=4 size=5>
-                <div class="tooltip">
-                    * <div class="tooltiptext">Input a value greater than 0.</div>
-                </div> <br>
+            <input id="option_popSize" type="number" min="50" max="500"> <br>
+            <input id="option_numOfPop" type="number" min="1" max="10"> <br>
+            <input id="option_numOfAlleles" type="number" min="2" max="8"> <br>
+            <input id="option_init" type="number" min="0" max="1000"> <br>
         </div>
     </div>
     <div class="jsBody_Child">
-        <button onclick="options_Validate()">
+        <button id="options_simStart">
             Simulate
         </button>
     </div>
@@ -95,23 +106,26 @@
 </div>
 <!-- Bottom Matter HTML (End) -->
 
-<!-- Initialisation JS (Start) -->
+<!-- Initialisation JS Functionality (Start) -->
+<script src="scripts/options.js"></script>
+<script src="scripts/simulation.js"></script>
+
 <script>
     var settings = {
             popSize: 50,
             numOfPop: 5,
-            init: 1,
-            numOfAlleles: 5
+            numOfAlleles: 5,
+            init: 1
         },
         alleles = new alleleObj(),
         rng = new pseudoRandom(),
         allSpecies = [],
         ctx = $("#jsChart_alleleDens"),
         simGraph = null;
-    
-    alleles.create(settings.numOfAlleles);
+        
+    options_Load();
 </script>
-<!-- Initialisation JS (End)f -->
+<!-- Initialisation JS Functionality (End) -->
 
 </body>
 </html>

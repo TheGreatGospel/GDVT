@@ -7,6 +7,10 @@ button {
     font-size: 12pt;
 }
 
+input {
+    background-color: #fffff0;
+}
+
 .main {
     padding: 10px;
 }
@@ -48,6 +52,7 @@ button {
 
 #options_lTable {
     line-height: 2;
+    text-align: right;
 }
 
 #options_rTable {

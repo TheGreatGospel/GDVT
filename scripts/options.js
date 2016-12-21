@@ -1,41 +1,58 @@
-function options_Validate() {
-        var errorMsg = "";
-        var inpObj = {
-            popSize: parseInt($("#option_popSize").val(), 10),
-            numOfPop: parseInt($("#option_numOfPop").val(), 10),
-            init: parseInt($("#option_init").val(), 10),
-            numOfAlleles: 8
-        };
+function options_Load() {
+    $("#option_popSize").val(settings.popSize);
+    $("#option_numOfPop").val(settings.numOfPop);
+    $("#option_numOfAlleles").val(settings.numOfAlleles);
+    $("#option_init").val(settings.init);
+};
 
-        errorMsg += conditionHack(isNaN(inpObj.popSize),
-            "The \"Population Size\" has an invalid input! \n",
-            inpObj.popSize < 50 || inpObj.popSize > 500,
-            "The \"Population Size\" has an invalid input! \n");
-        
-        errorMsg += conditionHack(isNaN(inpObj.numOfPop),
-            "The \"Number of Populations\" has an invalid input! \n",
-            inpObj.numOfPop < 1 || inpObj.numOfPop > 10,
-            "The \"Number of Populations\" has an invalid input! \n");
-        
-        errorMsg += conditionHack(isNaN(inpObj.init),
-            "The \"Initial Number of Simulations\" has an invalid input! \n",
-            inpObj.init < 1,
-            "The \"Initial Number of Simulations\" has an invalid input! \n");
+$('#option_popSize').on("focusout", function() {
+    var x = $(this);
+    if (x.val() < 50 || x.val() > 500) {
+        x.val(settings.popSize);
+        x.css({backgroundColor: "#ffff99"});
+        x.animate({backgroundColor: "#fffff0"}, 1000);
+    } else {
+        settings.popSize = x.val();
+    }
+});
 
-        if (errorMsg === "") {
-            settings = inpObj;
-            $("#jsBody_Options").css({display: "none"});
-            $("#jsBody_Simulation").css({display: "block"});
-            simulation_Init();
-        } else {
-            alert(errorMsg);
-        }
-    };
+$('#option_numOfPop').on("focusout", function() {
+    var x = $(this);
+    if (x.val() < 1 || x.val() > 10) {
+        x.val(settings.numOfPop);
+        x.css({backgroundColor: "#ffff99"});
+        x.animate({backgroundColor: "#fffff0"}, 1000);
+    } else {
+        settings.numOfPop = x.val();
+    }
+});
 
-/*
-document.getElementById("demo").innerHTML =  typeof inpObj.popSize + " " +
-    typeof inpObj.numOfPop + " " + typeof inpObj.init + "<br>" + 
-    inpObj.popSize + " " + inpObj.numOfPop + " " + inpObj.init;
-document.getElementById("demo2").innerHTML = "hi <br>" + errorMsg;
+$('#option_numOfAlleles').on("focusout", function() {
+    var x = $(this);
+    if (x.val() < 2 || x.val() > 8) {
+        x.val(settings.numOfAlleles);
+        x.css({backgroundColor: "#ffff99"});
+        x.animate({backgroundColor: "#fffff0"}, 1000);
+    } else {
+        settings.numOfAlleles = x.val();
+    }
+});
 
-*/
+$('#option_init').on("focusout", function() {
+    var x = $(this);
+    if (x.val() < 1 || x.val() > 1000) {
+        x.val(settings.init);
+        x.css({backgroundColor: "#ffff99"});
+        x.animate({backgroundColor: "#fffff0"}, 1000);
+    } else {
+        settings.init = x.val();
+    }
+});
+
+$("#options_simStart").click(function () {
+    $("#jsBody_Options").css({display: "none"});
+    $("#jsBody_Simulation").css({display: "block"});
+    alleles.create(settings.numOfAlleles);
+
+    simulation_Init();    
+});
