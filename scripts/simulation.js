@@ -9,6 +9,8 @@ function alleleObj() {
         {code: "G", colour: "rgba(191, 91, 23, 1)"}, 
         {code: "H", colour: "rgba(102, 102, 102 ,1)"}
     ];
+    
+    /*decID; colour; label*/
 
     this.pool = [];
     this.colours = [];
