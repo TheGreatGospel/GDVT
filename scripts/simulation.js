@@ -1,228 +1,134 @@
-function alleleObj() {
+function alleleMaster() {
     var fullPool = [
-        {code: "A", colour: "rgba(127, 201, 127, 1)"}, 
-        {code: "B", colour: "rgba(190, 174, 212, 1)"}, 
-        {code: "C", colour: "rgba(253, 192, 134, 1)"}, 
-        {code: "D", colour: "rgba(255, 255, 153, 1)"}, 
-        {code: "E", colour: "rgba(56, 108, 176, 1)"}, 
-        {code: "F", colour: "rgba(240, 2, 127, 1)"}, 
-        {code: "G", colour: "rgba(191, 91, 23, 1)"}, 
-        {code: "H", colour: "rgba(102, 102, 102 ,1)"}
+        {label: "A", colour: "rgba(127, 201, 127, 1)"}, 
+        {label: "B", colour: "rgba(190, 174, 212, 1)"}, 
+        {label: "C", colour: "rgba(253, 192, 134, 1)"}, 
+        {label: "D", colour: "rgba(255, 255, 153, 1)"}, 
+        {label: "E", colour: "rgba(56, 108, 176, 1)"}, 
+        {label: "F", colour: "rgba(240, 2, 127, 1)"}, 
+        {label: "G", colour: "rgba(191, 91, 23, 1)"}, 
+        {label: "H", colour: "rgba(102, 102, 102 ,1)"}
     ];
-    
-    /*decID; colour; label*/
 
-    this.pool = [];
-    this.colours = [];
-    
-    this.create = function(poolSize) {
-        var i = 0;
-        if (poolSize > 8) {
-            poolSize = 8;
-        };
+    this.pool = [],
+        this.labels = [],
+        this.colours = [];
 
-        for (i = 0; i < poolSize; i++) {
-            this.pool.push(fullPool[i].code);
+    this.create = function() {
+        for (var i = 0; i < settings.numOfAlleles; i++) {
+            this.pool.push(i);
+            this.labels.push(fullPool[i].label);
             this.colours.push(fullPool[i].colour);
         };
     };
+};
 
-    this.grab_Unif = function() {
-        var i = 0, 
-            toReturn = [];
+function species() {
+    this.genNumber = 1, 
+        this.genSize = settings.popSize,
+        this.tree = [],
+        this.freq = [],
+        this.maxTreeSize = settings.track - 1;
 
-        for (i = 0; i < 2; i++) {
-            toReturn.push(this.pool[
-                getRandomInt(0, this.pool.length - 1)
-            ]);
-        };
+    this.allelesPack = function(toPack) {
+        var toReturn = 0,
+            x = toPack.slice();
+        toReturn |= x.shift();
+        toReturn <<= 7;
+        toReturn |= x.shift();
         return toReturn;
     };
-}
 
-function member(alleles) {
-    this.pool = alleles;
-
-    this.reciprocate_Bit = function() {
-        return this.pool[rng.bop()];
-    }
-}
-
-function species(genSize) {
-    this.genNumber = 1;
-    this.tree = [];
-    this.genSize = genSize;
-
-    var initGen = [],
-        i = 0,
-        j = 0;
-
-    for (i = 0; i < this.genSize; i++) {
-        initGen.push(new member(alleles.grab_Unif()));
-    }
-
-    this.tree.push(initGen);
-
-    this.mate = function(numOfTimes) {
-        var i = 0,
-            j = 0,
-            parentGen = [],
-            childGen = [],
-            inherit = [],
-            parentIndices;
-        for (i = 0; i < numOfTimes; i++) {
-            parentGen = this.tree[this.genNumber - 1];
-            childGen = [];
-            for (j = 0; j < this.genSize; j++) {
-                inherit = [];
-                parentIndices = this.rollIndices();
-                inherit.push(parentGen[parentIndices[0]].reciprocate_Bit());
-                inherit.push(parentGen[parentIndices[1]].reciprocate_Bit());
-                childGen.push(new member(inherit));
-            };
-            this.tree.push(childGen);
-            this.genNumber++;
-        };
-    }
-
-    this.rollIndices = function() {
+    this.allelesUnpack = function(toUnpack) {
         var toReturn = [];
-
-        toReturn.push(getRandomInt(0, this.genSize - 1));
-        toReturn.push(getRandomInt(0, this.genSize - 1));
-        
-        while (toReturn[0] == toReturn[1]) {
-            toReturn.pop();
-            toReturn.push(getRandomInt(0, this.genSize - 1));
-        }
-
+        toReturn.unshift(toUnpack & 127);
+        toUnpack >>= 7;
+        toReturn.unshift(toUnpack & 127);
         return toReturn;
-    }
-
-    this.summaryStats = function(whichGen = 1) {
-        var i = 0,
-            toReturn = [];
+    };
+    
+    this.freqSummary = function(whichGen = 1) {
         if (whichGen < 1 || whichGen > this.genNumber) {
             whichGen = this.genNumber;
         }
-        whichGen--;
-        for (i = 0; i < alleles.pool.length; i++) {
-            toReturn.push(0);
+        return this.freq[whichGen - 1];
+    };
+
+    this.mate = function(numOfTimes = 1) {
+        var parentGen = [],
+            childGen = [],
+            freqTemp = [],
+            allelePool = [],
+            parentsTemp = [],
+            current = this.tree.length - 1,
+            x = 0,
+            j = 0;
+
+        if (numOfTimes < 1) {
+            numOfTimes = 1;
         };
 
-        for(i = 0; i < this.genSize; i++) {
-            toReturn[alleles.pool.indexOf(this.tree[whichGen][i].pool[0])] += 1;
-            toReturn[alleles.pool.indexOf(this.tree[whichGen][i].pool[1])] += 1;
-        }
+        for (var i = 0; i < numOfTimes; i++) {
+            current = this.tree.length - 1;
+            parentGen = this.tree[current];
+            childGen.splice(0, this.genSize);
+            freqTemp.splice(0, alleles.pool.length);
 
-        return toReturn;
-    }
-}
+            for (j = 0; j < alleles.pool.length; j++) {
+                freqTemp.push(0);
+            };
 
-function simGraphUpdate() {
-    var i = 0,
-        j = 0,
-        allelesLen = settings.numOfAlleles,
-        currentGen = allSpecies[0].genNumber,
-        tempArray = [],
-        newData = [];
-    //console.log("Hi");
-    for (i = 0; i < alleles.pool.length; i++) {
-        tempArray = [];
-        for (j = 0; j < settings.numOfPop; j++) {
-            tempArray.push(allSpecies[j].summaryStats(currentGen)[i]);
-            //console.log(allSpecies[j].summaryStats(currentGen)[i]);
-        }
-        newData.push(tempArray);
-        simGraph.data.datasets[i].data = tempArray;
-    };
-    //console.log(simGraph.data);
-    //console.log(newData);
-    
-    $("#displayCurrentGen").html(allSpecies[0].genNumber);
-    simGraph.update(); 
-}
+            for (j = 0; j < this.genSize; j++) {
+                parentsTemp.push(getRandomInt(0, this.genSize - 1));
+                parentsTemp.push(getRandomInt(0, this.genSize - 1));
+                while (parentsTemp[0] == parentsTemp[1]) {
+                    parentsTemp.pop();
+                    parentsTemp.push(getRandomInt(0, this.genSize - 1));
+                };
 
-function sim_n1() {
-    var i = 0;
-    for (i = 0; i < settings.numOfPop; i++) {
-        allSpecies[i].mate(1);
-    };
-    simGraphUpdate();
-}
+                x = a.tree[current][parentsTemp[0]] >> 7*rng.bop();
+                allelePool.push(x &= 127);
+                x = a.tree[current][parentsTemp[1]] >> 7*rng.bop();
+                allelePool.push(x &= 127);
+                
+                childGen.push(this.allelesPack(allelePool)); 
+            
+                freqTemp[allelePool[0]]++;
+                freqTemp[allelePool[1]]++;
+               
+                allelePool.splice(0, 2);
+                parentsTemp.splice(0, 2);
+            };
 
-function sim_n10() {
-    var i = 0;
-    for (i = 0; i < settings.numOfPop; i++) {
-        allSpecies[i].mate(10);
-    };
-    simGraphUpdate();
-}
-
-function sim_nX() {
-    var howMany = parseInt($("#sim_input").val(), 10),
-        errorMsg = "",
-        i = 0;
-
-    errorMsg += conditionHack(isNaN(howMany),
-        "\"n =\" has an invalid input! \n",
-        howMany < 1,
-        "\"n =\" has an invalid input! \n");
-    if (errorMsg === "") {
-        for (i = 0; i < settings.numOfPop; i++) {
-            allSpecies[i].mate(howMany);
+            this.tree.push(childGen);
+            this.freq.push(freqTemp);
+            this.genNumber++;
         };
-        simGraphUpdate();
-    } else {
-        alert(errorMsg);
-    }
-}
-
-function simulation_Init() {
-    var i = 0,
-        j = 0,
-        dummyData = [],
-        newData = {};
-
-    for (i = 0; i < settings.numOfPop; i++) {
-        allSpecies.push(new species(settings.popSize));
-        dummyData.push(i + 1);
-        if (settings.init > 1) {
-            allSpecies[i].mate(settings.init - 1);
-        }
     };
-    
-    
-        newData.labels = dummyData;
-        
-        newData.datasets = [];
-    
-    for (i = 0; i < settings.numOfAlleles; i++) {
-        newData.datasets.push({
-            label: alleles.pool[i],
-            data: dummyData,
-            backgroundColor: alleles.colours[i]
-        });
-    };
-    
-        ctx[0].height = 400;
-        ctx[0].width = 800;
-        simGraph = new Chart(ctx, {
-            type: 'bar',
-            data: newData,
-            options: {
-                scales: {
-                    xAxes: [{
-                        stacked: true   
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                },
-                responsive: false
-            }
 
-        });
+    this.create = function() {
+        var genTemp = [],
+            freqTemp = [],
+            allelePool = [];
+
+        for (var i = 0; i < alleles.pool.length; i++) {
+            freqTemp.push(0);
+        };
+
+        for (i = 0; i < this.genSize; i++) {
+            allelePool.push(alleles.pool[getRandomInt(0, alleles.pool.length - 1)]);
+            allelePool.push(alleles.pool[getRandomInt(0, alleles.pool.length - 1)]);
+
+            genTemp.push(this.allelesPack(allelePool)); 
+            
+            freqTemp[allelePool[0]]++;
+            freqTemp[allelePool[1]]++;
+
+            allelePool.splice(0, 2);
+        };
         
-            simGraphUpdate();
-}
+        this.tree.push(genTemp);
+        this.freq.push(freqTemp);
+    };
+
+};

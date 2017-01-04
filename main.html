@@ -115,15 +115,33 @@
             popSize: 50,
             numOfPop: 5,
             numOfAlleles: 5,
-            init: 1
+            init: 1,
+            track: 10
         },
-        alleles = new alleleObj(),
+        alleles = new alleleMaster(),
         rng = new pseudoRandom(),
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
         allSpecies = [],
         ctx = $("#jsChart_alleleDens"),
         simGraph = null;
-        
+
     options_Load();
+
+    alleles.create();
+    var a = new species();
+    a.create();
+    
+    console.log(a.freqSummary(1));
+    a.mate();
+    console.log(a.freqSummary(2));
+    a.mate();
+    console.log(a.freqSummary(3));
+    a.mate();
+    console.log(a.freqSummary(4));
+    a.mate();
+    console.log(a.freqSummary(5));
+    a.mate(100);
+    console.log(a.freqSummary(105));
 </script>
 <!-- Initialisation JS Functionality (End) -->
 
