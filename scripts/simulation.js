@@ -28,56 +28,40 @@ function species() {
         this.genSize = settings.popSize,
         this.tree = [],
         this.freq = [],
-        this.maxTreeSize = settings.track - 1;
-
-    this.allelesPack = function(toPack) {
-        var toReturn = 0,
-            x = toPack.slice();
-        toReturn |= x.shift();
-        toReturn <<= 7;
-        toReturn |= x.shift();
-        return toReturn;
-    };
-
-    this.allelesUnpack = function(toUnpack) {
-        var toReturn = [];
-        toReturn.unshift(toUnpack & 127);
-        toUnpack >>= 7;
-        toReturn.unshift(toUnpack & 127);
-        return toReturn;
-    };
-    
-    this.freqSummary = function(whichGen = 1) {
-        if (whichGen < 1 || whichGen > this.genNumber) {
-            whichGen = this.genNumber;
-        }
-        return this.freq[whichGen - 1];
-    };
+        this.freq2Up = [];;
 
     this.mate = function(numOfTimes = 1) {
         var parentGen = [],
             childGen = [],
             freqTemp = [],
-            allelePool = [],
-            parentsTemp = [],
-            current = this.tree.length - 1,
-            x = 0,
+            freq2UpTemp = [],
             j = 0;
 
         if (numOfTimes < 1) {
             numOfTimes = 1;
         };
 
-        for (var i = 0; i < numOfTimes; i++) {
-            current = this.tree.length - 1;
-            parentGen = this.tree[current];
-            childGen.splice(0, this.genSize);
-            freqTemp.splice(0, alleles.pool.length);
+        for (var i = this.genNumber; i <= this.genNumber + numOfTimes; i++) {
+            parentGen = this.tree[i - 1];
 
             for (j = 0; j < alleles.pool.length; j++) {
                 freqTemp.push(0);
+                freq2UpTemp.push(0);
             };
 
+            for (j = 0; j < this.genSize; j++) {
+                childGen.push(i);
+            };
+            
+            this.tree.push(childGen);
+            this.freq.push(freqTemp);
+            this.freq2Up.push(freq2UpTemp);
+            
+            childGen.splice(0, this.genSize);
+            freqTemp.splice(0, alleles.pool.length);
+            freq2UpTemp.splice(0, alleles.pool.length);
+            
+            /*
             for (j = 0; j < this.genSize; j++) {
                 parentsTemp.push(getRandomInt(0, this.genSize - 1));
                 parentsTemp.push(getRandomInt(0, this.genSize - 1));
@@ -85,34 +69,39 @@ function species() {
                     parentsTemp.pop();
                     parentsTemp.push(getRandomInt(0, this.genSize - 1));
                 };
-
-                x = a.tree[current][parentsTemp[0]] >> 7*rng.bop();
+                
+                x = parentGen[parentsTemp[0]] >> 7*rng.bop();
                 allelePool.push(x &= 127);
-                x = a.tree[current][parentsTemp[1]] >> 7*rng.bop();
+                x = parentGen[parentsTemp[1]] >> 7*rng.bop();
                 allelePool.push(x &= 127);
                 
                 childGen.push(this.allelesPack(allelePool)); 
             
                 freqTemp[allelePool[0]]++;
                 freqTemp[allelePool[1]]++;
+                if (allelePool[0] === allelePool[1]) {
+                    freq2UpTemp[allelePool[0]]++;
+                };
                
                 allelePool.splice(0, 2);
                 parentsTemp.splice(0, 2);
             };
-
-            this.tree.push(childGen);
-            this.freq.push(freqTemp);
-            this.genNumber++;
         };
+        */
+        };
+
+        this.genNumber += numOfTimes;
     };
 
     this.create = function() {
         var genTemp = [],
             freqTemp = [],
+            freq2UpTemp = [],
             allelePool = [];
 
         for (var i = 0; i < alleles.pool.length; i++) {
             freqTemp.push(0);
+            freq2UpTemp.push(0);
         };
 
         for (i = 0; i < this.genSize; i++) {
@@ -123,12 +112,79 @@ function species() {
             
             freqTemp[allelePool[0]]++;
             freqTemp[allelePool[1]]++;
-
+            if (allelePool[0] === allelePool[1]) {
+                freq2UpTemp[allelePool[0]]++;
+            };
+            
             allelePool.splice(0, 2);
         };
         
         this.tree.push(genTemp);
         this.freq.push(freqTemp);
+        this.freq2Up.push(freq2UpTemp);
     };
 
 };
+
+species.prototype.allelesPack = function(toPack) {
+    var toReturn = 0,
+        x = toPack.slice();
+    toReturn |= x.shift();
+    toReturn <<= 7;
+    toReturn |= x.shift();
+    return toReturn;
+};
+
+species.prototype.allelesUnpack = function(toUnpack) {
+    var toReturn = [],
+        x = toUnpack;
+    toReturn.unshift(x & 127);
+    x >>= 7;
+    toReturn.unshift(x & 127);
+    return toReturn;
+};
+    
+species.prototype.freqSummary = function(whichGen = 1) {
+    if (whichGen < 1 || whichGen > this.genNumber) {
+        whichGen = this.genNumber;
+    }
+    return this.freq[whichGen - 1];
+};
+
+species.prototype.freq2UpSummary = function(whichGen = 1) {
+    if (whichGen < 1 || whichGen > this.genNumber) {
+        whichGen = this.genNumber;
+    }
+    return this.freq2Up[whichGen - 1];
+};
+
+function calculateFST() {
+    var current = statsMaster["FST"].length,
+        fstTemp = 0,
+        px = [],
+        Pxx = [],
+        i = 0,
+        j = 0;
+
+
+
+    while (allSpecies[0].genNumber > current) {
+        px.splice(0, alleles.pool.length);
+        Pxx.splice(0, alleles.pool.length);
+
+        for (i = 0; i < alleles.pool.length; i++) {
+            px.push(0);
+            Pxx.push(0);
+
+            for (j = 0; j < settings.numOfPop; j++) {
+            //    px[i] += allSpecies[j].freq[current][i];
+            //    Pxx[i] += allSpecies[j].freq2Up[current][i];
+            };
+        };
+        
+        statsMaster["FST"].push(fstTemp);
+        current++;
+    };
+    
+    //console.log(current === allSpecies[0].genNumber);
+}
