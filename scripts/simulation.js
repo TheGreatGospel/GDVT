@@ -35,6 +35,9 @@ function species() {
             childGen = [],
             freqTemp = [],
             freq2UpTemp = [],
+            parents = [],
+            allelePool = [],
+            parentPool = [];
             j = 0;
 
         if (numOfTimes < 1) {
@@ -50,44 +53,42 @@ function species() {
             };
 
             for (j = 0; j < this.genSize; j++) {
-                childGen.push(i);
+                parents.push(getRandomInt(0, this.genSize - 1));
+                parents.push(getRandomInt(0, this.genSize - 1));
+                while (parents[0] === parents[1]) {
+                    parents[rng.bop()] = getRandomInt(0, this.genSize - 1);
+                };
+
+                parentPool.push(this.allelesUnpack(parentGen[parents[0]]));
+                parentPool.push(this.allelesUnpack(parentGen[parents[1]]));
+                
+                allelePool.push(parentPool[0][rng.bop()]);
+                allelePool.push(parentPool[1][rng.bop()]);
+
+                if (rng.bop() == 0) {
+                    allelePool.reverse();
+                }
+
+                childGen.push(this.allelesPack(allelePool));
+
+                freqTemp[allelePool[0]]++;
+                freqTemp[allelePool[1]]++;
+                if (allelePool[0] === allelePool[1]) {
+                    freq2UpTemp[allelePool[0]]++;
+                };
+
+                allelePool = [];
+                parents = [];
+                parentPool = [];
             };
             
             this.tree.push(childGen);
             this.freq.push(freqTemp);
             this.freq2Up.push(freq2UpTemp);
             
-            childGen.splice(0, this.genSize);
-            freqTemp.splice(0, alleles.pool.length);
-            freq2UpTemp.splice(0, alleles.pool.length);
-            
-            /*
-            for (j = 0; j < this.genSize; j++) {
-                parentsTemp.push(getRandomInt(0, this.genSize - 1));
-                parentsTemp.push(getRandomInt(0, this.genSize - 1));
-                while (parentsTemp[0] == parentsTemp[1]) {
-                    parentsTemp.pop();
-                    parentsTemp.push(getRandomInt(0, this.genSize - 1));
-                };
-                
-                x = parentGen[parentsTemp[0]] >> 7*rng.bop();
-                allelePool.push(x &= 127);
-                x = parentGen[parentsTemp[1]] >> 7*rng.bop();
-                allelePool.push(x &= 127);
-                
-                childGen.push(this.allelesPack(allelePool)); 
-            
-                freqTemp[allelePool[0]]++;
-                freqTemp[allelePool[1]]++;
-                if (allelePool[0] === allelePool[1]) {
-                    freq2UpTemp[allelePool[0]]++;
-                };
-               
-                allelePool.splice(0, 2);
-                parentsTemp.splice(0, 2);
-            };
-        };
-        */
+            childGen = [];
+            freqTemp = [];
+            freq2UpTemp = [];
         };
 
         this.genNumber += numOfTimes;
@@ -108,7 +109,7 @@ function species() {
             allelePool.push(alleles.pool[getRandomInt(0, alleles.pool.length - 1)]);
             allelePool.push(alleles.pool[getRandomInt(0, alleles.pool.length - 1)]);
 
-            genTemp.push(this.allelesPack(allelePool)); 
+            genTemp.push(this.allelesPack(allelePool));
             
             freqTemp[allelePool[0]]++;
             freqTemp[allelePool[1]]++;
@@ -116,7 +117,7 @@ function species() {
                 freq2UpTemp[allelePool[0]]++;
             };
             
-            allelePool.splice(0, 2);
+            allelePool = [];
         };
         
         this.tree.push(genTemp);
@@ -161,30 +162,71 @@ species.prototype.freq2UpSummary = function(whichGen = 1) {
 function calculateFST() {
     var current = statsMaster["FST"].length,
         fstTemp = 0,
-        px = [],
-        Pxx = [],
+        s1 = [], s2 = [], s3 = [],
+        n_bar = 0, n_c = [], arrayTemp = [0, 0, 0], abcdefg = [0, 0, 0, 0, 0, 0],
+        n_u = [], n_uu = [], sSq_u = 0, H_uBar = 0,
+        p_u = [], P_uu = [], p_bar = 0, rMinusOne = settings.numOfPop - 1,
+
         i = 0,
         j = 0;
 
-
+    for (j = 0; j < settings.numOfPop; j++) {
+        n_bar += allSpecies[j].genSize;
+        arrayTemp[0] += allSpecies[j].genSize;
+        arrayTemp[1] += allSpecies[j].genSize*allSpecies[j].genSize;
+    };
+    n_bar /= settings.numOfPop;
+    n_c = (1/(rMinusOne)) * (arrayTemp[0] - arrayTemp[1]/arrayTemp[0]);
 
     while (allSpecies[0].genNumber > current) {
-        px.splice(0, alleles.pool.length);
-        Pxx.splice(0, alleles.pool.length);
+        s1 = [], s2 = [], s3 = [];
 
         for (i = 0; i < alleles.pool.length; i++) {
-            px.push(0);
-            Pxx.push(0);
+            abcdefg = [0, 0, 0, 0, 0, 0],
+            n_u = [], n_uu = [], sSq_u = 0, H_uBar = 0,
+            p_u = [], P_uu = [], p_bar = 0,
+            arrayTemp[1] = 0, arrayTemp[2] = 0;
 
             for (j = 0; j < settings.numOfPop; j++) {
-            //    px[i] += allSpecies[j].freq[current][i];
-            //    Pxx[i] += allSpecies[j].freq2Up[current][i];
+                n_u.push(allSpecies[j].freq[current][i]);
+                n_uu.push(allSpecies[j].freq2Up[current][i]);
+
+                p_u.push(n_u[j]/(2 * allSpecies[j].genSize));
+                P_uu.push(n_uu[j]/(allSpecies[j].genSize));
+
+                p_bar += p_u[j];
             };
+            
+            p_bar /= settings.numOfPop;
+            
+            for (j = 0; j < settings.numOfPop; j++) {
+                arrayTemp[1] += allSpecies[j].genSize*((p_u[j] - p_bar)*(p_u[j] - p_bar));
+                arrayTemp[2] += 2*allSpecies[j].genSize*((p_u[j] - P_uu[j]));
+            };
+            
+            sSq_u = arrayTemp[1]/(rMinusOne*n_bar);
+            H_uBar = (1/arrayTemp[0])*arrayTemp[2];
+            
+            abcdefg[0] = p_bar*(1 - p_bar);
+            abcdefg[1] = n_bar/(settings.numOfPop*(n_bar - 1));
+            abcdefg[2] = (settings.numOfPop*(n_bar - n_c))/(n_bar);
+            abcdefg[3] = n_bar - 1;
+            abcdefg[4] = rMinusOne*(n_bar - n_c)
+            abcdefg[5] = (1/n_bar)*(abcdefg[3] + abcdefg[4])*sSq_u;
+            abcdefg[6] = (n_bar - n_c)/(4*n_c*n_c)*H_uBar;
+
+            s1.push(sSq_u - (1/(n_bar - 1))*(abcdefg[0] - (rMinusOne/settings.numOfPop)*sSq_u - (1/4)*H_uBar));
+            s2.push(abcdefg[0] - abcdefg[1]*(abcdefg[2]*abcdefg[0] - abcdefg[5] - abcdefg[6]));
+            s3.push((n_c/n_bar)*H_uBar);
+        };
+
+        fstTemp = 0;
+
+        for (i = 0; i < alleles.pool.length; i++) {
+            fstTemp += s1[i]/s2[i];
         };
         
         statsMaster["FST"].push(fstTemp);
         current++;
     };
-    
-    //console.log(current === allSpecies[0].genNumber);
 }

@@ -131,16 +131,22 @@
 
     allSpecies.push(new species());
     allSpecies[0].create();
-    allSpecies[0].mate(100);
-    //allSpecies.push(new species());
-    //allSpecies[1].create();
-    //allSpecies[1].mate(100);
-    console.log(allSpecies[0].freqSummary());
-    //console.log(allSpecies[1].freqSummary());
+    allSpecies[0].mate(49);
+    allSpecies.push(new species());
+    allSpecies[1].create();
+    allSpecies[1].mate(49);
+
+    console.log(allSpecies[0].freqSummary(1));
+    console.log(allSpecies[0].freqSummary(10));
+    console.log(allSpecies[0].freqSummary(20));
+    console.log(allSpecies[0].freqSummary(30));
+    console.log(allSpecies[0].freqSummary(40));
+    console.log(allSpecies[0].freqSummary(50));
 
     calculateFST();
     console.log("Processed!");
     console.log(statsMaster["FST"]);
+;
 
     //console.log(allSpecies[1].freq);
 </script>
