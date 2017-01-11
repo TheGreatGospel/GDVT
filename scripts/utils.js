@@ -1,13 +1,3 @@
-function conditionHack(cnd1, msg1, cnd2, msg2) {
-    if (cnd1) {
-        return msg1;
-    } else if (cnd2) {
-        return msg2;
-    } else {
-        return "";
-    }
-}
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };

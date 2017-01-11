@@ -159,74 +159,53 @@ species.prototype.freq2UpSummary = function(whichGen = 1) {
     return this.freq2Up[whichGen - 1];
 };
 
-function calculateFST() {
-    var current = statsMaster["FST"].length,
-        fstTemp = 0,
-        s1 = [], s2 = [], s3 = [],
-        n_bar = 0, n_c = [], arrayTemp = [0, 0, 0], abcdefg = [0, 0, 0, 0, 0, 0],
-        n_u = [], n_uu = [], sSq_u = 0, H_uBar = 0,
-        p_u = [], P_uu = [], p_bar = 0, rMinusOne = settings.numOfPop - 1,
+function drawAlleleFreq() {
+    var data = new google.visualization.DataTable(),
+        temp = [];
 
-        i = 0,
-        j = 0;
-
-    for (j = 0; j < settings.numOfPop; j++) {
-        n_bar += allSpecies[j].genSize;
-        arrayTemp[0] += allSpecies[j].genSize;
-        arrayTemp[1] += allSpecies[j].genSize*allSpecies[j].genSize;
+    data.addColumn("string", "Population");
+    for (var i = 0; i < settings.numOfAlleles; i++) {
+        data.addColumn("number", alleles.labels[i]);
     };
-    n_bar /= settings.numOfPop;
-    n_c = (1/(rMinusOne)) * (arrayTemp[0] - arrayTemp[1]/arrayTemp[0]);
 
-    while (allSpecies[0].genNumber > current) {
-        s1 = [], s2 = [], s3 = [];
-
-        for (i = 0; i < alleles.pool.length; i++) {
-            abcdefg = [0, 0, 0, 0, 0, 0],
-            n_u = [], n_uu = [], sSq_u = 0, H_uBar = 0,
-            p_u = [], P_uu = [], p_bar = 0,
-            arrayTemp[1] = 0, arrayTemp[2] = 0;
-
-            for (j = 0; j < settings.numOfPop; j++) {
-                n_u.push(allSpecies[j].freq[current][i]);
-                n_uu.push(allSpecies[j].freq2Up[current][i]);
-
-                p_u.push(n_u[j]/(2 * allSpecies[j].genSize));
-                P_uu.push(n_uu[j]/(allSpecies[j].genSize));
-
-                p_bar += p_u[j];
-            };
-            
-            p_bar /= settings.numOfPop;
-            
-            for (j = 0; j < settings.numOfPop; j++) {
-                arrayTemp[1] += allSpecies[j].genSize*((p_u[j] - p_bar)*(p_u[j] - p_bar));
-                arrayTemp[2] += 2*allSpecies[j].genSize*((p_u[j] - P_uu[j]));
-            };
-            
-            sSq_u = arrayTemp[1]/(rMinusOne*n_bar);
-            H_uBar = (1/arrayTemp[0])*arrayTemp[2];
-            
-            abcdefg[0] = p_bar*(1 - p_bar);
-            abcdefg[1] = n_bar/(settings.numOfPop*(n_bar - 1));
-            abcdefg[2] = (settings.numOfPop*(n_bar - n_c))/(n_bar);
-            abcdefg[3] = n_bar - 1;
-            abcdefg[4] = rMinusOne*(n_bar - n_c)
-            abcdefg[5] = (1/n_bar)*(abcdefg[3] + abcdefg[4])*sSq_u;
-            abcdefg[6] = (n_bar - n_c)/(4*n_c*n_c)*H_uBar;
-
-            s1.push(sSq_u - (1/(n_bar - 1))*(abcdefg[0] - (rMinusOne/settings.numOfPop)*sSq_u - (1/4)*H_uBar));
-            s2.push(abcdefg[0] - abcdefg[1]*(abcdefg[2]*abcdefg[0] - abcdefg[5] - abcdefg[6]));
-            s3.push((n_c/n_bar)*H_uBar);
-        };
-
-        fstTemp = 0;
-
-        for (i = 0; i < alleles.pool.length; i++) {
-            fstTemp += s1[i]/s2[i];
-        };
-        
-        statsMaster["FST"].push(fstTemp);
-        current++;
+    for (i = 0; i < settings.numOfPop; i++) {
+        temp.push(allSpecies[i].freq[allSpecies[i].genNumber - 1].slice());
+        temp[i].unshift("Population " + (i+1));
     };
+    data.addRows(temp);
+
+    var options = {
+        title: 'Allele Frequencies',
+        subtitle: 'by Population',
+        isStacked: 'percent' 
+    };
+    
+    var material = new google.visualization.ColumnChart(document.getElementById('alleleFreq'));
+    material.draw(data, options);
 }
+
+function simulation_Load() {
+    var j = settings.init - 1;
+    alleles.create();
+    for (var i = 0; i < settings.numOfPop; i++) {
+        allSpecies.push(new species());
+        allSpecies[i].create();
+        if (j > 0) {
+            allSpecies[i].mate(j);
+        };
+    };
+
+    //calculateFST();
+
+    //google.charts.setOnLoadCallback(drawAlleleFreq);
+}    
+
+$("#alleleFreq_Show").click(function () {
+    $("#fst").css({display: "none"});
+    $("#alleleFreq").css({display: "inline"});
+});
+
+$("#fst_Show").click(function () {
+    $("#alleleFreq").css({display: "none"});
+    $("#fst").css({display: "inline"});
+});
