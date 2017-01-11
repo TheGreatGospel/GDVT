@@ -197,7 +197,7 @@ function simulation_Load() {
 
     //calculateFST();
 
-    //google.charts.setOnLoadCallback(drawAlleleFreq);
+    google.charts.setOnLoadCallback(drawAlleleFreq);
 }    
 
 $("#alleleFreq_Show").click(function () {
