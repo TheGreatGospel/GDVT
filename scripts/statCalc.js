@@ -56,6 +56,8 @@ function calculateFST() {
                     scope)
             );
 
+            /*Freq stores in one object*/
+
             s2 = math.fraction(s2 +
                 math.eval("pDot * (1 - pDot) - nBar / (r * (nBar - 1)) * (r * (nBar - nC) / nBar * pDot * (1 - pDot) - 1 / nBar * (nBar - 1 + (r - 1) * (nBar - nC)) * sSq - (nBar - nC) / (4 * nC^2) * hDot)", 
                     scope)

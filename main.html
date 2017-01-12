@@ -90,16 +90,16 @@
     </div>
     <div class="jsBody_Child" id="subtoolbar">
         Simulate next <i>n</i> generations: <br>
-        <button id="n.eq.1">
+        <button id="sim_1">
             n = 1 
         </button> 
-        <button id="n.eq.10">
+        <button id="sim_10">
             n = 10
         </button>
-        <button id="n.eq.x">
+        <button id="sim_X">
             n =
         </button>
-        <input maxlength=4 size=1 value=100 id="sim_input">
+        <input id="sim_input" type="number" min="0" max="999" value=100>
     </div>
     
     <div class="jsBody_Child" id="simulation_hold">
@@ -150,38 +150,22 @@
 
 <script>
     var settings = {
-            popSize: 50,
-            numOfPop: 5,
-            numOfAlleles: 5,
-            init: 1
+            popSize: 500,
+            numOfPop: 10,
+            numOfAlleles: 8,
+            init: 1,
+            simInput: 100
         },
+        processFlag = false,
         alleles = new alleleMaster(),
         rng = new pseudoRandom(),
         alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
         allSpecies = [],
-        statsMaster = {FST: []
-    };
+        statsMaster = {
+            FST: []
+        };
 
     options_Load();
-
-    /*alleles.create();
-
-    allSpecies.push(new species());
-    allSpecies[0].create();
-    allSpecies[0].mate(199);
-    allSpecies.push(new species());
-    allSpecies[1].create();
-    allSpecies[1].mate(199);
-
-    console.log(allSpecies[0].freqSummary(200));
-    console.log(allSpecies[1].freqSummary(200));
-
-    calculateFST();
-    console.log("Processed!");
-    console.log(statsMaster["FST"]);*/
-
-
-    //console.log(allSpecies[1].freq);
 </script>
 <!-- Initialisation JS Functionality (End) -->
 
