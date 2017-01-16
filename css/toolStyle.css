@@ -60,6 +60,44 @@ input {
     flex-grow: 1;
 }
 
+/* Simulation */
+
 #jsBody_Simulation {
     display: none;
+}
+
+#simulation_hold {
+    display: flex;
+}
+
+#simulation_lTable {
+    padding: 0 15px 0 0;
+    width: 800px;
+    height: 400px;
+}
+
+#simulation_rTable {
+    width: 200px;
+}
+
+#simulation_subtitle {
+    font-weight: bold;
+}
+
+#alleleFreq {
+    width: 800px;
+    height: 400px;
+}
+
+#fst {
+    width: 800px;
+    height: 400px;
+    display: none;
+}
+
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 0 5px;
+    overflow: hidden;
 }

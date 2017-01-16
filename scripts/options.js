@@ -51,8 +51,7 @@ $('#option_init').on("focusout", function() {
 
 $("#options_simStart").click(function () {
     $("#jsBody_Options").css({display: "none"});
-    $("#jsBody_Simulation").css({display: "block"});
-    alleles.create(settings.numOfAlleles);
+    $("#jsBody_Simulation").css({display: "inline"});
 
-    simulation_Init();    
+    simulation_Load();    
 });
