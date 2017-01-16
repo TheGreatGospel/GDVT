@@ -98,13 +98,14 @@ species.prototype.create = function() {
 species.prototype.mate = function(numOfTimes = 1) {
     var i = 1, j = 0, 
         parentGen, 
-        parents = [], parentsAlPool = [], allelePool = [];
+        parents = [], parentAPool = [], parentBPool = [], allelePool = [];
 
     if (numOfTimes < 1) {
         numOfTimes = 1;
     };
 
     while (i <= numOfTimes) {
+        
         parentGen = this.tree.shift();
         this.tree.push([]);
 
@@ -120,30 +121,28 @@ species.prototype.mate = function(numOfTimes = 1) {
                 parents[rng.bop()] = getRandomInt(0, this.genSize - 1);
             };
 
-            parentsAlPool.push(this.allelesUnpack(parentGen[parents[0]]));
-            parentsAlPool.push(this.allelesUnpack(parentGen[parents[1]]));
+            parentAPool = this.allelesUnpack(parentGen[parents[0]]);
+            parentBPool = this.allelesUnpack(parentGen[parents[1]]);
 
-            console.log(parentsAlPool);
-
-            /*parentsAlPool.push(this.allelesUnpack(parentGen[parents[0]]));
-            parentsAlPool.push(this.allelesUnpack(parentGen[parents[1]]));
-
-            allelePool.push(parentsAlPool[0][rng.bop()]);
-            allelePool.push(parentsAlPool[1][rng.bop()]);
-
-            if (rng.bop() == 0) {
+            allelePool.push(parentAPool[rng.bop()]);
+            allelePool.push(parentBPool[rng.bop()]);
+            
+            if (rng.bop() === 0) {
                 allelePool.reverse();
             };
 
-            this.freq[allelePool[0]][i]++;
-            this.freq[allelePool[1]][i]++;
+            this.tree[0].push(this.allelesPack(allelePool));
+
+            this.freq[allelePool[0]][this.genNumber]++;
+            this.freq[allelePool[1]][this.genNumber]++;
             if (allelePool[0] === allelePool[1]) {
-                this.freq2Up[allelePool[0]][i]++;
-            };*/
+                this.freq2Up[allelePool[0]][this.genNumber]++;
+            };
 
             allelePool.length = 0;
             parents.length = 0;
-            parentsAlPool.length = 0;
+            parentAPool.length = 0;
+            parentBPool.length = 0;
         };
 
         parentGen.length = 0;
@@ -152,6 +151,10 @@ species.prototype.mate = function(numOfTimes = 1) {
     }
 };
 
+var allelFreq_Chart,
+    alleleFreq_Data,
+    alleleFreq_Options;
+
 function drawAlleleFreq() {
     //alleleFreq_Chart.draw(alleleFreq_Data, options);
 }
@@ -159,7 +162,7 @@ function drawAlleleFreq() {
 function drawCharts_Init() {
     alleleFreq_Data = new google.visualization.DataTable();
     alleleFreq_Chart = new google.visualization.ColumnChart(document.getElementById('alleleFreq'));
-    alleleFreq_options = {
+    alleleFreq_Options = {
         title: 'Allele Frequencies',
         subtitle: 'by Population',
         isStacked: 'percent' 
@@ -167,7 +170,7 @@ function drawCharts_Init() {
 
     var temp = [];
 
-    alleleFreq_Data.addColumn("string", "Population");
+    /*alleleFreq_Data.addColumn("string", "Population");
     for (var i = 0; i < settings.numOfAlleles; i++) {
         alleleFreq_Data.addColumn("number", alleles.labels[i]);
     };
@@ -176,10 +179,10 @@ function drawCharts_Init() {
         temp.push(allSpecies[i].freq[allSpecies[i].genNumber - 1].slice());
         temp[i].unshift("Population " + (i+1));
     };
-    alleleFreq_Data.addRows(temp);
+    alleleFreq_Data.addRows(temp);*/
 
-    FST_Data = new google.visualization.DataTable();
-    FST_Chart =  new google.visualization.LineChart(document.getElementById('fst'));
+    //FST_Data = new google.visualization.DataTable();
+    //FST_Chart =  new google.visualization.LineChart(document.getElementById('fst'));
 };
 
 function simulation_Load() {
@@ -196,17 +199,15 @@ function simulation_Load() {
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
 
     //calculateFST();
-    //google.charts.setOnLoadCallback(drawCharts_Init);
+    google.charts.setOnLoadCallback(drawCharts_Init);
     //google.charts.setOnLoadCallback(drawAlleleFreq);
     //google.charts.setOnLoadCallback(drawFST);
 }
 
 function simulation_Update(howMany) {
     for (var i = 0; i < settings.numOfPop; i++) {
-        console.log(allSpecies[i].freqSummary(allSpecies[i].genNumber));
         allSpecies[i].mate(howMany);
-
-    }
+    };
     processFlag = false;
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
     //google.charts.setOnLoadCallback(drawAlleleFreq);
