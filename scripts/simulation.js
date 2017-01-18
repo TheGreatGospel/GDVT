@@ -156,7 +156,16 @@ var allelFreq_Chart,
     alleleFreq_Options;
 
 function drawAlleleFreq() {
-    //alleleFreq_Chart.draw(alleleFreq_Data, options);
+    var temp = [], y = 0;
+    for (var rowIndex = 0; rowIndex < settings.numOfPop; rowIndex++) {
+        temp = allSpecies[rowIndex].freqSummary(allSpecies[rowIndex].genNumber);
+        for (y = 1; y <= settings.numOfAlleles; y++) {
+            alleleFreq_Data.setValue(rowIndex, y, temp[y-1]);
+        }
+        temp.length = 0;
+    };
+
+    alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
 }
 
 function drawCharts_Init() {
@@ -170,16 +179,26 @@ function drawCharts_Init() {
 
     var temp = [];
 
-    /*alleleFreq_Data.addColumn("string", "Population");
+    alleleFreq_Data.addColumn("string", "Population");
     for (var i = 0; i < settings.numOfAlleles; i++) {
         alleleFreq_Data.addColumn("number", alleles.labels[i]);
     };
 
     for (i = 0; i < settings.numOfPop; i++) {
+        temp.push(allSpecies[i].freqSummary(allSpecies[i].genNumber));
+        temp[i].unshift("Population " + (i+1));
+    };
+    
+    alleleFreq_Data.addRows(temp);
+    alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
+    /*
+    
+
+    for (i = 0; i < settings.numOfPop; i++) {
         temp.push(allSpecies[i].freq[allSpecies[i].genNumber - 1].slice());
         temp[i].unshift("Population " + (i+1));
     };
-    alleleFreq_Data.addRows(temp);*/
+    */
 
     //FST_Data = new google.visualization.DataTable();
     //FST_Chart =  new google.visualization.LineChart(document.getElementById('fst'));
@@ -198,9 +217,12 @@ function simulation_Load() {
     };
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
 
-    //calculateFST();
+    calculateFST();
+    console.log(allSpecies[0].freqSummary());
+    console.log(allSpecies[0].freq2UpSummary());
+    console.log(allSpecies[1].freqSummary());
+    console.log(allSpecies[1].freq2UpSummary());
     google.charts.setOnLoadCallback(drawCharts_Init);
-    //google.charts.setOnLoadCallback(drawAlleleFreq);
     //google.charts.setOnLoadCallback(drawFST);
 }
 
@@ -208,9 +230,11 @@ function simulation_Update(howMany) {
     for (var i = 0; i < settings.numOfPop; i++) {
         allSpecies[i].mate(howMany);
     };
+    calculateFST();
+
     processFlag = false;
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
-    //google.charts.setOnLoadCallback(drawAlleleFreq);
+    google.charts.setOnLoadCallback(drawAlleleFreq);
 };
 
 $("#alleleFreq_Show").click(function () {

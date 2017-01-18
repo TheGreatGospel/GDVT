@@ -150,9 +150,9 @@
 
 <script>
     var settings = {
-            popSize: 500,
-            numOfPop: 10,
-            numOfAlleles: 8,
+            popSize: 50,
+            numOfPop: 2,
+            numOfAlleles: 5,
             init: 1,
             simInput: 100
         },
@@ -164,6 +164,10 @@
         statsMaster = {
             FST: []
         };
+    
+    math.config({
+        number: 'Fraction'
+    });
 
     options_Load();
 </script>

@@ -12,7 +12,7 @@ $('#option_popSize').on("focusout", function() {
         x.css({backgroundColor: "#ffff99"});
         x.animate({backgroundColor: "#fffff0"}, 1000);
     } else {
-        settings.popSize = x.val();
+        settings.popSize = parseInt(x.val());
     }
 });
 
@@ -23,7 +23,7 @@ $('#option_numOfPop').on("focusout", function() {
         x.css({backgroundColor: "#ffff99"});
         x.animate({backgroundColor: "#fffff0"}, 1000);
     } else {
-        settings.numOfPop = x.val();
+        settings.numOfPop = parseInt(x.val());
     }
 });
 
@@ -34,7 +34,7 @@ $('#option_numOfAlleles').on("focusout", function() {
         x.css({backgroundColor: "#ffff99"});
         x.animate({backgroundColor: "#fffff0"}, 1000);
     } else {
-        settings.numOfAlleles = x.val();
+        settings.numOfAlleles = parseInt(x.val());
     }
 });
 
@@ -45,7 +45,7 @@ $('#option_init').on("focusout", function() {
         x.css({backgroundColor: "#ffff99"});
         x.animate({backgroundColor: "#fffff0"}, 1000);
     } else {
-        settings.init = x.val();
+        settings.init = parseInt(x.val());
     }
 });
 
