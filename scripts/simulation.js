@@ -153,7 +153,11 @@ species.prototype.mate = function(numOfTimes = 1) {
 
 var allelFreq_Chart,
     alleleFreq_Data,
-    alleleFreq_Options;
+    alleleFreq_Options,
+    FST_Chart,
+    FST_Data,
+    FST_Options,
+    FST_DataCurrent = 1;
 
 function drawAlleleFreq() {
     var temp = [], y = 0;
@@ -166,7 +170,15 @@ function drawAlleleFreq() {
     };
 
     alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
-}
+};
+
+function drawFST() {
+    while (allSpecies[0].genNumber >= FST_DataCurrent) {
+        FST_Data.addRow([FST_DataCurrent, statsMaster["FST"][FST_DataCurrent - 1]]);
+        FST_DataCurrent++;
+    };
+    FST_Chart.draw(FST_Data, FST_Options);
+};
 
 function drawCharts_Init() {
     alleleFreq_Data = new google.visualization.DataTable();
@@ -191,17 +203,19 @@ function drawCharts_Init() {
     
     alleleFreq_Data.addRows(temp);
     alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
-    /*
-    
 
-    for (i = 0; i < settings.numOfPop; i++) {
-        temp.push(allSpecies[i].freq[allSpecies[i].genNumber - 1].slice());
-        temp[i].unshift("Population " + (i+1));
+    FST_Data = new google.visualization.DataTable();
+    FST_Chart = new google.visualization.LineChart(document.getElementById('fst'));
+    FST_Options = {
+        title: 'FST over Time',
+        subtitle: 'by Population',
+        isStacked: 'percent' 
     };
-    */
 
-    //FST_Data = new google.visualization.DataTable();
-    //FST_Chart =  new google.visualization.LineChart(document.getElementById('fst'));
+    FST_Data.addColumn("number", "Generation");
+    FST_Data.addColumn("number", "FST");
+
+    alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
 };
 
 function simulation_Load() {
@@ -218,12 +232,8 @@ function simulation_Load() {
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
 
     calculateFST();
-    console.log(allSpecies[0].freqSummary());
-    console.log(allSpecies[0].freq2UpSummary());
-    console.log(allSpecies[1].freqSummary());
-    console.log(allSpecies[1].freq2UpSummary());
     google.charts.setOnLoadCallback(drawCharts_Init);
-    //google.charts.setOnLoadCallback(drawFST);
+    google.charts.setOnLoadCallback(drawFST);
 }
 
 function simulation_Update(howMany) {
@@ -235,6 +245,7 @@ function simulation_Update(howMany) {
     processFlag = false;
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
     google.charts.setOnLoadCallback(drawAlleleFreq);
+    google.charts.setOnLoadCallback(drawFST);
 };
 
 $("#alleleFreq_Show").click(function () {
