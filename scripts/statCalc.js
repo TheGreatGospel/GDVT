@@ -23,16 +23,17 @@ function calculateFST() {
         for (i = 0; i < alleles.pool.length; i++) {
             x = 0, y = 0, z = 0;
             for (j = 0; j < scope.r; j++) {
-                x = math.fraction(allSpecies[j].freq[i][current], 2*allSpecies[j].genSize);
-                w.push(x);
-                console.log("p_" + alleles.labels[i] + j + ": " + x);
-                x = math.multiply(x, allSpecies[j].genSize);
+                w.push(math.fraction(allSpecies[j].freq[i][current], 2*allSpecies[j].genSize));
+                if (settings.debug) {
+                    console.log("p_" + alleles.labels[i] + j + ": " + w[j]);
+                };
+                x = math.multiply(w[j], allSpecies[j].genSize);
                 y = math.add(x, y);
-
-                z = math.add(allSpecies[j].genSize, z);
             };
-            scope.pDot = math.divide(y, z);
-            console.log("p_"+ alleles.labels[i] + ".: " + scope.pDot);
+            scope.pDot = math.divide(y, scope.nSum);
+            if (settings.debug) {
+                console.log("p_"+ alleles.labels[i] + ".: " + scope.pDot);
+            };
 
             x = 0, y = 0, z = 0;
             for (j = 0; j < scope.r; j++) {
@@ -71,7 +72,7 @@ function calculateFST() {
             
             s2[i] = math.eval("(a - b*(c*a - f*sSq/nBar - g*hDot))*10000000", scope);
             console.log("S2_" + alleles.labels[i] + ".: " + s2[i]);
-            //s3[i] = math.eval("(nC/nBar)*hDot", scope);
+            //s3[i] = math.eval("(nC/nBar)*hDot ", scope);  
 
             w.length = 0;
         };
@@ -82,7 +83,11 @@ function calculateFST() {
             x = math.add(x, s1[i]);
             y = math.add(y, s2[i]);
         };
-        z = math.divide(x, y);
+        if (y != 0) {
+            z = math.divide(x, y);
+        } else {
+            z = null;
+        };
         console.log("FST: " + math.number(z));
         statsMaster["FST"].push(math.number(z));
         current++;
