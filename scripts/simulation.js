@@ -281,7 +281,7 @@ $("#sim_X").click(function () {
 
 $('#sim_input').on("focusout", function() {
     var x = $(this);
-    if (x.val() < 1 || x.val() > 999) {
+    if (x.val() < 1 || x.val() > 1000) {
         x.val(settings.simInput);
         x.css({backgroundColor: "#ffff99"});
         x.animate({backgroundColor: "#fffff0"}, 1000);
