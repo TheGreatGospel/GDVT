@@ -185,7 +185,14 @@ function drawCharts_Init() {
     alleleFreq_Chart = new google.visualization.ColumnChart(document.getElementById('alleleFreq'));
     alleleFreq_Options = {
         title: 'Allele Frequencies',
-        subtitle: 'by Population',
+        height: 400,
+        width: 800,
+        hAxis: {
+            title: 'Population'
+        },
+        vAxis: {
+            title: 'Allele Frequency (%)'
+        },
         isStacked: 'percent' 
     };
 
@@ -198,7 +205,7 @@ function drawCharts_Init() {
 
     for (i = 0; i < settings.numOfPop; i++) {
         temp.push(allSpecies[i].freqSummary(allSpecies[i].genNumber));
-        temp[i].unshift("Population " + (i+1));
+        temp[i].unshift("#" + (i+1));
     };
     
     alleleFreq_Data.addRows(temp);
@@ -208,8 +215,17 @@ function drawCharts_Init() {
     FST_Chart = new google.visualization.LineChart(document.getElementById('fst'));
     FST_Options = {
         title: 'FST over Time',
-        subtitle: 'by Population',
-        isStacked: 'percent' 
+        height: 400,
+        width: 800,
+        hAxis: {
+            title: 'Generation'
+        },
+        vAxis: {
+            title: 'Coancestry Coefficient (FST)'
+        },
+        legend: {
+            position: 'none'
+        }
     };
 
     FST_Data.addColumn("number", "Generation");
@@ -232,8 +248,8 @@ function simulation_Load() {
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
 
     calculateFST();
-    //google.charts.setOnLoadCallback(drawCharts_Init);
-    //google.charts.setOnLoadCallback(drawFST);
+    google.charts.setOnLoadCallback(drawCharts_Init);
+    google.charts.setOnLoadCallback(drawFST);
 }
 
 function simulation_Update(howMany) {
@@ -244,8 +260,8 @@ function simulation_Update(howMany) {
 
     processFlag = false;
     $("#displayCurrentGen").html(allSpecies[0].genNumber);
-    //google.charts.setOnLoadCallback(drawAlleleFreq);
-    //google.charts.setOnLoadCallback(drawFST);
+    google.charts.setOnLoadCallback(drawAlleleFreq);
+    google.charts.setOnLoadCallback(drawFST);
 };
 
 $("#alleleFreq_Show").click(function () {
