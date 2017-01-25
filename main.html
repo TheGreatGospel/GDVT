@@ -138,8 +138,8 @@
 
 <!-- Bottom Matter HTML (Start) -->
 <div class="main" id="copyright">
-    Genetic Drift Visualisation Tool ver 0.1.1 <br>
-    &copy 2016 David Chan
+    Genetic Drift Visualisation Tool ver 0.2.0 <br>
+    &copy 2016-2017 David Chan
 </div>
 <!-- Bottom Matter HTML (End) -->
 
@@ -155,12 +155,13 @@
             numOfAlleles: 8,
             init: 1,
             simInput: 100,
+            migration: 10,
+            mutationRate: 300,
             debug: false
         },
         processFlag = false,
         alleles = new alleleMaster(),
         rng = new pseudoRandom(),
-        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
         allSpecies = [],
         statsMaster = {
             FST: []

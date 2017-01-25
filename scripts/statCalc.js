@@ -114,7 +114,7 @@ function calculateFST() {
         if (y != 0) {
             z = math.divide(x, y);
         } else {
-            z = math.null;
+            z = math.number(0);
         };
         if (settings.debug) {
             console.log("FST: " + math.number(z));
