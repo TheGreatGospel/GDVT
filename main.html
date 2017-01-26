@@ -8,7 +8,6 @@
 <!-- CSS and JS Libraries (Start) -->
 <head>
     <link rel="stylesheet" type="text/css" href="css/toolStyle.css">
-    <link rel="stylesheet" type="text/css" href="css/tooltipStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -20,7 +19,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.1/math.min.js"></script>
 
-    <script src="scripts/utils.js"></script>
+    <script src="scripts/main.js"></script>
 </head>
 <!-- CSS and JS Libraries (End) -->
 
@@ -32,61 +31,14 @@
 </div>
 
 <ul class="toolbar">
-    <li class="tab-link current">Settings</li>
-    <li class="tab-link">Output</li>
-    <li class="tab-link">About</li>
+    <li class="tab-link current" data-tab="jsBody_Output">Output</li>
+    <li class="tab-link" data-tab="jsBody_Parameters">Parameters</li>
+    <li class="tab-link" data-tab="jsBody_About">About</li>
 </ul>
 <!-- Top Matter HTML (End) -->
 
-<!-- Settings Tab HTML (Start) -->
-<div class="main" id="jsBody_Options">
-    <div class="jsBody_Child" id="subheading">
-        Options
-    </div>
-    <div class="jsBody_Child" id="options_hold">
-        <div id="options_lTable">
-            <div class="tooltip">
-                Population Size:
-                <div class="tooltiptext" id="popSizeTip">
-                    Input a value between 50-500.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Number of Populations: 
-                <div class="tooltiptext" id="numOfPopTip">
-                    Input a value between 1-10.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Number of Alleles: 
-                <div class="tooltiptext" id="numOfAllelesTip">
-                    Input a value between 2-8.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Initial Number of Simulations: 
-                <div class="tooltiptext" id="initTip">
-                    Input a value greater than 0.
-                </div>
-            </div> <br>
-        </div>
-        <div id="options_rTable">
-            <input id="option_popSize" type="number" min="50" max="500"> <br>
-            <input id="option_numOfPop" type="number" min="1" max="10"> <br>
-            <input id="option_numOfAlleles" type="number" min="2" max="8"> <br>
-            <input id="option_init" type="number" min="0" max="1000"> <br>
-        </div>
-    </div>
-    <div class="jsBody_Child">
-        <button id="options_simStart">
-            Simulate
-        </button>
-    </div>
-</div>
-<!-- Settings Tab HTML (Start) -->
-
 <!-- Output Tab HTML (Start) -->
-<div class="main" id="jsBody_Simulation">
+<div class="main toolbar-content current" id="jsBody_Output">
     <div class="jsBody_Child" id="subheading">
         Generation: <span id="displayCurrentGen"></span>
     </div>
@@ -138,7 +90,75 @@
 </div>
 <!-- Output Tab HTML (End) -->
 
+<!-- Parameters Tab HTML (Start) -->
+<div class="main toolbar-content" id="jsBody_Parameters">
+    <div id="jsBody_Container">
+        <ul class="paraMag" id="paraMag_L">
+            <li>
+                Population Size: <input id="paraMag_popSize" type="number" min=50 max=500> <br>
+                <span class="paraMag_Info">
+                    This option sets the <b>fixed</b> population size for each population. The valid inputs for this parameter are: 50-500 (inclusive).
+                </span>
+            </li>
+            <li>
+                Number of Populations: <input id="paraMag_numOfPop" type="number" min=1 max=10> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                Number of Alleles: <input id="paraMag_numOfAlleles" type="number" min=2 max=8> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                Number of Migrants: <input id="paraMag_numOfMigrants" type="number" min=0 max=500> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                Mutation Rate: <input id="paraMag_mutaRate" type="number" min=0 max=1000> <br>
+                <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                Initial Number of Simulations: <input id="paraMag_init" type="number" min=0 max=1000> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                Refresh Rate: <input id="paraMag_rfrshRate" type="number" min=0 max=5> <br>
+                <span class="paraMag_space"></span><input id="paraMag_rfrshRateChild" type="range" min=0 max=5 step=0.01> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+        </ul>
+
+        <ul class="paraMag" id="paraMag_R">
+            <li>
+                <button id="paraMag_Submit">Submit Parameters</button> <br>
+                <span class="paraMag_Info">
+                    hi
+                </span>
+            </li>
+            <li>
+                <input type="checkbox">Show detailed information
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Parameters Tab HTML (Start) -->
+
 <!-- About Tab HTML (Start) -->
+<div class="main toolbar-content" id="jsBody_About">
+
+</div>
 
 <!-- About Tab HTML (End) -->
 

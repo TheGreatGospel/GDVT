@@ -1,4 +1,3 @@
-/* Top Matter CSS (Start) */
 body {
     font-family: sans-serif;
     font-size: 12pt;
@@ -8,6 +7,16 @@ div.main {
     padding: 5px 5px 10px 5px;
 }
 
+button {
+    font-size: 12pt;
+}
+
+#jsBody_Container {
+    display: flex;
+}
+
+/* Top Matter CSS (Start) */
+
 #header {
     font-size: 24pt;
     font-weight: bold;
@@ -15,27 +24,58 @@ div.main {
 
 ul.toolbar {
     margin: 0px;
-	padding: 5px;
+	padding: 0px;
 	list-style: none;
     font-size: 14pt;
     border-top: thin solid black;
+    border-bottom: thin solid black;
 }
 
 ul.toolbar li {
     display: inline-block;
-    padding: 0px 10px 0px 10px;
+    padding: 5px 10px 5px 10px;
     cursor: pointer;
 }
 
-ul.tabs li.current{
-    background-color: black;
+ul.toolbar li.current {
+    font-weight: bold;
+}
+
+.toolbar-content {
+    display: none;
+}
+
+.toolbar-content.current {
+    display: inherit;
 }
 
 /* Top Matter CSS (End) */
 
-button {
-    font-size: 12pt;
+/* Parameters Tab CSS (Start) */
+
+ul.paraMag {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
 }
+
+ul.paraMag li {
+    padding: 5px 0px 5px 0px;
+}
+
+#paraMag_L {
+    width: 500px;
+}
+
+.paraMag_Info {
+    font-size: 12px;
+}
+
+.paraMag_space {
+    padding-left: 20px;
+}
+
+/* Parameters Tab CSS (End) */
 
 input {
     background-color: #fffff0;
@@ -59,27 +99,7 @@ input {
     text-align: center;
 }
 
-/* Options */
-
-#options_hold {
-    display: flex;
-}
-
-#options_lTable {
-    line-height: 2;
-    text-align: right;
-}
-
-#options_rTable {
-    line-height: 2;
-    flex-grow: 1;
-}
-
 /* Simulation */
-
-#jsBody_Simulation {
-    display: none;
-}
 
 #simulation_hold {
     display: flex;

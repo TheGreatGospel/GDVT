@@ -18,3 +18,17 @@ function pseudoRandom() {
         return toReturn;
     }
 };
+
+$(document).ready(function(){
+    
+	$('ul.toolbar li').click(function(){
+		var tab_id = $(this).attr('data-tab');
+
+		$('ul.toolbar li').removeClass('current');
+	    $('.toolbar-content').removeClass('current');
+
+		$(this).addClass('current');
+		$("#"+tab_id).addClass('current');
+	})
+
+})
