@@ -95,47 +95,47 @@
     <div id="jsBody_Container">
         <ul class="paraMag" id="paraMag_L">
             <li>
-                Population Size: <input id="paraMag_popSize" type="number" min=50 max=500> <br>
-                <span class="paraMag_Info">
-                    This option sets the <b>fixed</b> population size for each population. The valid inputs for this parameter are: 50-500 (inclusive).
-                </span>
-            </li>
-            <li>
                 Number of Populations: <input id="paraMag_numOfPop" type="number" min=1 max=10> <br>
                 <span class="paraMag_Info">
-                    hi
+                    Sets the number of populations to observe in the simulation routine. <br> Takes a value between 1 and 10 (inclusive).
                 </span>
             </li>
             <li>
-                Number of Alleles: <input id="paraMag_numOfAlleles" type="number" min=2 max=8> <br>
+                Population Size: <input id="paraMag_popSize" type="number" min=50 max=500> <br>
                 <span class="paraMag_Info">
-                    hi
+                    Sets a population's <b>fixed</b> size in the simulation routine. Takes a value between 50 and 500 (inclusive).
                 </span>
             </li>
             <li>
-                Number of Migrants: <input id="paraMag_numOfMigrants" type="number" min=0 max=500> <br>
+                Number of Allele Types: <input id="paraMag_numOfAlleles" type="number" min=2 max=8> <br>
                 <span class="paraMag_Info">
-                    hi
+                    Sets the <b>initial</b> number of allele types in a population. Takes a value between 2 and 8 (inclusive).
                 </span>
             </li>
             <li>
                 Mutation Rate: <input id="paraMag_mutaRate" type="number" min=0 max=1000> <br>
                 <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
                 <span class="paraMag_Info">
-                    hi
+                    Sets the denominator of an allele's mutation rate. Currently an allele has a 1 in <span id="paraMag_mutaRateChildToo"></span> chance to mutate. Takes a value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
-                Initial Number of Simulations: <input id="paraMag_init" type="number" min=0 max=1000> <br>
+                Number of Migrants: <input id="paraMag_numOfMigrants" type="number" min=0 max=499> <br>
                 <span class="paraMag_Info">
-                    hi
+                    Sets the number of members who migrate each generation. Takes a value between 0 and <span id="paraMag_numOfMigrantsChild"></span> (inclusive).
+                </span>
+            </li>
+            <li>
+                Initial Number of Simulations: <input id="paraMag_init" type="number" min=1 max=1000> <br>
+                <span class="paraMag_Info">
+                    Sets the number of simulations to conduct before the user can interact with the <b>Output</b> page. Takes a value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
                 Refresh Rate: <input id="paraMag_rfrshRate" type="number" min=0 max=5> <br>
                 <span class="paraMag_space"></span><input id="paraMag_rfrshRateChild" type="range" min=0 max=5 step=0.01> <br>
                 <span class="paraMag_Info">
-                    hi
+                    hi.
                 </span>
             </li>
         </ul>
