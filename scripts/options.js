@@ -31,21 +31,27 @@ $(document).ready(function(){
 
     /* jQuery event listener for the "Number of Populations" input */
      $('#paraMag_numOfPop').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 1 || x > 10 ) {
             $('#paraMag_numOfPop').val(settings.numOfPop);
         } else {
             settings.numOfPop = x;
+            if (x != $(this).val()) {
+                $('#paraMag_numOfPop').val(settings.numOfPop);
+            };
         };
     });
 
     /* jQuery event listener for the "Population Size" input */
      $('#paraMag_popSize').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 1 || x > 500 ) {
             $('#paraMag_popSize').val(settings.popSize);
         } else {
             settings.popSize = x;
+            if (x != $(this).val()) {
+                $('#paraMag_popSize').val(settings.popSize);
+            };
             $('#paraMag_numOfMigrantsChild').text(settings.popSize);
 
             /* Double check if settings.numOfMigrants < settings.popSize */
@@ -58,21 +64,27 @@ $(document).ready(function(){
 
     /* jQuery event listener for the "Number of Allele Types" input */
      $('#paraMag_numOfAlleles').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 1 || x > 8 ) {
             $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
         } else {
             settings.numOfAlleles = x;
+            if (x != $(this).val()) {
+                $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
+            };
         };
     });
 
     /* jQuery event listener for the "Mutation Rate" input */
      $('#paraMag_mutaRate').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
             $('#paraMag_mutaRate').val(settings.mutationRate);
         } else {
             settings.mutationRate = x;
+            if (x != $(this).val()) {
+                $('#paraMag_mutaRate').val(settings.mutationRate);
+            };
             $('#paraMag_mutaRateChild').val(x);
             /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
             if (x == 0) {
@@ -85,7 +97,7 @@ $(document).ready(function(){
     
     /* jQuery event listener for the "Mutation Rate" slider */
     $('#paraMag_mutaRateChild').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         settings.mutationRate = x;
         $('#paraMag_mutaRate').val(x);
         /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
@@ -99,21 +111,27 @@ $(document).ready(function(){
     /* jQuery event listener for the "Number of Migrants" input */
     /* #paraMag_numOfMigrantsChild is handled by the jQuery event listener for the "Population Size" input */
      $('#paraMag_numOfMigrants').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 0 || x > settings.popSize) {
             $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
         } else {
            settings.numOfMigrants = x;
+           if (x != $(this).val()) {
+                $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
+           };
         };
     });
 
     /* jQuery event listener for the "Initial Number of Simulations" input */
      $('#paraMag_init').change(function() {
-        var x = $(this).val();
+        var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
             $('#paraMag_init').val(settings.init);
         } else {
             settings.init = x;
+            if (x != $(this).val()) {
+                $('#paraMag_init').val(settings.init);
+            };
         };
     });
 
