@@ -19,8 +19,9 @@ button {
     font-size: 10pt;
 }
 
+/*========================*/
 /* Top Matter CSS (Start) */
-
+/*========================*/
 #header {
     font-size: 24pt;
     font-weight: bold;
@@ -52,11 +53,13 @@ ul.toolbar li.current {
 .toolbar-content.current {
     display: inherit;
 }
-
+/*======================*/
 /* Top Matter CSS (End) */
+/*======================*/
 
+/*============================*/
 /* Parameters Tab CSS (Start) */
-
+/*============================*/
 ul.paraMag {
     margin: 0px;
 	padding: 0px;
@@ -79,8 +82,21 @@ ul.paraMag li {
 .paraMag_space {
     padding-left: 20px;
 }
-
+/*==========================*/
 /* Parameters Tab CSS (End) */
+/*==========================*/
+
+/*==========================*/
+/* Bottom Mater CSS (Start) */
+/*==========================*/
+#copyright {
+    font-size: 8pt;
+    text-align: center;
+}
+/*========================*/
+/* Bottom Mater CSS (End) */
+/*========================*/
+
 
 #subheading {
     font-size: 16pt;
@@ -95,10 +111,7 @@ ul.paraMag li {
     padding: 1px 0 1px 0;
 }
 
-#copyright {
-    font-size: 8pt;
-    text-align: center;
-}
+
 
 /* Simulation */
 
@@ -129,11 +142,4 @@ ul.paraMag li {
     width: 800px;
     height: 400px;
     display: none;
-}
-
-ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0 0 0 5px;
-    overflow: hidden;
 }

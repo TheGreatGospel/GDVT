@@ -4,7 +4,7 @@ function options_Initialise() {
     $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
     $('#paraMag_mutaRate').val(settings.mutationRate);
         $('#paraMag_mutaRateChild').val(settings.mutationRate);
-        $('#paraMag_mutaRateChildToo').text(settings.mutationRate);
+        $('#paraMag_mutaRateChildToo').text("1 in a "+ settings.mutationRate);
     $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
         $('#paraMag_numOfMigrantsChild').text(settings.popSize);
     $('#paraMag_init').val(settings.init);
@@ -74,7 +74,12 @@ $(document).ready(function(){
         } else {
             settings.mutationRate = x;
             $('#paraMag_mutaRateChild').val(x);
-            $('#paraMag_mutaRateChildToo').text(x);
+            /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
+            if (x == 0) {
+                $('#paraMag_mutaRateChildToo').text("no");
+            } else {
+                $('#paraMag_mutaRateChildToo').text("1 in a "+x);
+            };
         };
     });
     
@@ -83,7 +88,12 @@ $(document).ready(function(){
         var x = $(this).val();
         settings.mutationRate = x;
         $('#paraMag_mutaRate').val(x);
-        $('#paraMag_mutaRateChildToo').text(x);
+        /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
+        if (x == 0) {
+            $('#paraMag_mutaRateChildToo').text("no");
+        } else {
+            $('#paraMag_mutaRateChildToo').text("1 in  a "+x);
+        };
     });
 
     /* jQuery event listener for the "Number of Migrants" input */

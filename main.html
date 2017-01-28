@@ -18,8 +18,6 @@
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.1/math.min.js"></script>
-
-    <script src="scripts/main.js"></script>
 </head>
 <!-- CSS and JS Libraries (End) -->
 
@@ -116,7 +114,7 @@
                 Mutation Rate: <input id="paraMag_mutaRate" type="number" min=1 max=1000> <br>
                 <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
                 <span class="paraMag_Info">
-                    Sets the denominator of an allele's mutation rate. An allele currently has a 1 in <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. <br> Takes a value between 1 and 1000 (inclusive).
+                    Sets the denominator of an allele's mutation rate. An allele currently has <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. <br> Takes a value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
@@ -156,7 +154,6 @@
 <div class="main toolbar-content" id="jsBody_About">
 
 </div>
-
 <!-- About Tab HTML (End) -->
 
 <!-- Bottom Matter HTML (Start) -->
@@ -167,6 +164,7 @@
 <!-- Bottom Matter HTML (End) -->
 
 <!-- Initialisation of JS Functionality (Start) -->
+<script src="scripts/main.js"></script>
 <script src="scripts/options.js"></script>
 <script src="scripts/simulation.js"></script>
 <script src="scripts/statCalc.js"></script>
@@ -179,7 +177,7 @@
             mutationRate: 300,  // Mutation Rate
             numOfMigrants: 1,   // Number of Migrants
             init: 1,            // Initial Number of Simulations
-            simRate: 1,        // Simulation Rate
+            simRate: 1,         // Simulation Rate
             debug: false        // Hidden option to print various calculations to console.log()
         },
         processFlag = false,
