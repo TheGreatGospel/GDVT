@@ -31,7 +31,7 @@
 </div>
 
 <ul class="toolbar">
-    <li class="tab-link current" data-tab="jsBody_Output">Output</li>
+    <li class="tab-link current" data-tab="jsBody_Output" id="dummy_Output">Output</li>
     <li class="tab-link" data-tab="jsBody_Parameters">Parameters</li>
     <li class="tab-link" data-tab="jsBody_About">About</li>
 </ul>
@@ -113,10 +113,10 @@
                 </span>
             </li>
             <li>
-                Mutation Rate: <input id="paraMag_mutaRate" type="number" min=0 max=1000> <br>
+                Mutation Rate: <input id="paraMag_mutaRate" type="number" min=1 max=1000> <br>
                 <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
                 <span class="paraMag_Info">
-                    Sets the denominator of an allele's mutation rate. Currently an allele has a 1 in <span id="paraMag_mutaRateChildToo"></span> chance to mutate. Takes a value between 1 and 1000 (inclusive).
+                    Sets the denominator of an allele's mutation rate. An allele currently has a 1 in <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. <br> Takes a value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
@@ -132,23 +132,20 @@
                 </span>
             </li>
             <li>
-                Refresh Rate: <input id="paraMag_rfrshRate" type="number" min=0 max=5> <br>
-                <span class="paraMag_space"></span><input id="paraMag_rfrshRateChild" type="range" min=0 max=5 step=0.01> <br>
+                Simulation Rate: <input id="paraMag_simRate" type="number" min=0.01 max=5> <br>
+                <span class="paraMag_space"></span><input id="paraMag_simRateChild" type="range" min=0.01 max=5 step=0.01> <br>
                 <span class="paraMag_Info">
-                    hi.
+                    Sets the timer rate of the executing consecutive simulations. The user interruption button will be more responsive if the Simulation Rate is set to a high value. Takes a value between 0.01 and 5.00 seconds (inclusive).
                 </span>
             </li>
         </ul>
 
         <ul class="paraMag" id="paraMag_R">
             <li>
-                <button id="paraMag_Submit">Submit Parameters</button> <br>
-                <span class="paraMag_Info">
-                    hi
-                </span>
+                <button id="paraMag_submit">Submit Parameters</button> <br>
             </li>
-            <li>
-                <input type="checkbox">Show detailed information
+            <li id="small">
+                <input id="paraMag_show" type="checkbox">Show detailed information
             </li>
         </ul>
     </div>
@@ -169,21 +166,21 @@
 </div>
 <!-- Bottom Matter HTML (End) -->
 
-<!-- Initialisation JS Functionality (Start) -->
+<!-- Initialisation of JS Functionality (Start) -->
 <script src="scripts/options.js"></script>
 <script src="scripts/simulation.js"></script>
 <script src="scripts/statCalc.js"></script>
 
 <script>
     var settings = {
-            popSize: 500,
-            numOfPop: 10,
-            numOfAlleles: 8,
-            init: 1,
-            simInput: 100,
-            migration: 10,
-            mutationRate: 300,
-            debug: false
+            numOfPop: 10,       // Number of Populations 
+            popSize: 500,       // Population Size
+            numOfAlleles: 8,    // Number of Allele Types
+            mutationRate: 300,  // Mutation Rate
+            numOfMigrants: 1,   // Number of Migrants
+            init: 1,            // Initial Number of Simulations
+            simRate: 1,        // Simulation Rate
+            debug: false        // Hidden option to print various calculations to console.log()
         },
         processFlag = false,
         alleles = new alleleMaster(),
@@ -197,9 +194,9 @@
         number: 'Fraction'
     });
 
-    options_Load();
+    options_Initialise(); // Loads in the initial settings for the simulation routine
 </script>
-<!-- Initialisation JS Functionality (End) -->
+<!-- Initialisation of JS Functionality (End) -->
 
 </body>
 </html>

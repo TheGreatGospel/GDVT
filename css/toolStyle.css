@@ -15,6 +15,10 @@ button {
     display: flex;
 }
 
+#small {
+    font-size: 10pt;
+}
+
 /* Top Matter CSS (Start) */
 
 #header {
@@ -68,6 +72,7 @@ ul.paraMag li {
 }
 
 .paraMag_Info {
+    display: none;
     font-size: 12px;
 }
 
@@ -76,10 +81,6 @@ ul.paraMag li {
 }
 
 /* Parameters Tab CSS (End) */
-
-input {
-    background-color: #fffff0;
-}
 
 #subheading {
     font-size: 16pt;
