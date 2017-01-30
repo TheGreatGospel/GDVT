@@ -8,10 +8,8 @@
 <!-- CSS and JS Libraries (Start) -->
 <head>
     <link rel="stylesheet" type="text/css" href="css/toolStyle.css">
-    <link rel="stylesheet" type="text/css" href="css/tooltipStyle.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -19,8 +17,6 @@
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.1/math.min.js"></script>
-
-    <script src="scripts/utils.js"></script>
 </head>
 <!-- CSS and JS Libraries (End) -->
 
@@ -31,60 +27,15 @@
     Genetic Drift Visualisation Tool
 </div>
 
-<div class="main" id="toolbar">
-    Reserved space for future versions.
-</div>
+<ul class="toolbar">
+    <li class="tab-link current" data-tab="jsBody_Output" id="dummy_Output">Output</li>
+    <li class="tab-link" data-tab="jsBody_Parameters">Parameters</li>
+    <li class="tab-link" data-tab="jsBody_About">About</li>
+</ul>
 <!-- Top Matter HTML (End) -->
 
-<!-- Options Tab HTML (Start) -->
-<div class="main" id="jsBody_Options">
-    <div class="jsBody_Child" id="subheading">
-        Options
-    </div>
-    <div class="jsBody_Child" id="options_hold">
-        <div id="options_lTable">
-            <div class="tooltip">
-                Population Size:
-                <div class="tooltiptext" id="popSizeTip">
-                    Input a value between 50-500.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Number of Populations: 
-                <div class="tooltiptext" id="numOfPopTip">
-                    Input a value between 1-10.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Number of Alleles: 
-                <div class="tooltiptext" id="numOfAllelesTip">
-                    Input a value between 2-8.
-                </div>
-            </div> <br>
-            <div class="tooltip">
-                Initial Number of Simulations: 
-                <div class="tooltiptext" id="initTip">
-                    Input a value greater than 0.
-                </div>
-            </div> <br>
-        </div>
-        <div id="options_rTable">
-            <input id="option_popSize" type="number" min="50" max="500"> <br>
-            <input id="option_numOfPop" type="number" min="1" max="10"> <br>
-            <input id="option_numOfAlleles" type="number" min="2" max="8"> <br>
-            <input id="option_init" type="number" min="0" max="1000"> <br>
-        </div>
-    </div>
-    <div class="jsBody_Child">
-        <button id="options_simStart">
-            Simulate
-        </button>
-    </div>
-</div>
-<!-- Options Tab HTML (Start) -->
-
-<!-- Simulation Tab HTML (Start) -->
-<div class="main" id="jsBody_Simulation">
+<!-- Output Tab HTML (Start) -->
+<div class="main toolbar-content current" id="jsBody_Output">
     <div class="jsBody_Child" id="subheading">
         Generation: <span id="displayCurrentGen"></span>
     </div>
@@ -134,7 +85,75 @@
 
     </div>
 </div>
-<!-- Simulation Tab HTML (End) -->
+<!-- Output Tab HTML (End) -->
+
+<!-- Parameters Tab HTML (Start) -->
+<div class="main toolbar-content" id="jsBody_Parameters">
+    <div id="jsBody_Container">
+        <ul class="paraMag" id="paraMag_L">
+            <li>
+                Number of Populations: <input id="paraMag_numOfPop" type="number" min=1 max=10> <br>
+                <span class="paraMag_Info">
+                    Sets the number of populations to observe in the simulation routine. <br> Takes an integer value between 1 and 10 (inclusive).
+                </span>
+            </li>
+            <li>
+                Population Size: <input id="paraMag_popSize" type="number" min=50 max=500> <br>
+                <span class="paraMag_Info">
+                    Sets a population's <b>fixed</b> size in the simulation routine. Takes an integer value between 50 and 500 (inclusive).
+                </span>
+            </li>
+            <li>
+                Number of Allele Types: <input id="paraMag_numOfAlleles" type="number" min=2 max=8> <br>
+                <span class="paraMag_Info">
+                    Sets the <b>initial</b> number of allele types in a population. Takes an integer value between 2 and 8 (inclusive).
+                </span>
+            </li>
+            <li>
+                Mutation Rate: <input id="paraMag_mutaRate" type="number" min=1 max=1000> <br>
+                <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
+                <span class="paraMag_Info">
+                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
+                </span>
+            </li>
+            <li>
+                Number of Migrants: <input id="paraMag_numOfMigrants" type="number" min=0 max=499> <br>
+                <span class="paraMag_Info">
+                    Sets the number of members who migrate each generation. Takes an integer value between 0 and <span id="paraMag_numOfMigrantsChild"></span> (inclusive).
+                </span>
+            </li>
+            <li>
+                Initial Number of Simulations: <input id="paraMag_init" type="number" min=1 max=1000> <br>
+                <span class="paraMag_Info">
+                    Sets the number of simulations to conduct before the user can interact with the <b>Output</b> page. Takes an integer value between 1 and 1000 (inclusive).
+                </span>
+            </li>
+            <li>
+                Simulation Rate: <input id="paraMag_simRate" type="number" min=0.01 max=5> <br>
+                <span class="paraMag_space"></span><input id="paraMag_simRateChild" type="range" min=0.01 max=5 step=0.01> <br>
+                <span class="paraMag_Info">
+                    Sets the timer rate of the executing consecutive simulations. The user interruption button will be more responsive if the Simulation Rate is set to a high value. Takes a value between 0.01 and 5.00 seconds (inclusive).
+                </span>
+            </li>
+        </ul>
+
+        <ul class="paraMag" id="paraMag_R">
+            <li>
+                <button id="paraMag_submit">Submit Parameters</button> <br>
+            </li>
+            <li id="small">
+                <input id="paraMag_show" type="checkbox">Show detailed information
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Parameters Tab HTML (Start) -->
+
+<!-- About Tab HTML (Start) -->
+<div class="main toolbar-content" id="jsBody_About">
+
+</div>
+<!-- About Tab HTML (End) -->
 
 <!-- Bottom Matter HTML (Start) -->
 <div class="main" id="copyright">
@@ -143,22 +162,23 @@
 </div>
 <!-- Bottom Matter HTML (End) -->
 
-<!-- Initialisation JS Functionality (Start) -->
+<!-- Initialisation of JS Functionality (Start) -->
+<script src="scripts/main.js"></script>
 <script src="scripts/options.js"></script>
 <script src="scripts/simulation.js"></script>
 <script src="scripts/statCalc.js"></script>
 
 <script>
     var settings = {
-            popSize: 500,
-            numOfPop: 10,
-            numOfAlleles: 8,
-            init: 1,
-            simInput: 100,
-            migration: 10,
-            mutationRate: 300,
-            debug: false
+            numOfPop: 10,       // Number of Populations 
+            popSize: 500,       // Population Size
+            numOfAlleles: 8,    // Number of Allele Types
+            mutationRate: 300,  // Mutation Rate
+            numOfMigrants: 1,   // Number of Migrants
+            init: 1,            // Initial Number of Simulations
+            simRate: 1,         // Simulation Rate
         },
+        debug = false,                 // Hidden option to print various calculations to console.log()
         processFlag = false,
         alleles = new alleleMaster(),
         rng = new pseudoRandom(),
@@ -171,9 +191,10 @@
         number: 'Fraction'
     });
 
-    options_Load();
+    options_Initialise(); // Loads in the initial settings for the simulation routine
 </script>
-<!-- Initialisation JS Functionality (End) -->
+<!-- Initialisation of JS Functionality (End) -->
 
 </body>
+
 </html>

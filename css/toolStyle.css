@@ -3,31 +3,111 @@ body {
     font-size: 12pt;
 }
 
+div.main {
+    padding: 5px 5px 10px 5px;
+}
+
 button {
     font-size: 12pt;
 }
 
-input {
-    background-color: #fffff0;
+#jsBody_Container {
+    display: flex;
 }
 
-.main {
-    padding: 10px;
+#small {
+    font-size: 10pt;
 }
 
+/*========================*/
+/* Top Matter CSS (Start) */
+/*========================*/
 #header {
     font-size: 24pt;
     font-weight: bold;
 }
 
-#subheading {
-    font-size: 16pt;
-}
-
-#toolbar {
+ul.toolbar {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
     font-size: 14pt;
     border-top: thin solid black;
     border-bottom: thin solid black;
+}
+
+ul.toolbar li {
+    display: inline-block;
+    padding: 5px 10px 5px 10px;
+    cursor: pointer;
+}
+
+ul.toolbar li.current {
+    font-weight: bold;
+}
+
+.toolbar-content {
+    display: none;
+}
+
+.toolbar-content.current {
+    display: inherit;
+}
+/*======================*/
+/* Top Matter CSS (End) */
+/*======================*/
+
+/*============================*/
+/* Parameters Tab CSS (Start) */
+/*============================*/
+ul.paraMag {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.paraMag li {
+    padding: 5px 0px 5px 0px;
+}
+
+#paraMag_L {
+    width: 400px;
+}
+
+.paraMag_Info {
+    display: none;
+    font-size: 12px;
+}
+
+.paraMag_space {
+    padding-left: 20px;
+}
+/*==========================*/
+/* Parameters Tab CSS (End) */
+/*==========================*/
+
+/*============================*/
+/* Simulation Tab CSS (Start) */
+/*============================*/
+
+/*==========================*/
+/* Simulation Tab CSS (End) */
+/*==========================*/
+
+/*==========================*/
+/* Bottom Matter CSS (Start) */
+/*==========================*/
+#copyright {
+    font-size: 8pt;
+    text-align: center;
+}
+/*========================*/
+/* Bottom Matter CSS (End) */
+/*========================*/
+
+
+#subheading {
+    font-size: 16pt;
 }
 
 #subtoolbar {
@@ -39,32 +119,9 @@ input {
     padding: 1px 0 1px 0;
 }
 
-#copyright {
-    font-size: 8pt;
-    text-align: center;
-}
 
-/* Options */
-
-#options_hold {
-    display: flex;
-}
-
-#options_lTable {
-    line-height: 2;
-    text-align: right;
-}
-
-#options_rTable {
-    line-height: 2;
-    flex-grow: 1;
-}
 
 /* Simulation */
-
-#jsBody_Simulation {
-    display: none;
-}
 
 #simulation_hold {
     display: flex;
@@ -93,11 +150,4 @@ input {
     width: 800px;
     height: 400px;
     display: none;
-}
-
-ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0 0 0 5px;
-    overflow: hidden;
 }
