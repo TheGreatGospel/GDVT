@@ -1,4 +1,21 @@
-function alleleMaster() {
+$(document).ready(function(){
+
+    /* jQuery event listener to operate the plot toolbar */
+	$('ul.output_ulL li').click(function(){
+		var tab_id = $(this).attr('data-tab'); // Returns the tab to swap to
+
+        /* Removes the visibility of the current tab */
+		$('ul.output_ulL li').removeClass('current');
+	    //$('.toolbar-content').removeClass('current');
+
+        /* Gives visibility to the tab to swap to */
+		$(this).addClass('current');
+		//$("#"+tab_id).addClass('current');
+	})
+
+})
+
+/*function alleleMaster() {
     var fullPool = [
         {label: "A", colour: "rgba(127, 201, 127, 1)"}, 
         {label: "B", colour: "rgba(190, 174, 212, 1)"}, 
@@ -302,4 +319,4 @@ $('#sim_input').on("focusout", function() {
     } else {
         settings.simInput = x.val();
     }
-});
+});*/

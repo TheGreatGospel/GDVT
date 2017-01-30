@@ -28,9 +28,9 @@
 </div>
 
 <ul class="toolbar">
-    <li class="tab-link current" data-tab="jsBody_Output" id="dummy_Output">Output</li>
-    <li class="tab-link" data-tab="jsBody_Parameters">Parameters</li>
-    <li class="tab-link" data-tab="jsBody_About">About</li>
+    <li class="current" data-tab="jsBody_Output" id="dummy_Output">Output</li>
+    <li data-tab="jsBody_Parameters">Parameters</li>
+    <li data-tab="jsBody_About">About</li>
 </ul>
 <!-- Top Matter HTML (End) -->
 
@@ -47,7 +47,14 @@
 
     <div id="jsBody_Container">
         <div id="output_L">
-            Chart Management
+            <ul class="output_ulL">
+                <li class="current">Allele Frequencies</li>
+                <li>Coancestry Coefficient</li>
+                <li>Individual Alleles</li>
+            </ul>
+            <div>
+                Please don't break
+            </div>
         </div>
         <div id="output_R">
             <ul class="output_ulR">
@@ -189,7 +196,7 @@
 <!-- Initialisation of JS Functionality (Start) -->
 <script src="scripts/main.js"></script>
 <script src="scripts/parameters.js"></script>
-<script src="scripts/simulation.js"></script>
+<script src="scripts/output.js"></script>
 <script src="scripts/statCalc.js"></script>
 
 <script>
@@ -204,8 +211,8 @@
         },
         debug = false,                 // Hidden option to print various calculations to console.log()
         processFlag = false,
-        alleles = new alleleMaster(),
-        rng = new pseudoRandom(),
+        //alleles = new alleleMaster(),
+        rngBin = new randomBinary(),
         allSpecies = [],
         statsMaster = {
             FST: []
@@ -215,7 +222,7 @@
         number: 'Fraction'
     });
 
-    parameters_Initialise(); // Writes out the initial parameters into the Parameters tab 
+    parameters_Initialise();
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 

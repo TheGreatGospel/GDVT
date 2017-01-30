@@ -97,6 +97,28 @@ ul.paraMag li {
     font-size: 16pt;
 }
 
+#output_L {
+    width: 600px;
+}
+
+ul.output_ulL {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.output_ulL li {
+    background: none;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2.5px 10px 0px 10px;
+}
+
+ul.output_ulL li.current {
+    background: #ededed;
+}
+
 #output_R {
     padding-left: 24px;
 }

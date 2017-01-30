@@ -1,3 +1,4 @@
+/* Plugs in the initial settings into the corresponding spans */
 function parameters_Initialise() {
     $('#paraMag_numOfPop').val(settings.numOfPop);
     $('#paraMag_popSize').val(settings.popSize);
