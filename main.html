@@ -113,7 +113,7 @@
                 Mutation Rate: <input id="paraMag_mutaRate" type="number" min=1 max=1000> <br>
                 <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
                 <span class="paraMag_Info">
-                    Sets the denominator of an allele's mutation rate. An allele currently has <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
+                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
@@ -178,7 +178,7 @@
             init: 1,            // Initial Number of Simulations
             simRate: 1,         // Simulation Rate
         },
-        debug: false                 // Hidden option to print various calculations to console.log()
+        debug = false,                 // Hidden option to print various calculations to console.log()
         processFlag = false,
         alleles = new alleleMaster(),
         rng = new pseudoRandom(),
