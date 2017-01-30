@@ -7,10 +7,6 @@ div.main {
     padding: 5px 5px 10px 5px;
 }
 
-button {
-    font-size: 12pt;
-}
-
 #jsBody_Container {
     display: flex;
 }
@@ -82,17 +78,57 @@ ul.paraMag li {
 .paraMag_space {
     padding-left: 20px;
 }
+
+#paraMag_submit {
+    font-size: 12pt;
+}
 /*==========================*/
 /* Parameters Tab CSS (End) */
 /*==========================*/
 
-/*============================*/
-/* Simulation Tab CSS (Start) */
-/*============================*/
+/*========================*/
+/* Output Tab CSS (Start) */
+/*========================*/
+#output_heading {
+    padding-bottom: 12px;
+}
 
-/*==========================*/
-/* Simulation Tab CSS (End) */
-/*==========================*/
+#output_headingChild {
+    font-size: 16pt;
+}
+
+#output_R {
+    padding-left: 24px;
+}
+
+#output_Heading {
+    font-size: 14pt;
+}
+
+ul.output_ulR {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.output_ulR li {
+    padding-bottom: 12px;
+}
+
+ul.output_curParaMag {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.output_curParaMag li {
+    font-size: 12px;
+    padding-left: 12px;
+    padding-bottom: 0px;
+}
+/*======================*/
+/* Output Tab CSS (End) */
+/*======================*/
 
 /*==========================*/
 /* Bottom Matter CSS (Start) */
@@ -104,22 +140,6 @@ ul.paraMag li {
 /*========================*/
 /* Bottom Matter CSS (End) */
 /*========================*/
-
-
-#subheading {
-    font-size: 16pt;
-}
-
-#subtoolbar {
-    line-height: 1.5;
-    padding: 0 0 10px 0;
-}
-
-.jsBody_Child {
-    padding: 1px 0 1px 0;
-}
-
-
 
 /* Simulation */
 

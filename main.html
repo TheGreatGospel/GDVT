@@ -36,23 +36,47 @@
 
 <!-- Output Tab HTML (Start) -->
 <div class="main toolbar-content current" id="jsBody_Output">
-    <div class="jsBody_Child" id="subheading">
-        Generation: <span id="displayCurrentGen"></span>
+    <div id="output_heading">
+        <span id="output_headingChild">
+            Generation: <span id="output_genNum"></span><br>
+        </span>
+        <span id="output_headingChildToo">
+            F<sub>ST</sub>: <span id="output_fst"></span>
+        </span>
     </div>
-    <div class="jsBody_Child" id="subtoolbar">
-        Simulate next <i>n</i> generations: <br>
-        <button id="sim_1">
-            n = 1 
-        </button> 
-        <button id="sim_10">
-            n = 10
-        </button>
-        <button id="sim_X">
-            n =
-        </button>
-        <input id="sim_input" type="number" min="0" max="1000" value=100>
+
+    <div id="jsBody_Container">
+        <div id="output_L">
+            Chart Management
+        </div>
+        <div id="output_R">
+            <ul class="output_ulR">
+                <li>
+                    Simulate next <i>n</i> generations: <br>
+                    <button class="output_simButton" howMany="1">n = 1 </button> 
+                    <button class="output_simButton" howMany="10">n = 10</button>
+                    <button class="output_simButton" howMany="output_simInput">n =</button>
+                    <input id="output_simInput" type="number" min=0 max=1000 value=100>
+                </li>
+                <li>
+                    <button id="output_interrupt" disabled="true">Interrupt Simulation</button>
+                </li>
+                <li>
+                    Current Parameters
+                    <ul class="output_curParaMag">
+                        <li>Number of Populations: <span="output_numOfPop"></span></li>
+                        <li>Population Size: <span="output_popSize"></span></li>
+                        <li>Number of Allele Types: <span="output_numOfAlleles"></span></li>
+                        <li>Mutation Rate: <span="output_mutaRate"></span></li>
+                        <li>Number of Migrants: <span="output_numOfMigrants"></span></li>
+                        <li>Initial Number of Simulations: <span="output_ubut"></span></li>
+                        <li>Simulation Rate: <span="output_simRate"></span></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-    
+    <!--
     <div class="jsBody_Child" id="simulation_hold">
         <div id="simulation_lTable">
             <div id="alleleFreq">
@@ -83,7 +107,7 @@
             </div>
         </div>
 
-    </div>
+    </div> -->
 </div>
 <!-- Output Tab HTML (End) -->
 
@@ -157,14 +181,14 @@
 
 <!-- Bottom Matter HTML (Start) -->
 <div class="main" id="copyright">
-    Genetic Drift Visualisation Tool ver 0.2.0 <br>
+    Genetic Drift Visualisation Tool ver 0.2.1 <br>
     &copy 2016-2017 David Chan
 </div>
 <!-- Bottom Matter HTML (End) -->
 
 <!-- Initialisation of JS Functionality (Start) -->
 <script src="scripts/main.js"></script>
-<script src="scripts/options.js"></script>
+<script src="scripts/parameters.js"></script>
 <script src="scripts/simulation.js"></script>
 <script src="scripts/statCalc.js"></script>
 
@@ -191,7 +215,7 @@
         number: 'Fraction'
     });
 
-    options_Initialise(); // Loads in the initial settings for the simulation routine
+    parameters_Initialise(); // Writes out the initial parameters into the Parameters tab 
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 
