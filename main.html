@@ -48,12 +48,14 @@
     <div id="jsBody_Container">
         <div id="output_L">
             <ul class="output_ulL">
-                <li class="current">Allele Frequencies</li>
-                <li>Coancestry Coefficient</li>
-                <li>Individual Alleles</li>
+                <li class="current" data-tab="output_alleleFreqChart">Allele Frequencies</li>
+                <li data-tab="output_fstChart">Coancestry Coefficient</li>
+                <li data-tab="output_indivAlleleChart">Inidividual Alleles</li>
             </ul>
-            <div>
-                Please don't break
+            <div class="output_chartContainer">
+                <div class="output_chartDim current" id="output_alleleFreqChart">allele freq</div>
+                <div class="output_chartDim" id="output_fstChart">fst chart</div>
+                <div class="output_chartDim" id="output_indivAlleleChart">individual allele</div>
             </div>
         </div>
         <div id="output_R">
@@ -83,38 +85,6 @@
             </ul>
         </div>
     </div>
-    <!--
-    <div class="jsBody_Child" id="simulation_hold">
-        <div id="simulation_lTable">
-            <div id="alleleFreq">
-                
-            </div>
-            <div id="fst">
-                
-            </div>
-        </div>
-
-        <div id="simulation_rTable">
-            <div>
-                <span id = "simulation_subtitle">
-                    Plots
-                </span>
-                <ul class="tab">
-                    <li>
-                        <a href="javascript:void(0)" id="alleleFreq_Show">
-                            Allele Frequency
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)" id="fst_Show">
-                            FST
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-    </div> -->
 </div>
 <!-- Output Tab HTML (End) -->
 

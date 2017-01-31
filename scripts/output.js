@@ -6,11 +6,11 @@ $(document).ready(function(){
 
         /* Removes the visibility of the current tab */
 		$('ul.output_ulL li').removeClass('current');
-	    //$('.toolbar-content').removeClass('current');
+	    $('.output_chartDim').removeClass('current');
 
         /* Gives visibility to the tab to swap to */
 		$(this).addClass('current');
-		//$("#"+tab_id).addClass('current');
+		$("#"+tab_id).addClass('current');
 	})
 
 })

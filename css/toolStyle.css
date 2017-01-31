@@ -53,39 +53,6 @@ ul.toolbar li.current {
 /* Top Matter CSS (End) */
 /*======================*/
 
-/*============================*/
-/* Parameters Tab CSS (Start) */
-/*============================*/
-ul.paraMag {
-    margin: 0px;
-	padding: 0px;
-	list-style: none;
-}
-
-ul.paraMag li {
-    padding: 5px 0px 5px 0px;
-}
-
-#paraMag_L {
-    width: 400px;
-}
-
-.paraMag_Info {
-    display: none;
-    font-size: 12px;
-}
-
-.paraMag_space {
-    padding-left: 20px;
-}
-
-#paraMag_submit {
-    font-size: 12pt;
-}
-/*==========================*/
-/* Parameters Tab CSS (End) */
-/*==========================*/
-
 /*========================*/
 /* Output Tab CSS (Start) */
 /*========================*/
@@ -98,25 +65,43 @@ ul.paraMag li {
 }
 
 #output_L {
-    width: 600px;
+    position: relative;
+    height: 430px;
+    width: 620px;
 }
 
 ul.output_ulL {
     margin: 0px;
 	padding: 0px;
 	list-style: none;
+    font-size: 10pt;
 }
 
 ul.output_ulL li {
     background: none;
     display: inline-block;
-    cursor: pointer;
-    font-size: 13px;
     padding: 2.5px 10px 0px 10px;
+    cursor: pointer;
 }
 
 ul.output_ulL li.current {
     background: #ededed;
+}
+
+.output_chartContainer {
+    display: inherit;
+    background: #ededed;
+    height: 400px;
+    width: 600px;
+    padding: 10px;
+}
+
+.output_chartDim {
+    display: none;
+}
+
+.output_chartDim.current {
+    display: inherit;
 }
 
 #output_R {
@@ -151,6 +136,39 @@ ul.output_curParaMag li {
 /*======================*/
 /* Output Tab CSS (End) */
 /*======================*/
+
+/*============================*/
+/* Parameters Tab CSS (Start) */
+/*============================*/
+ul.paraMag {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.paraMag li {
+    padding: 5px 0px 5px 0px;
+}
+
+#paraMag_L {
+    width: 400px;
+}
+
+.paraMag_Info {
+    display: none;
+    font-size: 12px;
+}
+
+.paraMag_space {
+    padding-left: 20px;
+}
+
+#paraMag_submit {
+    font-size: 12pt;
+}
+/*==========================*/
+/* Parameters Tab CSS (End) */
+/*==========================*/
 
 /*==========================*/
 /* Bottom Matter CSS (Start) */
