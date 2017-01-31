@@ -1,24 +1,29 @@
-/* Plugs in the initial settings into the corresponding spans */
+/* Plugs in the initial parameters into the corresponding spans */
 function parameters_Initialise() {
-    $('#paraMag_numOfPop').val(settings.numOfPop);
-    $('#paraMag_popSize').val(settings.popSize);
-    $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
-    $('#paraMag_mutaRate').val(settings.mutationRate);
-        $('#paraMag_mutaRateChild').val(settings.mutationRate);
-        $('#paraMag_mutaRateChildToo').text("1 in a "+ settings.mutationRate);
-    $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
-        $('#paraMag_numOfMigrantsChild').text(settings.popSize);
-    $('#paraMag_init').val(settings.init);
-    $('#paraMag_simRate').val(settings.simRate/100);
-        $('#paraMag_simRateChild').val(settings.simRate/100);
+    $('#paraMag_numOfPop').val(parameters.numOfPop);
+    $('#paraMag_popSize').val(parameters.popSize);
+    $('#paraMag_numOfAlleles').val(parameters.numOfAlleles);
+    $('#paraMag_mutaRate').val(parameters.mutationRate);
+        $('#paraMag_mutaRateChild').val(parameters.mutationRate);
+        $('#paraMag_mutaRateChildToo').text("1 in a "+ parameters.mutationRate);
+    $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
+        $('#paraMag_numOfMigrantsChild').text(parameters.popSize);
+    $('#paraMag_init').val(parameters.init);
+    $('#paraMag_simRate').val(parameters.simRate/100);
+        $('#paraMag_simRateChild').val(parameters.simRate/100);
+    
+    // Setup parameters.simInput as well
+    $('#output_simInput').val(parameters.simInput);
 };
 
+/* jQuery event listeners for the Parameters Tab */
 $(document).ready(function(){
 
     /* jQuery event listener fopr the "Submit Parameters" button */
     $("#paraMag_submit").click(function () {
         $("#dummy_Output").click(); // Forces a click on the toolbar's Output button
 
+        output_Initialise();
     });
 
     /* jQuery event listener for the "Show Detailed Information" checkbox */
@@ -34,11 +39,11 @@ $(document).ready(function(){
      $('#paraMag_numOfPop').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 10 ) {
-            $('#paraMag_numOfPop').val(settings.numOfPop);
+            $('#paraMag_numOfPop').val(parameters.numOfPop);
         } else {
-            settings.numOfPop = x;
+            parameters.numOfPop = x;
             if (x != $(this).val()) {
-                $('#paraMag_numOfPop').val(settings.numOfPop);
+                $('#paraMag_numOfPop').val(parameters.numOfPop);
             };
         };
     });
@@ -47,18 +52,18 @@ $(document).ready(function(){
      $('#paraMag_popSize').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 500 ) {
-            $('#paraMag_popSize').val(settings.popSize);
+            $('#paraMag_popSize').val(parameters.popSize);
         } else {
-            settings.popSize = x;
+            parameters.popSize = x;
             if (x != $(this).val()) {
-                $('#paraMag_popSize').val(settings.popSize);
+                $('#paraMag_popSize').val(parameters.popSize);
             };
-            $('#paraMag_numOfMigrantsChild').text(settings.popSize);
+            $('#paraMag_numOfMigrantsChild').text(parameters.popSize);
 
-            /* Double check if settings.numOfMigrants < settings.popSize */
-            if (settings.numOfMigrants > settings.popSize) {
-                settings.numOfMigrants = settings.popSize
-                $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
+            /* Double check if parameters.numOfMigrants < parameters.popSize */
+            if (parameters.numOfMigrants > parameters.popSize) {
+                parameters.numOfMigrants = parameters.popSize
+                $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
             };
         };
     });
@@ -67,11 +72,11 @@ $(document).ready(function(){
      $('#paraMag_numOfAlleles').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 8 ) {
-            $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
+            $('#paraMag_numOfAlleles').val(parameters.numOfAlleles);
         } else {
-            settings.numOfAlleles = x;
+            parameters.numOfAlleles = x;
             if (x != $(this).val()) {
-                $('#paraMag_numOfAlleles').val(settings.numOfAlleles);
+                $('#paraMag_numOfAlleles').val(parameters.numOfAlleles);
             };
         };
     });
@@ -80,11 +85,11 @@ $(document).ready(function(){
      $('#paraMag_mutaRate').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
-            $('#paraMag_mutaRate').val(settings.mutationRate);
+            $('#paraMag_mutaRate').val(parameters.mutationRate);
         } else {
-            settings.mutationRate = x;
+            parameters.mutationRate = x;
             if (x != $(this).val()) {
-                $('#paraMag_mutaRate').val(settings.mutationRate);
+                $('#paraMag_mutaRate').val(parameters.mutationRate);
             };
             $('#paraMag_mutaRateChild').val(x);
             /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
@@ -99,7 +104,7 @@ $(document).ready(function(){
     /* jQuery event listener for the "Mutation Rate" slider */
     $('#paraMag_mutaRateChild').change(function() {
         var x = Math.floor($(this).val());
-        settings.mutationRate = x;
+        parameters.mutationRate = x;
         $('#paraMag_mutaRate').val(x);
         /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
         if (x == 0) {
@@ -113,12 +118,12 @@ $(document).ready(function(){
     /* #paraMag_numOfMigrantsChild is handled by the jQuery event listener for the "Population Size" input */
      $('#paraMag_numOfMigrants').change(function() {
         var x = Math.floor($(this).val());
-        if (x < 0 || x > settings.popSize) {
-            $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
+        if (x < 0 || x > parameters.popSize) {
+            $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
         } else {
-           settings.numOfMigrants = x;
+           parameters.numOfMigrants = x;
            if (x != $(this).val()) {
-                $('#paraMag_numOfMigrants').val(settings.numOfMigrants);
+                $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
            };
         };
     });
@@ -127,11 +132,11 @@ $(document).ready(function(){
      $('#paraMag_init').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
-            $('#paraMag_init').val(settings.init);
+            $('#paraMag_init').val(parameters.init);
         } else {
-            settings.init = x;
+            parameters.init = x;
             if (x != $(this).val()) {
-                $('#paraMag_init').val(settings.init);
+                $('#paraMag_init').val(parameters.init);
             };
         };
     });
@@ -140,9 +145,9 @@ $(document).ready(function(){
      $('#paraMag_simRate').change(function() {
         var x = $(this).val();
         if (x < 0.01 || x > 5) {
-            $('#paraMag_simRate').val(settings.simRate/100);
+            $('#paraMag_simRate').val(parameters.simRate/100);
         } else {
-            settings.simRate = x*100;
+            parameters.simRate = x*100;
             $('#paraMag_simRateChild').val(x);
         };
     });
@@ -150,7 +155,7 @@ $(document).ready(function(){
     /* jQuery event listener for the "Simulation Rate" slider */
     $('#paraMag_simRateChild').change(function() {
         var x = $(this).val();
-        settings.simRate = x*100; // NB: Stored as an integer to prevent JS's precision error
+        parameters.simRate = x*100; // NB: Stored as an integer to prevent JS's precision error
         $('#paraMag_simRate').val(x);
     });
 

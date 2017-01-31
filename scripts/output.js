@@ -1,3 +1,81 @@
+/* A 'struct' which allows the other scripts to interface with the most current allele pool */
+function allelePool() {
+    /* The following variables are private to 'struct':              */
+    /* fullPool contains the labels and colours for each allele type */
+    /* uprBound restricts the number of alleles types made available */
+    /*      within the code. Note that the uprBound zero-indexed     */
+    /* ones is an utility array which contains -1 and 1 for use with */
+    /*      the mutate() method                                      */
+    var fullPool = [
+            {label: "A", colour: "#7fc97f"},
+            {label: "B", colour: "#beaed4"},
+            {label: "C", colour: "#fdc086"},
+            {label: "D", colour: "#ffff99"},
+            {label: "E", colour: "#386cb0"},
+            {label: "F", colour: "#f0027f"},
+            {label: "G", colour: "#bf5b17"},
+            {label: "H", colour: "#666666"}
+        ],
+        uprBound = 4,
+        ones = [-1, 1];
+    
+    this.setUprBound = function (i = 5) {
+        /* setUprBound() allows the user to interface with uprBound  */
+        /* and as mentioned earlier, uprBound is _zero-indexed_      */
+        uprBound = i - 1;
+    };
+
+    this.currentLabels = function () {
+        /* currentLabels() returns the current type allele labels    */
+        var labelPool = [], 
+        i = 0;
+        while (i <= uprBound) {
+            labelPool.push(fullPool[i].label);
+            i++;
+        };
+        return labelPool;
+    };
+
+    this.currentColours = function() {
+        /* currentColours() returns the current allele type colours  */
+        var colourPool = []
+        i = 0;
+        while (i <= uprBound) {
+            colourPool.push(fullPool[i].colour);
+            i++;
+        };
+        return colourPool;
+    };
+
+    this.mutate = function(i = getRandomInt(0, uprBound)) {
+        /* mutate() uses a one-step mutation model respecting       */
+        /* boundaries.                                              */
+        if (i == uprBound) {
+            i--; // 100% probability to go from uprBound -> uprBound - 1
+        } else if (i == 0) {
+            i++; // 100% probability to go from 0 -> 1
+        } else {
+            i += ones[rngBin.get()]; // 50% probability to go either direction
+        };
+        return i;
+    };
+};
+
+/*  */
+function species() {
+    this.genNumber = 1, 
+    this.genSize = parameters.popSize,
+    this.tree = [],
+    this.freq = {},
+    this.freq2Up = {};
+};
+
+/* Launches a new simulation routine with the current parameters */
+function output_Initialise() {
+
+};
+
+/* jQuery event listeners for the Output Tab */
 $(document).ready(function(){
 
     /* jQuery event listener to operate the plot toolbar */
@@ -13,41 +91,22 @@ $(document).ready(function(){
 		$("#"+tab_id).addClass('current');
 	})
 
+    /* jQuery event listener for the "n =" input */
+     $('#output_simInput').change(function() {
+        var x = Math.floor($(this).val());
+        if (x < 1 || x > 1000 ) {
+            $('#output_simInput').val(parameters.simInput);
+        } else {
+            parameters.simInput = x;
+            if (x != $(this).val()) {
+                $('#output_simInput').val(parameters.simInput);
+            };
+        };
+    });
+
 })
 
-/*function alleleMaster() {
-    var fullPool = [
-        {label: "A", colour: "rgba(127, 201, 127, 1)"}, 
-        {label: "B", colour: "rgba(190, 174, 212, 1)"}, 
-        {label: "C", colour: "rgba(253, 192, 134, 1)"}, 
-        {label: "D", colour: "rgba(255, 255, 153, 1)"}, 
-        {label: "E", colour: "rgba(56, 108, 176, 1)"}, 
-        {label: "F", colour: "rgba(240, 2, 127, 1)"}, 
-        {label: "G", colour: "rgba(191, 91, 23, 1)"}, 
-        {label: "H", colour: "rgba(102, 102, 102 ,1)"}
-    ];
-
-    this.pool = [],
-        this.labels = [],
-        this.colours = [];
-
-    this.create = function() {
-        for (var i = 0; i < settings.numOfAlleles; i++) {
-            this.pool.push(i);
-            this.labels.push(fullPool[i].label);
-            this.colours.push(fullPool[i].colour);
-        };
-    };
-};
-
-function species() {
-    this.genNumber = 1, 
-    this.genSize = settings.popSize,
-    this.tree = [],
-    this.freq = {},
-    this.freq2Up = {};
-};
-
+/*
 species.prototype.allelesPack = function(toPack) {
     var toReturn = 0;
     toReturn |= toPack[0];
@@ -178,9 +237,9 @@ var allelFreq_Chart,
 
 function drawAlleleFreq() {
     var temp = [], y = 0;
-    for (var rowIndex = 0; rowIndex < settings.numOfPop; rowIndex++) {
+    for (var rowIndex = 0; rowIndex < parameters.numOfPop; rowIndex++) {
         temp = allSpecies[rowIndex].freqSummary(allSpecies[rowIndex].genNumber);
-        for (y = 1; y <= settings.numOfAlleles; y++) {
+        for (y = 1; y <= parameters.numOfAlleles; y++) {
             alleleFreq_Data.setValue(rowIndex, y, temp[y-1]);
         }
         temp.length = 0;
@@ -216,11 +275,11 @@ function drawCharts_Init() {
     var temp = [];
 
     alleleFreq_Data.addColumn("string", "Population");
-    for (var i = 0; i < settings.numOfAlleles; i++) {
+    for (var i = 0; i < parameters.numOfAlleles; i++) {
         alleleFreq_Data.addColumn("number", alleles.labels[i]);
     };
 
-    for (i = 0; i < settings.numOfPop; i++) {
+    for (i = 0; i < parameters.numOfPop; i++) {
         temp.push(allSpecies[i].freqSummary(allSpecies[i].genNumber));
         temp[i].unshift("#" + (i+1));
     };
@@ -252,10 +311,10 @@ function drawCharts_Init() {
 };
 
 function simulation_Load() {
-    var j = settings.init - 1;
+    var j = parameters.init - 1;
 
     alleles.create();
-    for (var i = 0; i < settings.numOfPop; i++) {
+    for (var i = 0; i < parameters.numOfPop; i++) {
         allSpecies.push(new species());
         allSpecies[i].create();
         if (j > 0) {
@@ -270,7 +329,7 @@ function simulation_Load() {
 }
 
 function simulation_Update(howMany) {
-    for (var i = 0; i < settings.numOfPop; i++) {
+    for (var i = 0; i < parameters.numOfPop; i++) {
         allSpecies[i].mate(howMany);
     };
     calculateFST();
@@ -280,16 +339,6 @@ function simulation_Update(howMany) {
     google.charts.setOnLoadCallback(drawAlleleFreq);
     google.charts.setOnLoadCallback(drawFST);
 };
-
-$("#alleleFreq_Show").click(function () {
-    $("#fst").css({display: "none"});
-    $("#alleleFreq").css({display: "inline"});
-});
-
-$("#fst_Show").click(function () {
-    $("#alleleFreq").css({display: "none"});
-    $("#fst").css({display: "inline"});
-});
 
 $("#sim_1").click(function () {
     if (processFlag === false) {
@@ -310,13 +359,4 @@ $("#sim_X").click(function () {
         processFlag = true;
         simulation_Update(parseInt($("#sim_input").val()));
     };
-});
-
-$('#sim_input').on("focusout", function() {
-    var x = $(this);
-    if (x.val() < 1 || x.val() > 1000) {
-        x.val(settings.simInput);
-    } else {
-        settings.simInput = x.val();
-    }
 });*/
