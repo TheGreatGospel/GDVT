@@ -71,9 +71,10 @@ function allelePool() {
 /* keyword to optimise the browser memory usage                                      */
 function species() {
     /* Load in population specific parameters into the species object */
-    this.genSize = parameters.popSize,
-    this.mutaRate = parameters.mutationRate,
-    this.numOfMigrants = parameters.numOfMigrants,
+    this.popSize = parameters.popSize,
+    this.mutaRate = 0,
+    this.numOfMigrants = parameters.numOfMigrants;
+    if (parameters.mutationRate != 0) {this.mutaRate = math.fraction(1, parameters.mutationRate)};
 
     /* Data storage variables */
     this.currentPop = [],
@@ -84,6 +85,8 @@ function species() {
 /* The following methods are unique to the species object: */
 /*     - allelesPack(toPack)                               */
 /*     - allelesUnpack(toUnpack)                           */
+/*     - create()                                          */
+/*     - mate()                                            */
 
 species.prototype.allelesPack = function(toPack) {
     /* toPack takes an array of size two and compresses it */
@@ -121,15 +124,16 @@ species.prototype.create = function() {
         this.freq2Up[i] = [0];
     };
 
+    this.currentPop.push([]) // Pushes an empty array into currentPop, this is primarily functionality to assist future updates to the tool
     poolSize--; // Subtract poolSize by one to get it back as a zero-indexed number
 
-    for (i = 0; i < this.genSize; i++) {
+    for (i = 0; i < this.popSize; i++) {
         /* Load into allelePool two alleles (represented with the numbers 0-poolSize) */
         allelePool.push(getRandomInt(0, poolSize));
         allelePool.push(getRandomInt(0, poolSize));
 
         /* Add the compressed allelePool (which represents a member) to the population */
-        this.currentPop.push(this.allelesPack(allelePool));
+        this.currentPop[0].push(this.allelesPack(allelePool));
             
         /* Increase the corresponding frequencies */
         /* Note that the first index corresponds to the allele type and */
@@ -144,6 +148,61 @@ species.prototype.create = function() {
     };
 };
 
+species.prototype.mate = function () {
+    var parentGen = this.currentPop.shift(),
+        poolSize = alleles.getUprBound(),
+        parents = [], parentAPool = [], parentBPool = [], allelePool = [];
+
+    this.currentPop.push([]);
+    for (var i = 0; i < poolSize; i++) {
+        this.freq[i].push(0);
+        this.freq2Up[i].push(0);
+    };
+
+    for (i = 0; i < this.popSize; i++) {
+        parents.push(getRandomInt(0, this.popSize - 1));
+        parents.push(getRandomInt(0, this.popSize - 1));
+        while (parents[0] === parents[1]) {
+            parents[rngBin.get()] = getRandomInt(0, this.popSize - 1);
+        };
+
+        parentAPool = this.allelesUnpack(parentGen[parents[0]]);
+        parentBPool = this.allelesUnpack(parentGen[parents[1]]);
+
+        allelePool.push(parentAPool[rngBin.get()]);
+        if (math.random() <= this.mutaRate) {
+            allelePool[0] = alleles.mutate(allelePool[0]);
+        };
+        allelePool.push(parentBPool[rngBin.get()]);
+        if (math.random() <= this.mutaRate) {
+            allelePool[1] = alleles.mutate(allelePool[1]);
+        };
+            
+        if (rngBin.get() === 0) {
+            allelePool.reverse();
+        };
+
+        this.currentPop[0].push(this.allelesPack(allelePool));
+
+        this.freq[allelePool[0]][allSpecies.genNumber]++;
+        this.freq[allelePool[1]][allSpecies.genNumber]++;
+        if (allelePool[0] === allelePool[1]) {
+            this.freq2Up[allelePool[0]][allSpecies.genNumber]++;
+        };
+
+        allelePool.length = 0;
+        parents.length = 0;
+        parentAPool.length = 0;
+        parentBPool.length = 0;
+    };
+
+    parentGen.length = 0;
+};
+
+species.prototype.migrate = function () {
+
+};
+
 function output_TimerManagement() {
     if (timerVars.stage == 0) {
         allSpecies.push(new species());
@@ -152,13 +211,21 @@ function output_TimerManagement() {
 
         if (timerVars.index >= parameters.numOfPop) {
             timerVars.stage = 1;
+            timerVars.index = 0;
         };
-        
     } else if (timerVars.stage == 1) {
-        timerVars.stage = 2
-                //if (j > 0) {
-        //    allSpecies[i].mate(j);
-        //};
+        if (allSpecies.genNumber >= timerVars.howMany) {
+            timerVars.stage = 2;
+            timerVars.index = 0;
+        } else {
+            for (var i = 0; i < allSpecies.length; i++) {
+                allSpecies[i].migrate();
+            };
+            for (i = 0; i < allSpecies.length; i++) {
+                allSpecies[i].mate();
+            };
+            allSpecies.genNumber++;
+        };
     } else if (timerVars.stage == 2) {
         //calculateFST();
         timerVars.toEnd = true;
@@ -182,8 +249,6 @@ function output_TimerManagement() {
 
 /* Launches a new simulation routine with the current parameters */
 function output_Initialise(webpageLoaded = true) {
-    var j = parameters.init - 1;
-
     $('.output_simButton').prop('disabled', true);
     $('#output_interrupt').prop('disabled', false);
     $('#paraMag_submit').prop('disabled', true);
@@ -209,6 +274,7 @@ function output_Initialise(webpageLoaded = true) {
     
     timerVars.index = 0;
     timerVars.stage = 0;
+    timerVars.howMany = parameters.init;
     timerVars.toEnd = false;
     timerVars.tickTock = setInterval(output_TimerManagement, allSpecies.simRate);
 };
@@ -244,63 +310,7 @@ $(document).ready(function(){
 
 })
 
-/* species.prototype.mate = function(numOfTimes = 1) {
-    var i = 1, j = 0, 
-        parentGen, 
-        parents = [], parentAPool = [], parentBPool = [], allelePool = [];
-
-    if (numOfTimes < 1) {
-        numOfTimes = 1;
-    };
-
-    while (i <= numOfTimes) {
-        
-        parentGen = this.tree.shift();
-        this.tree.push([]);
-
-        for (j = 0; j < alleles.pool.length; j++) {
-            this.freq[j].push(0);
-            this.freq2Up[j].push(0);
-        };
-
-        for (j = 0; j < this.genSize; j++) {
-            parents.push(getRandomInt(0, this.genSize - 1));
-            parents.push(getRandomInt(0, this.genSize - 1));
-            while (parents[0] === parents[1]) {
-                parents[rng.bop()] = getRandomInt(0, this.genSize - 1);
-            };
-
-            parentAPool = this.allelesUnpack(parentGen[parents[0]]);
-            parentBPool = this.allelesUnpack(parentGen[parents[1]]);
-
-            allelePool.push(parentAPool[rng.bop()]);
-            allelePool.push(parentBPool[rng.bop()]);
-            
-            if (rng.bop() === 0) {
-                allelePool.reverse();
-            };
-
-            this.tree[0].push(this.allelesPack(allelePool));
-
-            this.freq[allelePool[0]][this.genNumber]++;
-            this.freq[allelePool[1]][this.genNumber]++;
-            if (allelePool[0] === allelePool[1]) {
-                this.freq2Up[allelePool[0]][this.genNumber]++;
-            };
-
-            allelePool.length = 0;
-            parents.length = 0;
-            parentAPool.length = 0;
-            parentBPool.length = 0;
-        };
-
-        parentGen.length = 0;
-        i++;
-        this.genNumber++;
-    }
-};
-
-var allelFreq_Chart,
+/*var allelFreq_Chart,
     alleleFreq_Data,
     alleleFreq_Options,
     FST_Chart,

@@ -176,7 +176,7 @@
             numOfAlleles: 8,    // Number of Allele Types
             mutationRate: 300,  // Mutation Rate
             numOfMigrants: 1,   // Number of Migrants
-            init: 1,            // Initial Number of Simulations
+            init: 3,            // Initial Number of Simulations
             simRate: 1,         // Simulation Rate
 
             /* Output Tab */
@@ -189,6 +189,7 @@
         timerVars = {                // Stores the timer variables to get Javascript to think in more than two threads 
             index: 0,
             stage: 0,
+            howMany: 0,
             toEnd: false
         },
         statsMaster = {
@@ -202,7 +203,6 @@
 
     parameters_Initialise();
     output_Initialise(webpageLoaded = false);
-
 
     /*allSpecies.push(12); allSpecies.push(12);
     allSpecies.push(12); allSpecies.push(12);
