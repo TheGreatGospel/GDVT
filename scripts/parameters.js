@@ -5,7 +5,7 @@ function parameters_Initialise() {
     $('#paraMag_numOfAlleles').val(parameters.numOfAlleles);
     $('#paraMag_mutaRate').val(parameters.mutationRate);
         $('#paraMag_mutaRateChild').val(parameters.mutationRate);
-        $('#paraMag_mutaRateChildToo').text("1 in a "+ parameters.mutationRate);
+        $('#paraMag_mutaRateChildToo').text('1 in a '+ parameters.mutationRate);
     $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
         $('#paraMag_numOfMigrantsChild').text(parameters.popSize);
     $('#paraMag_init').val(parameters.init);
@@ -19,14 +19,13 @@ function parameters_Initialise() {
 /* jQuery event listeners for the Parameters Tab */
 $(document).ready(function(){
 
-    /* jQuery event listener fopr the "Submit Parameters" button */
-    $("#paraMag_submit").click(function () {
-        $("#dummy_Output").click(); // Forces a click on the toolbar's Output button
-
-        output_Initialise();
+    /* jQuery event listener fopr the 'Submit Parameters' button */
+    $('#paraMag_submit').click(function () {
+        $('#dummy_Output').click(); // Forces a click on the toolbar's Output button
+        output_Initialise(); // Starts a new simulation routine
     });
 
-    /* jQuery event listener for the "Show Detailed Information" checkbox */
+    /* jQuery event listener for the 'Show Detailed Information' checkbox */
     $('#paraMag_show').change(function() {
         if ($('#paraMag_show').is(':checked')) {
             $('.paraMag_Info').css({display: 'block'});
@@ -35,7 +34,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Number of Populations" input */
+    /* jQuery event listener for the 'Number of Populations' input */
      $('#paraMag_numOfPop').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 10 ) {
@@ -48,7 +47,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Population Size" input */
+    /* jQuery event listener for the 'Population Size' input */
      $('#paraMag_popSize').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 500 ) {
@@ -68,7 +67,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Number of Allele Types" input */
+    /* jQuery event listener for the 'Number of Allele Types' input */
      $('#paraMag_numOfAlleles').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 8 ) {
@@ -81,7 +80,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Mutation Rate" input */
+    /* jQuery event listener for the 'Mutation Rate' input */
      $('#paraMag_mutaRate').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
@@ -94,28 +93,28 @@ $(document).ready(function(){
             $('#paraMag_mutaRateChild').val(x);
             /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
             if (x == 0) {
-                $('#paraMag_mutaRateChildToo').text("no");
+                $('#paraMag_mutaRateChildToo').text('no');
             } else {
-                $('#paraMag_mutaRateChildToo').text("1 in a "+x);
+                $('#paraMag_mutaRateChildToo').text('1 in a '+x);
             };
         };
     });
     
-    /* jQuery event listener for the "Mutation Rate" slider */
+    /* jQuery event listener for the 'Mutation Rate' slider */
     $('#paraMag_mutaRateChild').change(function() {
         var x = Math.floor($(this).val());
         parameters.mutationRate = x;
         $('#paraMag_mutaRate').val(x);
         /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
         if (x == 0) {
-            $('#paraMag_mutaRateChildToo').text("no");
+            $('#paraMag_mutaRateChildToo').text('no');
         } else {
-            $('#paraMag_mutaRateChildToo').text("1 in  a "+x);
+            $('#paraMag_mutaRateChildToo').text('1 in  a '+x);
         };
     });
 
-    /* jQuery event listener for the "Number of Migrants" input */
-    /* #paraMag_numOfMigrantsChild is handled by the jQuery event listener for the "Population Size" input */
+    /* jQuery event listener for the 'Number of Migrants' input */
+    /* #paraMag_numOfMigrantsChild is handled by the jQuery event listener for the 'Population Size' input */
      $('#paraMag_numOfMigrants').change(function() {
         var x = Math.floor($(this).val());
         if (x < 0 || x > parameters.popSize) {
@@ -128,7 +127,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Initial Number of Simulations" input */
+    /* jQuery event listener for the 'Initial Number of Simulations' input */
      $('#paraMag_init').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
@@ -141,7 +140,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Simulation Rate" input */
+    /* jQuery event listener for the 'Simulation Rate' input */
      $('#paraMag_simRate').change(function() {
         var x = $(this).val();
         if (x < 0.01 || x > 5) {
@@ -152,7 +151,7 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the "Simulation Rate" slider */
+    /* jQuery event listener for the 'Simulation Rate' slider */
     $('#paraMag_simRateChild').change(function() {
         var x = $(this).val();
         parameters.simRate = x*100; // NB: Stored as an integer to prevent JS's precision error

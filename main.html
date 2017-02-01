@@ -7,13 +7,13 @@
 
 <!-- CSS and JS Libraries (Start) -->
 <head>
-    <link rel="stylesheet" type="text/css" href="css/toolStyle.css">
+    <link rel='stylesheet' type='text/css' href='css/toolStyle.css'>
 
-    <script src="libraries/jquery-3.1.1.min.js"></script>
-    <script src="libraries/math.min.js"></script>
+    <script src='libraries/jquery-3.1.1.min.js'></script>
+    <script src='libraries/math.min.js'></script>
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
+    <script type='text/javascript'>
         google.charts.load('current', {packages: ['corechart', 'bar', 'line']});
     </script>
 </head>
@@ -22,63 +22,63 @@
 <body>
 
 <!-- Top Matter HTML (Start) -->
-<div class="main" id="header">
+<div class='main' id='header'>
     Genetic Drift Visualisation Tool
 </div>
 
-<ul class="toolbar">
-    <li class="current" data-tab="jsBody_Output" id="dummy_Output">Output</li>
-    <li data-tab="jsBody_Parameters">Parameters</li>
-    <li data-tab="jsBody_About">About</li>
+<ul class='toolbar'>
+    <li class='current' data-tab='jsBody_Output' id='dummy_Output'>Output</li>
+    <li data-tab='jsBody_Parameters'>Parameters</li>
+    <li data-tab='jsBody_About'>About</li>
 </ul>
 <!-- Top Matter HTML (End) -->
 
 <!-- Output Tab HTML (Start) -->
-<div class="main toolbar-content current" id="jsBody_Output">
-    <div id="output_heading">
-        <span id="output_headingChild">
-            Generation: <span id="output_genNum"></span><br>
+<div class='main toolbar-content current' id='jsBody_Output'>
+    <div id='output_heading'>
+        <span id='output_headingChild'>
+            Generation: <span id='output_genNum'></span><br>
         </span>
-        <span id="output_headingChildToo">
-            F<sub>ST</sub>: <span id="output_fst"></span>
+        <span id='output_headingChildToo'>
+            F<sub>ST</sub>: <span id='output_fst'></span>
         </span>
     </div>
 
-    <div id="jsBody_Container">
-        <div id="output_L">
-            <ul class="output_ulL">
-                <li class="current" data-tab="output_alleleFreqChart">Allele Frequencies</li>
-                <li data-tab="output_fstChart">Coancestry Coefficient</li>
-                <li data-tab="output_indivAlleleChart">Inidividual Alleles</li>
+    <div id='jsBody_Container'>
+        <div id='output_L'>
+            <ul class='output_ulL'>
+                <li class='current' data-tab='output_alleleFreqChart'>Allele Frequencies</li>
+                <li data-tab='output_fstChart'>Coancestry Coefficient</li>
+                <li data-tab='output_indivAlleleChart'>Inidividual Alleles</li>
             </ul>
-            <div class="output_chartContainer">
-                <div class="output_chartDim current" id="output_alleleFreqChart">allele freq</div>
-                <div class="output_chartDim" id="output_fstChart">fst chart</div>
-                <div class="output_chartDim" id="output_indivAlleleChart">individual allele</div>
+            <div class='output_chartContainer'>
+                <div class='output_chartDim current' id='output_alleleFreqChart'>allele freq</div>
+                <div class='output_chartDim' id='output_fstChart'>fst chart</div>
+                <div class='output_chartDim' id='output_indivAlleleChart'>individual allele</div>
             </div>
         </div>
-        <div id="output_R">
-            <ul class="output_ulR">
+        <div id='output_R'>
+            <ul class='output_ulR'>
                 <li>
                     Simulate next <i>n</i> generations: <br>
-                    <button class="output_simButton" howMany="1">n = 1 </button> 
-                    <button class="output_simButton" howMany="10">n = 10</button>
-                    <button class="output_simButton" howMany="output_simInput">n =</button>
-                    <input id="output_simInput" type="number" min=0 max=1000 value=100>
+                    <button class='output_simButton' howMany='1'>n = 1 </button> 
+                    <button class='output_simButton' howMany='10'>n = 10</button>
+                    <button class='output_simButton' howMany='output_simInput'>n =</button>
+                    <input id='output_simInput' type='number' min=0 max=1000 value=100>
                 </li>
                 <li>
-                    <button id="output_interrupt" disabled="true">Interrupt Simulation</button>
+                    <button id='output_interrupt' disabled='true'>Interrupt Simulation</button>
                 </li>
                 <li>
                     Current Parameters
-                    <ul class="output_curParaMag">
-                        <li>Number of Populations: <span="output_numOfPop"></span></li>
-                        <li>Population Size: <span="output_popSize"></span></li>
-                        <li>Number of Allele Types: <span="output_numOfAlleles"></span></li>
-                        <li>Mutation Rate: <span="output_mutaRate"></span></li>
-                        <li>Number of Migrants: <span="output_numOfMigrants"></span></li>
-                        <li>Initial Number of Simulations: <span="output_ubut"></span></li>
-                        <li>Simulation Rate: <span="output_simRate"></span></li>
+                    <ul class='output_curParaMag'>
+                        <li>Number of Populations: <span id='output_numOfPop'></span></li>
+                        <li>Population Size: <span id='output_popSize'></span></li>
+                        <li>Number of Allele Types: <span id='output_numOfAlleles'></span></li>
+                        <li>Mutation Rate: <span id='output_mutaRate'></span></li>
+                        <li>Number of Migrants: <span id='output_numOfMigrants'></span></li>
+                        <li>Initial Number of Simulations: <span id='output_init'></span></li>
+                        <li>Simulation Rate: <span id='output_simRate'></span></li>
                     </ul>
                 </li>
             </ul>
@@ -88,61 +88,61 @@
 <!-- Output Tab HTML (End) -->
 
 <!-- Parameters Tab HTML (Start) -->
-<div class="main toolbar-content" id="jsBody_Parameters">
-    <div id="jsBody_Container">
-        <ul class="paraMag" id="paraMag_L">
+<div class='main toolbar-content' id='jsBody_Parameters'>
+    <div id='jsBody_Container'>
+        <ul class='paraMag' id='paraMag_L'>
             <li>
-                Number of Populations: <input id="paraMag_numOfPop" type="number" min=1 max=10> <br>
-                <span class="paraMag_Info">
+                Number of Populations: <input id='paraMag_numOfPop' type='number' min=1 max=10> <br>
+                <span class='paraMag_Info'>
                     Sets the number of populations to observe in the simulation routine. <br> Takes an integer value between 1 and 10 (inclusive).
                 </span>
             </li>
             <li>
-                Population Size: <input id="paraMag_popSize" type="number" min=50 max=500> <br>
-                <span class="paraMag_Info">
+                Population Size: <input id='paraMag_popSize' type='number' min=50 max=500> <br>
+                <span class='paraMag_Info'>
                     Sets a population's <b>fixed</b> size in the simulation routine. Takes an integer value between 50 and 500 (inclusive).
                 </span>
             </li>
             <li>
-                Number of Allele Types: <input id="paraMag_numOfAlleles" type="number" min=2 max=8> <br>
-                <span class="paraMag_Info">
+                Number of Allele Types: <input id='paraMag_numOfAlleles' type='number' min=2 max=8> <br>
+                <span class='paraMag_Info'>
                     Sets and limits the number of possible allele types in a population. Takes an integer value between 2 and 8 (inclusive).
                 </span>
             </li>
             <li>
-                Mutation Rate: <input id="paraMag_mutaRate" type="number" min=1 max=1000> <br>
-                <span class="paraMag_space"></span><input class="paraMag_slider" id="paraMag_mutaRateChild" type="range" min=0 max=1000 step=1> <br>
-                <span class="paraMag_Info">
-                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id="paraMag_mutaRateChildToo"></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
+                Mutation Rate: <input id='paraMag_mutaRate' type='number' min=1 max=1000> <br>
+                <span class='paraMag_space'></span><input class='paraMag_slider' id='paraMag_mutaRateChild' type='range' min=0 max=1000 step=1> <br>
+                <span class='paraMag_Info'>
+                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id='paraMag_mutaRateChildToo'></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
-                Number of Migrants: <input id="paraMag_numOfMigrants" type="number" min=0 max=499> <br>
-                <span class="paraMag_Info">
-                    Sets the number of members who migrate each generation. Takes an integer value between 0 and <span id="paraMag_numOfMigrantsChild"></span> (inclusive).
+                Number of Migrants: <input id='paraMag_numOfMigrants' type='number' min=0 max=499> <br>
+                <span class='paraMag_Info'>
+                    Sets the number of members who migrate each generation. Takes an integer value between 0 and <span id='paraMag_numOfMigrantsChild'></span> (inclusive).
                 </span>
             </li>
             <li>
-                Initial Number of Simulations: <input id="paraMag_init" type="number" min=1 max=1000> <br>
-                <span class="paraMag_Info">
+                Initial Number of Simulations: <input id='paraMag_init' type='number' min=1 max=1000> <br>
+                <span class='paraMag_Info'>
                     Sets the number of simulations to conduct before the user can interact with the <b>Output</b> page. Takes an integer value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
-                Simulation Rate: <input id="paraMag_simRate" type="number" min=0.01 max=5> <br>
-                <span class="paraMag_space"></span><input id="paraMag_simRateChild" type="range" min=0.01 max=5 step=0.01> <br>
-                <span class="paraMag_Info">
+                Simulation Rate: <input id='paraMag_simRate' type='number' min=0.01 max=5> <br>
+                <span class='paraMag_space'></span><input id='paraMag_simRateChild' type='range' min=0.01 max=5 step=0.01> <br>
+                <span class='paraMag_Info'>
                     Sets the timer rate of the executing consecutive simulations. The user interruption button will be more responsive if the Simulation Rate is set to a high value. Takes a value between 0.01 and 5.00 seconds (inclusive).
                 </span>
             </li>
         </ul>
 
-        <ul class="paraMag" id="paraMag_R">
+        <ul class='paraMag' id='paraMag_R'>
             <li>
-                <button id="paraMag_submit">Submit Parameters</button> <br>
+                <button id='paraMag_submit'>Submit Parameters</button> <br>
             </li>
-            <li id="small">
-                <input id="paraMag_show" type="checkbox">Show detailed information
+            <li id='small'>
+                <input id='paraMag_show' type='checkbox'>Show detailed information
             </li>
         </ul>
     </div>
@@ -150,23 +150,23 @@
 <!-- Parameters Tab HTML (Start) -->
 
 <!-- About Tab HTML (Start) -->
-<div class="main toolbar-content" id="jsBody_About">
+<div class='main toolbar-content' id='jsBody_About'>
 
 </div>
 <!-- About Tab HTML (End) -->
 
 <!-- Bottom Matter HTML (Start) -->
-<div class="main" id="copyright">
+<div class='main' id='copyright'>
     Genetic Drift Visualisation Tool ver 0.2.1 <br>
     &copy 2016-2017 David Chan
 </div>
 <!-- Bottom Matter HTML (End) -->
 
 <!-- Initialisation of JS Functionality (Start) -->
-<script src="scripts/main.js"></script>
-<script src="scripts/parameters.js"></script>
-<script src="scripts/output.js"></script>
-<script src="scripts/statCalc.js"></script>
+<script src='scripts/main.js'></script>
+<script src='scripts/parameters.js'></script>
+<script src='scripts/output.js'></script>
+<script src='scripts/statCalc.js'></script>
 
 <script>
     var parameters = {
@@ -182,9 +182,9 @@
             /* Output Tab */
             simInput: 100       // Number of simulations to do consecutively
         },
-        debug = false,                 // Hidden option to print various calculations to console.log()
-        alleles = new allelePool(),
-        rngBin = new randomBinary(),
+        debug = false,               // Hidden option to print various calculations to console.log()
+        alleles = new allelePool(),  // Stores the allelePool 'struct' and its methods
+        rngBin = new randomBinary(), // Stores the binary random number generator 'struct'
         allSpecies = [],
         statsMaster = {
             FST: []
@@ -195,7 +195,19 @@
     });
 
     parameters_Initialise();
-    output_Initialise();
+    output_Initialise(webpageLoaded = false);
+
+    /*allSpecies.push(12); allSpecies.push(12);
+    allSpecies.push(12); allSpecies.push(12);
+    allSpecies.hi2 = hi;
+    allSpecies.simRate = 2;
+    //allSpecies.hi2();
+    //allSpecies.length = 0;
+    //allSpecies.hi2();
+    console.log(allSpecies)
+    
+    function hi() {console.log(this.length)};
+*/
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 
