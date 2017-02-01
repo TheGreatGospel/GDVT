@@ -87,6 +87,7 @@ function species() {
 /*     - allelesUnpack(toUnpack)                           */
 /*     - create()                                          */
 /*     - mate()                                            */
+/*     - migrate()                                         */
 
 species.prototype.allelesPack = function(toPack) {
     /* toPack takes an array of size two and compresses it */
@@ -124,7 +125,8 @@ species.prototype.create = function() {
         this.freq2Up[i] = [0];
     };
 
-    this.currentPop.push([]) // Pushes an empty array into currentPop, this is primarily functionality to assist future updates to the tool
+    this.currentPop.push([]) // Pushes an empty array into currentPop, this is primarily 
+                             // functionality to assist future updates to the tool
     poolSize--; // Subtract poolSize by one to get it back as a zero-indexed number
 
     for (i = 0; i < this.popSize; i++) {
@@ -149,26 +151,36 @@ species.prototype.create = function() {
 };
 
 species.prototype.mate = function () {
+    /* Remove the oldest population from the currentPop array to be our parent generation */
     var parentGen = this.currentPop.shift(),
-        poolSize = alleles.getUprBound(),
+        /* popSize converts this.popSize to a zero-indexed number                         */
+        popSize = this.popSize - 1, 
+        /* Generate a couple of local variable arrays for use                             */
         parents = [], parentAPool = [], parentBPool = [], allelePool = [];
 
-    this.currentPop.push([]);
+    /* Increase the size of the allele frequencies arrays by one                          */
     for (var i = 0; i < poolSize; i++) {
         this.freq[i].push(0);
         this.freq2Up[i].push(0);
     };
+    this.currentPop.push([]); // Pushes an empty array into currentPop, this is primarily 
+                              // functionality to assist future updates to the tool                          
 
     for (i = 0; i < this.popSize; i++) {
-        parents.push(getRandomInt(0, this.popSize - 1));
-        parents.push(getRandomInt(0, this.popSize - 1));
+        /* Acquire some uniquely indexed parents with simple-random sampling              */
+        parents.push(getRandomInt(0, popSize));
+        parents.push(getRandomInt(0, popSize));
         while (parents[0] === parents[1]) {
-            parents[rngBin.get()] = getRandomInt(0, this.popSize - 1);
+            parents[rngBin.get()] = getRandomInt(0, popSize);
         };
 
+        /* Uncompress the parents' alleles into array form                                */
         parentAPool = this.allelesUnpack(parentGen[parents[0]]);
         parentBPool = this.allelesUnpack(parentGen[parents[1]]);
 
+        /* The child inherits one random allele from each parent. Then the inhreited      */
+        /* alleles have a chance to mutate using an one-step mutation scheme (respecting  */
+        /* boundaries)                                                                    */                                
         allelePool.push(parentAPool[rngBin.get()]);
         if (math.random() <= this.mutaRate) {
             allelePool[0] = alleles.mutate(allelePool[0]);
@@ -177,25 +189,32 @@ species.prototype.mate = function () {
         if (math.random() <= this.mutaRate) {
             allelePool[1] = alleles.mutate(allelePool[1]);
         };
-            
+        
+        /* Add in some additional variation to the possible allele structure              */
         if (rngBin.get() === 0) {
             allelePool.reverse();
         };
 
+        /* Add the compressed allelePool (which represents a member) to the population    */
         this.currentPop[0].push(this.allelesPack(allelePool));
 
+        /* Increase the corresponding frequencies                                         */
+        /* Note that the first index corresponds to the allele type and the second index  */
+        /* corresponds to which generation                                                */
         this.freq[allelePool[0]][allSpecies.genNumber]++;
         this.freq[allelePool[1]][allSpecies.genNumber]++;
         if (allelePool[0] === allelePool[1]) {
             this.freq2Up[allelePool[0]][allSpecies.genNumber]++;
         };
 
+        /* Cleanup local variable arrays                                                  */
         allelePool.length = 0;
         parents.length = 0;
         parentAPool.length = 0;
         parentBPool.length = 0;
     };
 
+    /* Permanently cleanup the parent array */
     parentGen.length = 0;
 };
 
