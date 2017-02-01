@@ -9,8 +9,8 @@ function parameters_Initialise() {
     $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
         $('#paraMag_numOfMigrantsChild').text(parameters.popSize);
     $('#paraMag_init').val(parameters.init);
-    $('#paraMag_simRate').val(parameters.simRate/100);
-        $('#paraMag_simRateChild').val(parameters.simRate/100);
+    $('#paraMag_simRate').val(parameters.simRate/1000);
+        $('#paraMag_simRateChild').val(parameters.simRate/1000);
     
     // Setup parameters.simInput as well
     $('#output_simInput').val(parameters.simInput);
@@ -143,10 +143,10 @@ $(document).ready(function(){
     /* jQuery event listener for the 'Simulation Rate' input */
      $('#paraMag_simRate').change(function() {
         var x = $(this).val();
-        if (x < 0.01 || x > 5) {
-            $('#paraMag_simRate').val(parameters.simRate/100);
+        if (x < 0.001 || x > 5) {
+            $('#paraMag_simRate').val(parameters.simRate/1000);
         } else {
-            parameters.simRate = x*100;
+            parameters.simRate = x*1000;
             $('#paraMag_simRateChild').val(x);
         };
     });
@@ -154,7 +154,7 @@ $(document).ready(function(){
     /* jQuery event listener for the 'Simulation Rate' slider */
     $('#paraMag_simRateChild').change(function() {
         var x = $(this).val();
-        parameters.simRate = x*100; // NB: Stored as an integer to prevent JS's precision error
+        parameters.simRate = x*1000; // NB: Stored as an integer to prevent JS's precision error
         $('#paraMag_simRate').val(x);
     });
 

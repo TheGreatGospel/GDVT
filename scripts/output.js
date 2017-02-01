@@ -122,7 +122,6 @@ species.prototype.create = function() {
     };
 
     poolSize--; // Subtract poolSize by one to get it back as a zero-indexed number
-    console.log(poolSize);
 
     for (i = 0; i < this.genSize; i++) {
         /* Load into allelePool two alleles (represented with the numbers 0-poolSize) */
@@ -145,12 +144,49 @@ species.prototype.create = function() {
     };
 };
 
+function output_TimerManagement() {
+    if (timerVars.stage == 0) {
+        allSpecies.push(new species());
+        allSpecies[timerVars.index].create();
+        timerVars.index++;
+
+        if (timerVars.index >= parameters.numOfPop) {
+            timerVars.stage = 1;
+        };
+        
+    } else if (timerVars.stage == 1) {
+        timerVars.stage = 2
+                //if (j > 0) {
+        //    allSpecies[i].mate(j);
+        //};
+    } else if (timerVars.stage == 2) {
+        //calculateFST();
+        timerVars.toEnd = true;
+    };
+
+    if (timerVars.toEnd) {
+        console.log("hi");
+        //google.charts.setOnLoadCallback(drawCharts_Init);
+        //google.charts.setOnLoadCallback(drawFST);
+
+        $('#output_genNum').html(allSpecies.genNumber);
+        //$('#output_fst').html(0.123456789);
+
+        $('.output_simButton').prop('disabled', false);
+        $('#output_interrupt').prop('disabled', true);
+        $('#paraMag_submit').prop('disabled', false);
+
+        clearInterval(timerVars.tickTock);
+    };
+};
+
 /* Launches a new simulation routine with the current parameters */
 function output_Initialise(webpageLoaded = true) {
     var j = parameters.init - 1;
 
     $('.output_simButton').prop('disabled', true);
     $('#output_interrupt').prop('disabled', false);
+    $('#paraMag_submit').prop('disabled', true);
 
     if (webpageLoaded) {
         allSpecies.length = 0;
@@ -160,31 +196,21 @@ function output_Initialise(webpageLoaded = true) {
     allSpecies.genNumber = 1;
     allSpecies.simRate = parameters.simRate;
 
+    $('#output_genNum').html(allSpecies.genNumber);
+    $('#output_fst').html('. . .');
+
     $('#output_numOfPop').text(parameters.numOfPop);
     $('#output_popSize').text(parameters.popSize);
     $('#output_numOfAlleles').text(parameters.numOfAlleles);
     $('#output_mutaRate').text(parameters.mutationRate);
     $('#output_numOfMigrants').text(parameters.numOfMigrants);
     $('#output_init').text(parameters.init);
-    $('#output_simRate').text(parameters.simRate/100);
-
-    for (var i = 0; i < parameters.numOfPop; i++) {
-        allSpecies.push(new species());
-        allSpecies[i].create();
-        //if (j > 0) {
-        //    allSpecies[i].mate(j);
-        //};
-    };
-
-    //calculateFST();
-    //google.charts.setOnLoadCallback(drawCharts_Init);
-    //google.charts.setOnLoadCallback(drawFST);
-
-    $('#output_genNum').html(allSpecies.genNumber);
-    //$('#output_fst').html(0.123456789);
-
-    $('.output_simButton').prop('disabled', false);
-    $('#output_interrupt').prop('disabled', true);
+    $('#output_simRate').text(parameters.simRate/1000);
+    
+    timerVars.index = 0;
+    timerVars.stage = 0;
+    timerVars.toEnd = false;
+    timerVars.tickTock = setInterval(output_TimerManagement, allSpecies.simRate);
 };
 
 /* jQuery event listeners for the Output Tab */
@@ -356,24 +382,6 @@ function drawCharts_Init() {
 
     alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
 };
-
-function simulation_Load() {
-    var j = parameters.init - 1;
-
-    alleles.create();
-    for (var i = 0; i < parameters.numOfPop; i++) {
-        allSpecies.push(new species());
-        allSpecies[i].create();
-        if (j > 0) {
-            allSpecies[i].mate(j);
-        };
-    };
-    $('#displayCurrentGen').html(allSpecies[0].genNumber);
-
-    calculateFST();
-    google.charts.setOnLoadCallback(drawCharts_Init);
-    google.charts.setOnLoadCallback(drawFST);
-}
 
 function simulation_Update(howMany) {
     for (var i = 0; i < parameters.numOfPop; i++) {
