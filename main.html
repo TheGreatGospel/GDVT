@@ -52,8 +52,8 @@
                 <li data-tab='output_indivAlleleChart'>Inidividual Alleles</li>
             </ul>
             <div class='output_chartContainer'>
-                <div class='output_chartDim current' id='output_alleleFreqChart'>allele freq</div>
-                <div class='output_chartDim' id='output_fstChart'>fst chart</div>
+                <div class='output_chartDim current' id='output_alleleFreqChart'></div>
+                <div class='output_chartDim' id='output_fstChart'></div>
                 <div class='output_chartDim' id='output_indivAlleleChart'>individual allele</div>
             </div>
         </div>
@@ -176,21 +176,49 @@
             numOfAlleles: 8,    // Number of Allele Types
             mutationRate: 300,  // Mutation Rate
             numOfMigrants: 1,   // Number of Migrants
-            init: 3,            // Initial Number of Simulations
+            init: 1,            // Initial Number of Simulations
             simRate: 1,         // Simulation Rate
 
             /* Output Tab */
             simInput: 100       // Number of simulations to do consecutively
         },
-        debug = false,               // Hidden option to print various calculations to console.log()
+        
         alleles = new allelePool(),  // Stores the allelePool 'struct' and its methods
         rngBin = new randomBinary(), // Stores the binary random number generator 'struct'
         allSpecies = [],             // Stores the simulation routine
         timerVars = {                // Stores the timer variables to get Javascript to think in more than two threads 
             index: 0,
             stage: 0,
-            howMany: 0,
+            toGenNum: 0,
             toEnd: false
+        },
+        
+        /* To Comment */
+        alleleFreq = {
+            options: {
+                title: 'Allele Frequencies',
+                height: 400,
+                width: 600,
+                hAxis: {
+                    title: 'Population'
+                },
+                vAxis: {
+                    title: 'Allele Frequency (%)',
+                    minValue: 0,
+                    maxValue: 1
+                },
+                isStacked: 'percent',
+                animation: {
+                    duration: 1000, // in milliseconds
+                    easing: 'out'
+                }
+            }
+        },
+
+        fst = {
+            options: {
+                title: 'Coancestry Coefficient (F<sub>ST</sub>)'
+            }
         },
         statsMaster = {
             FST: []
@@ -203,20 +231,6 @@
 
     parameters_Initialise();
     output_Initialise(webpageLoaded = false);
-
-    /*allSpecies.push(12); allSpecies.push(12);
-    allSpecies.push(12); allSpecies.push(12);
-    allSpecies.hi2 = hi;
-    allSpecies.simRate = 2;
-    //allSpecies.hi2();
-    //allSpecies.length = 0;
-    //allSpecies.hi2();
-    console.log(allSpecies)
-    
-    function hi() {console.log(this.length)};
-
-    
-*/
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 

@@ -20,7 +20,7 @@ function randomBinary() {
             index++; // Increment the index
         }   
         return toReturn;
-    }
+    };
 };
 
 /* jQuery event listeners for the Navigation Bar */
@@ -37,6 +37,6 @@ $(document).ready(function(){
         /* Gives visibility to the tab to swap to */
 		$(this).addClass('current');
 		$("#"+tab_id).addClass('current');
-	})
+	});
 
 });
