@@ -283,12 +283,12 @@ function output_TimerManagement() {
             allSpecies.genNumber++;
         };
     } else if (timerVars.stage == 2) {
-        google.charts.setOnLoadCallback(output_TimerManagementChild);
+        //google.charts.setOnLoadCallback(output_TimerManagementChild);
         timerVars.toEnd = true;
     };
 
     if (timerVars.toEnd) {
-        console.log("hi");
+        //console.log("hi");
         //google.charts.setOnLoadCallback(drawAlleleFreq);
         //google.charts.setOnLoadCallback(drawFST);
 
@@ -353,9 +353,9 @@ function output_Initialise(webpageLoaded = true) {
 
     if (webpageLoaded) {
         allSpecies.length = 0;
-        google.charts.setOnLoadCallback(output_InitialiseChildToo);
+        //google.charts.setOnLoadCallback(output_InitialiseChildToo);
     } else {
-        google.charts.setOnLoadCallback(output_InitialiseChild);  
+        //google.charts.setOnLoadCallback(output_InitialiseChild);  
     };
     
     /* Set up some  */
@@ -364,7 +364,7 @@ function output_Initialise(webpageLoaded = true) {
     allSpecies.simRate = parameters.simRate;
 
     /* Load up any additional setup for the google.DataTables */
-    google.charts.setOnLoadCallback(output_InitialiseChildTrois); 
+    //google.charts.setOnLoadCallback(output_InitialiseChildTrois); 
 
     $('#output_genNum').html(allSpecies.genNumber);
     $('#output_fst').html('. . .');
