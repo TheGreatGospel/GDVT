@@ -175,8 +175,8 @@
             popSize: 500,       // Population Size
             numOfAlleles: 8,    // Number of Allele Types
             mutationRate: 300,  // Mutation Rate
-            numOfMigrants: 1,   // Number of Migrants
-            init: 1,            // Initial Number of Simulations
+            numOfMigrants: 2,   // Number of Migrants
+            init: 2,            // Initial Number of Simulations
             simRate: 1,         // Simulation Rate
 
             /* Output Tab */
@@ -220,17 +220,19 @@
                 title: 'Coancestry Coefficient (F<sub>ST</sub>)'
             }
         },
-        statsMaster = {
-            FST: []
-        };
+        statFST = [];
 
     
     math.config({
         number: 'Fraction'
     });
 
+    $('#paraMag_submit').prop('disabled', true);
+    $('.output_simButton').prop('disabled', true);
     parameters_Initialise();
-    output_Initialise(webpageLoaded = false);
+
+    zz = function(){output_Initialise(webpageLoaded = false)};
+    google.charts.setOnLoadCallback(zz);
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 

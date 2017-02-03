@@ -16,8 +16,7 @@ function allelePool() {
             {label: 'G', colour: '#bf5b17'},
             {label: 'H', colour: '#666666'}
         ],
-        uprBound = 4,
-        ones = [-1, 1];
+        uprBound = 4;
     
     this.setUprBound = function () {
         /* setUprBound() allows the user to interface with uprBound  */
@@ -26,7 +25,7 @@ function allelePool() {
     };
 
     this.getUprBound = function () {
-        /* curUprBound() returns the current value of uprBound in _one-indexed_  form */
+        /* curUprBound() returns the current value of uprBound in _one-indexed_ form */
         return uprBound + 1;
     }
 
@@ -60,7 +59,7 @@ function allelePool() {
         } else if (i == 0) {
             i++; // 100% probability to go from 0 -> 1
         } else {
-            i += ones[rngBin.get()]; // 50% probability to go either direction
+            i += (1 - 2 * rngBin.get()); // 50% probability to go either direction
         };
         return i;
     };
@@ -87,7 +86,6 @@ function species() {
 /*     - allelesUnpack(toUnpack)                           */
 /*     - create()                                          */
 /*     - mate()                                            */
-/*     - migrate()                                         */
 /*     - freqSummary()                                     */
 /*     - freq2UpSummary()                                  */
 
@@ -220,10 +218,6 @@ species.prototype.mate = function () {
     parentGen.length = 0;
 };
 
-species.prototype.migrate = function () {
-
-};
-
 species.prototype.freqSummary = function(whichGen = 1) {
     var toReturn = [];
     if (whichGen < 1 || whichGen > allSpecies.genNumber) {
@@ -244,6 +238,50 @@ species.prototype.freq2UpSummary = function(whichGen = 1) {
         toReturn.push(this.freq2Up[i][whichGen - 1]);
     };
     return toReturn;
+};
+
+migrate = function(){
+    /*var limbo = [], index = 0, x = 0, y = 0, j = 0, tokens = [];
+    for (var i = 0; i < this.length; i++) {
+        for (j = 0; j < this[i].numOfMigrants; j++) {
+            index = getRandomInt(0, this[i].popSize - 1);
+            x = this[i].currentPop[0].splice(index, 1)[0];
+            limbo.push({member: x, origin: i});
+        };
+        tokens.push([]);
+    };
+
+    for (i = 0; i < limbo.length; i++) {
+        x = getRandomInt(0, this.length - 1);
+        if (x == limbo[i].origin) {
+            x = x + 1 - (2*rngBin.get());
+            if (x < 0) {
+                x = this.length - 1;
+            };
+            if (x > this.length - 1) {
+                x = 0;
+            };
+        };
+        limbo[i].destination = x;
+        tokens[x].push(limbo[i]);
+    };
+
+    console.log(tokens);
+    for (i = 0; i < tokens.length; i++) {
+        while (tokens[i].length > this[i].numOfMigrants) {
+            j = tokens[i].splice(getRandomInt(0, tokens[i].length - 1), 1);
+            x = 1 - (2*rngBin.get());
+            y = j.destination - x;
+            while (j = )
+        };
+    };
+    console.log(tokens);
+
+    for (i = 0; i < limbo.length; i++) {
+        if (limbo[i].origin == limbo[i].destination) {
+            console.log("Why");
+        }
+    }*/
 };
 
 function output_TimerManagementChild() {
@@ -273,9 +311,7 @@ function output_TimerManagement() {
             timerVars.stage = 2;
             timerVars.index = 0;
         } else {
-            for (var i = 0; i < allSpecies.length; i++) {
-                allSpecies[i].migrate();
-            };
+            allSpecies.migrate();
             for (i = 0; i < allSpecies.length; i++) {
                 allSpecies[i].mate();
             };
@@ -283,13 +319,12 @@ function output_TimerManagement() {
             allSpecies.genNumber++;
         };
     } else if (timerVars.stage == 2) {
-        //google.charts.setOnLoadCallback(output_TimerManagementChild);
+        output_TimerManagementChild();
         timerVars.toEnd = true;
     };
 
     if (timerVars.toEnd) {
         //console.log("hi");
-        //google.charts.setOnLoadCallback(drawAlleleFreq);
         //google.charts.setOnLoadCallback(drawFST);
 
         $('#output_genNum').html(allSpecies.genNumber);
@@ -353,9 +388,10 @@ function output_Initialise(webpageLoaded = true) {
 
     if (webpageLoaded) {
         allSpecies.length = 0;
-        //google.charts.setOnLoadCallback(output_InitialiseChildToo);
+        output_InitialiseChildToo();
     } else {
-        //google.charts.setOnLoadCallback(output_InitialiseChild);  
+        output_InitialiseChild();
+        allSpecies.migrate = migrate;
     };
     
     /* Set up some  */
@@ -364,7 +400,7 @@ function output_Initialise(webpageLoaded = true) {
     allSpecies.simRate = parameters.simRate;
 
     /* Load up any additional setup for the google.DataTables */
-    //google.charts.setOnLoadCallback(output_InitialiseChildTrois); 
+    output_InitialiseChildTrois(); 
 
     $('#output_genNum').html(allSpecies.genNumber);
     $('#output_fst').html('. . .');
