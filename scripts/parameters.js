@@ -3,9 +3,9 @@ function parameters_Initialise() {
     $('#paraMag_numOfPop').val(parameters.numOfPop);
     $('#paraMag_popSize').val(parameters.popSize);
     $('#paraMag_numOfAlleles').val(parameters.numOfAlleles);
-    $('#paraMag_mutaRate').val(parameters.mutationRate);
-        $('#paraMag_mutaRateChild').val(parameters.mutationRate);
-        $('#paraMag_mutaRateChildToo').text('1 in a '+ parameters.mutationRate);
+    $('#paraMag_mutaDenom').val(parameters.mutationDenom);
+        $('#paraMag_mutaDenomChild').val(parameters.mutationDenom);
+        $('#paraMag_mutaDenomChildToo').text('1 in a '+ parameters.mutationDenom);
     $('#paraMag_numOfMigrants').val(parameters.numOfMigrants);
         $('#paraMag_numOfMigrantsChild').text(parameters.popSize);
     $('#paraMag_init').val(parameters.init);
@@ -80,36 +80,36 @@ $(document).ready(function(){
         };
     });
 
-    /* jQuery event listener for the 'Mutation Rate' input */
-     $('#paraMag_mutaRate').change(function() {
+    /* jQuery event listener for the 'Mutation Denominator' input */
+     $('#paraMag_mutaDenom').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000) {
-            $('#paraMag_mutaRate').val(parameters.mutationRate);
+            $('#paraMag_mutaDenom').val(parameters.mutationDenom);
         } else {
-            parameters.mutationRate = x;
+            parameters.mutationDenom = x;
             if (x != $(this).val()) {
-                $('#paraMag_mutaRate').val(parameters.mutationRate);
+                $('#paraMag_mutaDenom').val(parameters.mutationDenom);
             };
-            $('#paraMag_mutaRateChild').val(x);
-            /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
+            $('#paraMag_mutaDenomChild').val(x);
+            /* if/else statement to detect when Mutation Denominator == 0 to change the message accordingly */
             if (x == 0) {
-                $('#paraMag_mutaRateChildToo').text('no');
+                $('#paraMag_mutaDenomChildToo').text('no');
             } else {
-                $('#paraMag_mutaRateChildToo').text('1 in a '+x);
+                $('#paraMag_mutaDenomChildToo').text('1 in a '+x);
             };
         };
     });
     
-    /* jQuery event listener for the 'Mutation Rate' slider */
-    $('#paraMag_mutaRateChild').change(function() {
+    /* jQuery event listener for the 'Mutation Denominator' slider */
+    $('#paraMag_mutaDenomChild').change(function() {
         var x = Math.floor($(this).val());
-        parameters.mutationRate = x;
-        $('#paraMag_mutaRate').val(x);
-        /* if/else statement to detect when Mutation Rate == 0 to change the message accordingly */
+        parameters.mutationDenom = x;
+        $('#paraMag_mutaDenom').val(x);
+        /* if/else statement to detect when Mutation Denominator == 0 to change the message accordingly */
         if (x == 0) {
-            $('#paraMag_mutaRateChildToo').text('no');
+            $('#paraMag_mutaDenomChildToo').text('no');
         } else {
-            $('#paraMag_mutaRateChildToo').text('1 in  a '+x);
+            $('#paraMag_mutaDenomChildToo').text('1 in  a '+x);
         };
     });
 

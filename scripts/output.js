@@ -1,93 +1,91 @@
-/* A 'struct' which allows the other scripts to interface with the most current allele pool */
+/*===================================================================================*/
+/* allelePool() is an object which allows the other functions to interface with the  */
+/* allele type pool. The functionality included relies on setting the upper bound of */
+/* the pool size before starting the simulation routine.                             */
+/*                                                                                   */
+/* These are the public methods available within the allelePool() object:            */
+/* - .setUprBound(): Sets the upper bound of the allele type pool size to            */
+/*      parameters.numOfAlleles.                                                     */
+/* - .getUprBound(): Returns the upper bound of the allele type pool size.           */
+/* - .getLabels(): Returns the labels of the allele type pool.                       */
+/* - .getColours(): Returns the colours of the allele type pool.                     */
+/* - .mutate(i = getRandomInt()): Returns an integer of a successful allele type     */
+/*      mutation under the one-step mutation model respecting boundaries.            */
+/*===================================================================================*/
 function allelePool() {
-    /* The following variables are private to 'struct':              */
-    /* fullPool contains the labels and colours for each allele type */
-    /* uprBound restricts the number of alleles types made available */
-    /*      within the code. Note that the uprBound zero-indexed     */
-    /* ones is an utility array which contains -1 and 1 for use with */
-    /*      the mutate() method                                      */
-    var fullPool = [
-            {label: 'A', colour: '#7fc97f'},
-            {label: 'B', colour: '#beaed4'},
-            {label: 'C', colour: '#fdc086'},
-            {label: 'D', colour: '#ffff99'},
-            {label: 'E', colour: '#386cb0'},
-            {label: 'F', colour: '#f0027f'},
-            {label: 'G', colour: '#bf5b17'},
-            {label: 'H', colour: '#666666'}
-        ],
-        uprBound = 4;
+    var labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        colourPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', 
+                      '#386cb0', '#f0027f', '#bf5b17', '#666666'],
+        uprBound = parameters.numOfAlleles,
+        uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
+            // 'uprBound' private variable. This is to prevent .mutate() from doing 
+            // unnecessary arithmetic.
     
-    this.setUprBound = function () {
-        /* setUprBound() allows the user to interface with uprBound  */
-        /* and as mentioned earlier, uprBound is _zero-indexed_      */
-        uprBound = parameters.numOfAlleles - 1;
+    this.setUprBound = function() {
+        uprBound = parameters.numOfAlleles;
+        uprBound_Zero = parameters.numOfAlleles - 1;
     };
 
-    this.getUprBound = function () {
-        /* curUprBound() returns the current value of uprBound in _one-indexed_ form */
-        return uprBound + 1;
-    }
-
-    this.currentLabels = function () {
-        /* currentLabels() returns the current type allele labels    */
-        var labelPool = [], 
-        i = 0;
-        while (i <= uprBound) {
-            labelPool.push(fullPool[i].label);
-            i++;
-        };
-        return labelPool;
+    this.getUprBound = function() {
+        return uprBound;
     };
 
-    this.currentColours = function() {
-        /* currentColours() returns the current allele type colours  */
-        var colourPool = []
-        i = 0;
-        while (i <= uprBound) {
-            colourPool.push(fullPool[i].colour);
-            i++;
-        };
-        return colourPool;
+    this.getLabels = function() {
+        return labelPool.slice(0, uprBound);
     };
 
-    this.mutate = function(i = getRandomInt(0, uprBound)) {
-        /* mutate() uses a one-step mutation model respecting       */
-        /* boundaries.                                              */
-        if (i == uprBound) {
-            i--; // 100% probability to go from uprBound -> uprBound - 1
+    this.getColours = function() {
+        return colourPool.slice(0, uprBound);
+    };
+
+    this.mutate = function(i = getRandomInt(0, uprBound_Zero)) {
+        if (i == uprBound_Zero) {
+            i--; // 100% probability to go from state 'uprBound_Zero' to 
+                    // state 'uprBound_Zero - 1'.
         } else if (i == 0) {
-            i++; // 100% probability to go from 0 -> 1
+            i++; // 100% probability to go from state '0' to state '1'.
         } else {
-            i += (1 - 2 * rngBin.get()); // 50% probability to go either direction
+            i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
+                                            // one-step either direction.
         };
         return i;
     };
 };
 
-/* An object which stores a species's most current generation and the frequencies of */
-/* all generations. The methods for this object are implemented with the prototype   */
-/* keyword to optimise the browser memory usage                                      */
+/*===================================================================================*/
+/* species() is an object which stores a population's current generation in a        */
+/* detailed form and the allele type frequencies of previous generations. The        */
+/* methods for the species() object are implemented with the .prototype keyword in   */
+/* order to minimise the browser's memeory usage.                                    */
+/*                                                                                   */
+/* These are the public variables available within the species() object:             */
+/* - .popSize: The population size as determined by parameters.popSize.              */
+/* - .mutaRate: The population's allele type mutation rate deteremined by            */
+/*      '1/parameters.mutationDenom'. Stored as a 'math.fraction' to avoid problems  */
+/*      with Javascript's lack of precision for small numbers.                       */
+/* - .numOfMigrants: The number of migrants this population should send each         */
+/*      generation.                                                                  */
+/* - .currentPop: The detailed makeup of the population's current generation.        */
+/* - .freq: An object which contains up to '.getUprBound()' arrays to store general  */
+/*      allele type frequency information.                                           */
+/* - .freq2Up: An object which contains up to '.getUprBound()' arrays to store       */
+/*      double-up allele type frequency information (for example, a member has two   */
+/*      'A' alleles).                                                                */
+/*                                                                                   */
+/* These are the public methods available within the species() object:               */
+/*===================================================================================*/
 function species() {
-    /* Load in population specific parameters into the species object */
     this.popSize = parameters.popSize,
     this.mutaRate = -1,
-    this.numOfMigrants = parameters.numOfMigrants;
-    if (parameters.mutationRate != 0) {this.mutaRate = math.fraction(1, parameters.mutationRate)};
-
-    /* Data storage variables */
+    this.numOfMigrants = parameters.numOfMigrants,
     this.currentPop = [],
     this.freq = {},
     this.freq2Up = {};
-};
 
-/* The following methods are unique to the species object: */
-/*     - allelesPack(toPack)                               */
-/*     - allelesUnpack(toUnpack)                           */
-/*     - create()                                          */
-/*     - mate()                                            */
-/*     - freqSummary()                                     */
-/*     - freq2UpSummary()                                  */
+    if (parameters.mutationDenom != 0) {
+        this.mutaRate = math.fraction(1, parameters.mutationDenom)
+    };
+};
 
 species.prototype.allelesPack = function(toPack) {
     /* toPack takes an array of size two and compresses it */
@@ -359,7 +357,7 @@ function output_InitialiseChildToo() {
 };
 
 function output_InitialiseChildTrois() {
-    var temp = alleles.currentLabels();
+    var temp = alleles.getLabels();
     for (var i = alleles.getUprBound() - 1; i >= 0; i--) {
         alleleFreq.data.addColumn('number', temp[i]);
     };
@@ -374,7 +372,7 @@ function output_InitialiseChildTrois() {
     };
 
     alleleFreq.data.addRows(temp);
-    alleleFreq.options.colors = alleles.currentColours().reverse();
+    alleleFreq.options.colors = alleles.getColours();
 
 };
 
@@ -408,7 +406,7 @@ function output_Initialise(webpageLoaded = true) {
     $('#output_numOfPop').text(parameters.numOfPop);
     $('#output_popSize').text(parameters.popSize);
     $('#output_numOfAlleles').text(parameters.numOfAlleles);
-    $('#output_mutaRate').text(parameters.mutationRate);
+    $('#output_mutaRate').text(parameters.mutationDenom);
     $('#output_numOfMigrants').text(parameters.numOfMigrants);
     $('#output_init').text(parameters.init);
     $('#output_simRate').text(parameters.simRate/1000);

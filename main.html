@@ -110,7 +110,7 @@
                 </span>
             </li>
             <li>
-                Mutation Rate: <input id='paraMag_mutaRate' type='number' min=1 max=1000> <br>
+                Mutation Denominator: <input id='paraMag_mutaRate' type='number' min=1 max=1000> <br>
                 <span class='paraMag_space'></span><input class='paraMag_slider' id='paraMag_mutaRateChild' type='range' min=0 max=1000 step=1> <br>
                 <span class='paraMag_Info'>
                     Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id='paraMag_mutaRateChildToo'></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
@@ -173,10 +173,10 @@
             /* Parameters Tab */
             numOfPop: 10,       // Number of Populations 
             popSize: 500,       // Population Size
-            numOfAlleles: 8,    // Number of Allele Types
-            mutationRate: 300,  // Mutation Rate
+            numOfAlleles: 6,    // Number of Allele Types
+            mutationDenom: 300,  // Mutation Denom
             numOfMigrants: 2,   // Number of Migrants
-            init: 2,            // Initial Number of Simulations
+            init: 1,            // Initial Number of Simulations
             simRate: 1,         // Simulation Rate
 
             /* Output Tab */
