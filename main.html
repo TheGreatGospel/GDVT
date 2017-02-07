@@ -75,7 +75,7 @@
                         <li>Number of Populations: <span id='output_numOfPop'></span></li>
                         <li>Population Size: <span id='output_popSize'></span></li>
                         <li>Number of Allele Types: <span id='output_numOfAlleles'></span></li>
-                        <li>Mutation Rate: <span id='output_mutaRate'></span></li>
+                        <li>Mutation Denominator: <span id='output_mutaDenom'></span></li>
                         <li>Number of Migrants: <span id='output_numOfMigrants'></span></li>
                         <li>Initial Number of Simulations: <span id='output_init'></span></li>
                         <li>Simulation Rate: <span id='output_simRate'></span></li>
@@ -110,10 +110,10 @@
                 </span>
             </li>
             <li>
-                Mutation Denominator: <input id='paraMag_mutaRate' type='number' min=1 max=1000> <br>
-                <span class='paraMag_space'></span><input class='paraMag_slider' id='paraMag_mutaRateChild' type='range' min=0 max=1000 step=1> <br>
+                Mutation Denominator: <input id='paraMag_mutaDenom' type='number' min=1 max=1000> <br>
+                <span class='paraMag_space'></span><input class='paraMag_slider' id='paraMag_mutaDenomChild' type='range' min=0 max=1000 step=1> <br>
                 <span class='paraMag_Info'>
-                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id='paraMag_mutaRateChildToo'></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
+                    Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id='paraMag_mutaDenomChildToo'></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
                 </span>
             </li>
             <li>
@@ -185,12 +185,11 @@
         
         alleles = new allelePool(),  // Stores the allelePool 'struct' and its methods
         rngBin = new randomBinary(), // Stores the binary random number generator 'struct'
-        allSpecies = [],             // Stores the simulation routine
+        allSpecies = [],             // Stores the simulation routine,
+        webpageLive = false,         // Tracks stuff 
         timerVars = {                // Stores the timer variables to get Javascript to think in more than two threads 
-            index: 0,
-            stage: 0,
-            toGenNum: 0,
-            toEnd: false
+            toGenNum: 0
+            // tickTock:
         },
         
         /* To Comment */
@@ -227,12 +226,14 @@
         number: 'Fraction'
     });
 
+    $('#output_genNum').html('. . .');
+    $('#output_fst').html('. . .');
+
     $('#paraMag_submit').prop('disabled', true);
     $('.output_simButton').prop('disabled', true);
     parameters_Initialise();
 
-    zz = function(){output_Initialise(webpageLoaded = false)};
-    google.charts.setOnLoadCallback(zz);
+    google.charts.setOnLoadCallback(output_Initialise);
 </script>
 <!-- Initialisation of JS Functionality (End) -->
 

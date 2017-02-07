@@ -218,21 +218,30 @@ species.prototype.mate = function () {
 };
 
 /*===================================================================================*/
-/* migrate() is a funciton that is hooked onto the 'allSpecies' global array. 
-/**/
+/* migrate() is a function that is hooked onto the 'allSpecies' global array.        */
+/* Members of a population will migrate to another population via SRS (excluding     */
+/* their origin population. As a side effect of this migration scheme, population    */
+/* sizes will fluctuate about the stated population size before mating.              */
+/*===================================================================================*/
 migrate = function(){
-    var toMigrate = [], 
-        x, 
-        numOfPop = this.length, 
-        numOfPop_Zero = numOfPop - 1,
-        numOfMigrants = 0;
+    var toMigrate = [], // An array to store the migration information.
+        x = 0, numOfMigrants = 0. // Local variables to work with.
+        numOfPop = this.length, // 'this.length' == 'allSpecies.length' (the number of 
+                                    // populations in the simulation routine).
+        numOfPop_Zero = numOfPop - 1; // Zero-indexed version of 'numOfPop'.
     
     for (var i = 0; i < numOfPop; i++) {
-        numOfMigrants = this[i].numOfMigrants;
+        numOfMigrants = this[i].numOfMigrants; // 'this[i].numOfMigrants' == 
+                                                   // 'allSpecies[i].numOfMigrants'.
         for (var j = 0; j < numOfMigrants; j++) {
+            // Remove a member from population 'i' 
             x = getRandomInt(0, this[i].currentPop[0].length - 1);
             toMigrate.push(this[i].currentPop[0].splice(x, 1)[0]);
+
+            // Store indice information.
             toMigrate.push(x);
+
+            // Store destination population information.
             x = getRandomInt(0, numOfPop_Zero);
             while (x === i) {
                 x = getRandomInt(0, numOfPop_Zero);
@@ -242,11 +251,17 @@ migrate = function(){
     };
 
     numOfMigrants = toMigrate.length;
-    for (i = 0; i < numOfMigrants; i += 3) {
-        this[toMigrate[i+2]].currentPop[0].splice(toMigrate[i+1], 0, toMigrate[i]);
+    for (i = 0; i < numOfMigrants; i += 3) { // Increments of three due to the way 
+                                                 // 'toMigrate'is structured.
+        // 'i': member information; 'i + 1': indice information; 'i + 2': destination.
+        this[toMigrate[i + 2]].currentPop[0].splice(toMigrate[i + 1], 0, toMigrate[i]);
     };
 
-    toMigrate.length = 0;
+    toMigrate.length = 0; // Ensure taht the 'toMigrate' array has been cleaned.
+};
+
+fstCalc = function(){
+
 };
 
 species.prototype.freqSummary = function(whichGen = 1) {
@@ -283,39 +298,8 @@ function output_TimerManagementChild() {
     alleleFreq.chart.draw(alleleFreq.data, alleleFreq.options);
 };
 
-function output_TimerManagement() {
-    if (timerVars.stage == 0) {
-        allSpecies.push(new species());
-        allSpecies[timerVars.index].create();
-        timerVars.index++;
-
-        if (timerVars.index >= parameters.numOfPop) {
-            timerVars.stage = 1;
-            timerVars.index = 0;
-            //console.log(allSpecies[0].freqSummary(allSpecies.genNumber));
-        };
-    } else if (timerVars.stage == 1) {
-        if (allSpecies.genNumber >= timerVars.toGenNum) {
-            timerVars.stage = 2;
-            timerVars.index = 0;
-        } else {
-            allSpecies.migrate();
-            for (i = 0; i < allSpecies.length; i++) {
-                allSpecies[i].mate();
-            };
-            //calculateFST();
-            allSpecies.genNumber++;
-            //console.log(allSpecies[0].freqSummary(allSpecies.genNumber));
-        };
-    } else if (timerVars.stage == 2) {
-        //output_TimerManagementChild();
-        timerVars.toEnd = true;
-    };
-
-    if (timerVars.toEnd) {
-        //console.log("hi");
-        //google.charts.setOnLoadCallback(drawFST);
-
+function output_Interval() {
+    if (allSpecies.genNumber >= timerVars.toGenNum) {
         $('#output_genNum').html(allSpecies.genNumber);
         //$('#output_fst').html(0.123456789);
 
@@ -324,6 +308,20 @@ function output_TimerManagement() {
         $('#paraMag_submit').prop('disabled', false);
 
         clearInterval(timerVars.tickTock);
+    } else {
+        if (allSpecies.genNumber == 0) {
+            for (var i = 0; i < parameters.numOfPop; i++) {
+                allSpecies.push(new species());
+                allSpecies[i].create();
+            };
+        } else {
+            allSpecies.migrate();
+            for (var i = 0; i < allSpecies.length; i++) {
+                allSpecies[i].mate();
+            };
+        };
+        allSpecies.fstCalc();
+        allSpecies.genNumber++;
     };
 };
 
@@ -368,88 +366,84 @@ function output_InitialiseChildTrois() {
 };
 
 /* Launches a new simulation routine with the current parameters */
-function output_Initialise(webpageLoaded = true) {
+function output_Initialise() {
     /* Disable the 'simulation next n generations buttons', */
     /* submit parameters and enable the interruption button */
     $('.output_simButton').prop('disabled', true);
-    $('#output_interrupt').prop('disabled', false);
     $('#paraMag_submit').prop('disabled', true);
 
-    if (webpageLoaded) {
+    if (webpageLive) {
         allSpecies.length = 0;
         //output_InitialiseChildToo();
     } else {
         //output_InitialiseChild();
         allSpecies.migrate = migrate;
+        allSpecies.fstCalc = fstCalc;
+        webpageLive = true;
     };
     
     /* Set up some  */
     alleles.setUprBound();
-    allSpecies.genNumber = 1;
+    allSpecies.genNumber = 0;
     allSpecies.simRate = parameters.simRate;
 
     /* Load up any additional setup for the google.DataTables */
     //output_InitialiseChildTrois(); 
 
-    $('#output_genNum').html(allSpecies.genNumber);
-    $('#output_fst').html('. . .');
-
     $('#output_numOfPop').text(parameters.numOfPop);
     $('#output_popSize').text(parameters.popSize);
     $('#output_numOfAlleles').text(parameters.numOfAlleles);
-    $('#output_mutaRate').text(parameters.mutationDenom);
+    $('#output_mutaDenom').text(parameters.mutationDenom);
     $('#output_numOfMigrants').text(parameters.numOfMigrants);
     $('#output_init').text(parameters.init);
     $('#output_simRate').text(parameters.simRate/1000);
 
     /* Refresh the timerVars object */
-    timerVars.index = 0;
-    timerVars.stage = 0;
     timerVars.toGenNum = parameters.init;
-    timerVars.toEnd = false;
-    timerVars.tickTock = setInterval(output_TimerManagement, allSpecies.simRate);
+    timerVars.tickTock = setInterval(output_Interval, allSpecies.simRate);
+
+    $('#output_interrupt').prop('disabled', false);
 };
 
-/* jQuery event listeners for the Output Tab */
+
+// jQuery event listeners for the Output Tab.
 $(document).ready(function(){
 
-    /* jQuery event listener to operate the plot toolbar */
-	$('ul.output_ulL li').click(function(){
-		var tab_id = $(this).attr('data-tab'); // Returns the tab to swap to
+    // jQuery event listener to operate the plot toolbar.
+    $('ul.output_ulL li').click(function(){
+		var tab_id = $(this).attr('data-tab'); // Returns the tab to swap to.
 
-        /* Removes the visibility of the current tab */
+        // Removes the visibility of the current tab.
 		$('ul.output_ulL li').removeClass('current');
 	    $('.output_chartDim').removeClass('current');
 
-        /* Gives visibility to the tab to swap to */
+        // Gives visibility to the tab to swap to.
 		$(this).addClass('current');
 		$('#'+tab_id).addClass('current');
 	});
 
-    /* jQuery event listeners for the 'n =' buttons */
+    // jQuery event listeners for the 'n =' buttons.
     $('.output_simButton').click(function(){
-        /* Disable the 'simulation next n generations buttons', */
-        /* submit parameters and enable the interruption button */
+        // Disable the buttons which can begin the timer
         $('.output_simButton').prop('disabled', true);
-        $('#output_interrupt').prop('disabled', false);
         $('#paraMag_submit').prop('disabled', true);
 
-        /* Refresh the timerVars object, however unlike the output_Initialise(), we want to only  */
-        /* migrate/mate for each population, therefore setting timerVars.stage to 1 rather than 0 */
-        timerVars.index = 0;
-        timerVars.stage = 1;
-        /* Code to read which button was pressed. */
+        // Figure out how many generations to we need to simulate to.
         var howMany = $(this).attr('howMany');
         if (howMany == 'output_simInput') {
             howMany = $('#output_simInput').val();
         };
+
+        // Start the timer to run the 'output_Interval()' function.
         timerVars.toGenNum = parseInt(howMany) + allSpecies.genNumber;
-        timerVars.toEnd = false;
-        timerVars.tickTock = setInterval(output_TimerManagement, allSpecies.simRate);
+        timerVars.tickTock = setInterval(output_Interval, allSpecies.simRate);
+
+        // Enable the interruption button.
+        $('#output_interrupt').prop('disabled', false);
     });
 
-    /* jQuery event listener for the 'n =' input */
-     $('#output_simInput').change(function() {
+    // jQuery event listener for the 'n =' input
+    $('#output_simInput').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000 ) {
             $('#output_simInput').val(parameters.simInput);
