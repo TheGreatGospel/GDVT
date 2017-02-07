@@ -7,8 +7,8 @@
 /* - .setUprBound(): Sets the upper bound of the allele type pool size to            */
 /*      parameters.numOfAlleles.                                                     */
 /* - .getUprBound(): Returns the upper bound of the allele type pool size.           */
-/* - .getLabels(): Returns the labels of the allele type pool.                       */
-/* - .getColours(): Returns the colours of the allele type pool.                     */
+/* - .getLabels(all = false): Returns the labels of the allele type pool.            */
+/* - .getColours(all = false): Returns the colours of the allele type pool.          */
 /* - .mutate(i = getRandomInt()): Returns an integer of a successful allele type     */
 /*      mutation under the one-step mutation model respecting boundaries.            */
 /*===================================================================================*/
@@ -30,11 +30,17 @@ function allelePool() {
         return uprBound;
     };
 
-    this.getLabels = function() {
+    this.getLabels = function(all = false) {
+        if (all == true) {
+            return labelPool;
+        };
         return labelPool.slice(0, uprBound);
     };
 
-    this.getColours = function() {
+    this.getColours = function(all = false) {
+        if (all == true) {
+            return colourPool;
+        };
         return colourPool.slice(0, uprBound);
     };
 
@@ -325,71 +331,62 @@ function output_Interval() {
     };
 };
 
-function output_InitialiseChild() {
-    alleleFreq.data = new google.visualization.DataTable();
-    alleleFreq.data.addColumn('string', 'Population');
-    
-    alleleFreq.chart = new google.visualization.ColumnChart(document.getElementById('output_alleleFreqChart'));
-
-    fst.data = new google.visualization.DataTable();
-    fst.data.addColumn('number', 'Generation');
-    fst.data.addColumn('number', 'FST');
-
-    fst.chart = new google.visualization.LineChart(document.getElementById('output_fstChart'));
-};
-
-function output_InitialiseChildToo() {
-    alleleFreq.data.removeColumns(1, alleleFreq.data.getNumberOfColumns() - 1);
-    alleleFreq.data.removeRows(0, alleleFreq.data.getNumberOfRows());
-
-    fst.data.removeRows(0, fst.data.getNumberOfRows());
-};
-
-function output_InitialiseChildTrois() {
-    var temp = alleles.getLabels();
-    for (var i = alleles.getUprBound() - 1; i >= 0; i--) {
-        alleleFreq.data.addColumn('number', temp[i]);
-    };
-
-    temp.length = 0;
-    for (var j = 0; j < parameters.numOfPop; j++) {
-        temp.push([]);
-        temp[j].push('#' + (j+1))
-        for (i = 0; i < alleles.getUprBound(); i++) {
-            temp[j].push(0);
-        };
-    };
-
-    alleleFreq.data.addRows(temp);
-    alleleFreq.options.colors = alleles.getColours();
-
-};
-
-/* Launches a new simulation routine with the current parameters */
+// Launches a new simulation routine with the current parameters.
 function output_Initialise() {
-    /* Disable the 'simulation next n generations buttons', */
-    /* submit parameters and enable the interruption button */
+    // Disable the buttons which can begin the timer.
     $('.output_simButton').prop('disabled', true);
     $('#paraMag_submit').prop('disabled', true);
-
-    if (webpageLive) {
-        allSpecies.length = 0;
-        //output_InitialiseChildToo();
-    } else {
-        //output_InitialiseChild();
-        allSpecies.migrate = migrate;
-        allSpecies.fstCalc = fstCalc;
-        webpageLive = true;
-    };
     
-    /* Set up some  */
+    // Initialise independent parts of the simulation routine.
     alleles.setUprBound();
     allSpecies.genNumber = 0;
     allSpecies.simRate = parameters.simRate;
 
-    /* Load up any additional setup for the google.DataTables */
-    //output_InitialiseChildTrois(); 
+    if (webpageLive) {
+        // Clean up previous simulation routine.
+        allSpecies.length = 0;
+    } else {
+        // Setup functionality for the simulation route.
+        allSpecies.migrate = migrate;
+        allSpecies.fstCalc = fstCalc;
 
+        // Notice that everything for the alleleFreq chart is in fact loaded 
+            // in reverse due to the native functionality of Google Charts...
+        alleleFreq.data = new google.visualization.DataTable();
+            alleleFreq.data.addColumn('string', 'Population');
+            var initLabels = alleles.getLabels(true);
+            for (var i = initLabels.length - 1; i > -1; i--) {
+                alleleFreq.data.addColumn('number', initLabels[i]);
+            };
+            var fill = [];
+                for (i = 0; i < 10; i++) {
+                    fill.push([]);
+                    fill[i].push('#' + (i + 1));
+                    for (var j = 0; j < initLabels.length; j++) {
+                        fill[i].push(0);
+                    };
+                };
+            alleleFreq.data.addRows(fill);
+
+        alleleFreq.options.colors = alleles.getColours(true).reverse();
+
+        alleleFreq.view = new google.visualization.DataView(alleleFreq.data);
+
+        alleleFreq.chart = new google.visualization.ColumnChart(
+            document.getElementById('output_alleleFreqChart')
+        );
+
+        webpageLive = true;
+        initLabels.length = 0;
+        fill.length = 0;
+    };
+
+    // Subset the DataTable in 'alleleFreq.data' to visualise the simulation.
+    //alleleFreq.view setColumns(columnIndexes)
+    //alleleFreq.view setRows(rowIndexes)
+    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+
+    // Load into the simulation parameters into the corresponding <span>s.
     $('#output_numOfPop').text(parameters.numOfPop);
     $('#output_popSize').text(parameters.popSize);
     $('#output_numOfAlleles').text(parameters.numOfAlleles);
@@ -398,10 +395,11 @@ function output_Initialise() {
     $('#output_init').text(parameters.init);
     $('#output_simRate').text(parameters.simRate/1000);
 
-    /* Refresh the timerVars object */
+    // Start the timer to run the 'output_Interval()' function.
     timerVars.toGenNum = parameters.init;
     timerVars.tickTock = setInterval(output_Interval, allSpecies.simRate);
 
+    // Enable the interruption button.
     $('#output_interrupt').prop('disabled', false);
 };
 
@@ -424,7 +422,7 @@ $(document).ready(function(){
 
     // jQuery event listeners for the 'n =' buttons.
     $('.output_simButton').click(function(){
-        // Disable the buttons which can begin the timer
+        // Disable the buttons which can begin the timer.
         $('.output_simButton').prop('disabled', true);
         $('#paraMag_submit').prop('disabled', true);
 
@@ -462,6 +460,12 @@ $(document).ready(function(){
     FST_Options,
     FST_DataCurrent = 1;
 
+fst.data = new google.visualization.DataTable();
+    fst.data.addColumn('number', 'Generation');
+    fst.data.addColumn('number', 'FST');
+
+    fst.chart = new google.visualization.LineChart(document.getElementById('output_fstChart'));
+
 function drawFST() {
     while (allSpecies[0].genNumber >= FST_DataCurrent) {
         FST_Data.addRow([FST_DataCurrent, statsMaster['FST'][FST_DataCurrent - 1]]);
@@ -469,6 +473,8 @@ function drawFST() {
     };
     FST_Chart.draw(FST_Data, FST_Options);
 };
+
+    fst.data.removeRows(0, fst.data.getNumberOfRows());
 
 function drawCharts_Init() {
     var temp = [];
@@ -490,6 +496,4 @@ function drawCharts_Init() {
 
     FST_Data.addColumn('number', 'Generation');
     FST_Data.addColumn('number', 'FST');
-
-    alleleFreq_Chart.draw(alleleFreq_Data, alleleFreq_Options);
 };*/

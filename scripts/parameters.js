@@ -12,10 +12,9 @@ function parameters_Initialise() {
     $('#paraMag_simRate').val(parameters.simRate/1000);
         $('#paraMag_simRateChild').val(parameters.simRate/1000);
     
-    // Setup parameters.simInput as well.
+    // Setup 'parameters.simInput' as well.
     $('#output_simInput').val(parameters.simInput);
 };
-/*===================================================================================*/
 
 // jQuery event listeners for the Parameters Tab.
 $(document).ready(function(){
