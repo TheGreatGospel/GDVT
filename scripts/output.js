@@ -224,6 +224,34 @@ species.prototype.mate = function () {
 };
 
 /*===================================================================================*/
+/* Debugging functionality that isn't used in the actual web-app itself.             */
+/*===================================================================================*/
+/*
+species.prototype.freqSummary = function(whichGen = 1) {
+    var toReturn = [];
+    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
+        whichGen = allSpecies.genNumber;
+    }
+    for (var i = 0; i < alleles.getUprBound(); i++) {
+        toReturn.push(this.freq[i][whichGen - 1]);
+    };
+    return toReturn;
+};
+
+species.prototype.freq2UpSummary = function(whichGen = 1) {
+    var toReturn = [];
+    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
+        whichGen = allSpecies.genNumber;
+    }
+    for (var i = 0; i < alleles.getUprBound(); i++) {
+        toReturn.push(this.freq2Up[i][whichGen - 1]);
+    };
+    return toReturn;
+};
+*/
+/*===================================================================================*/
+
+/*===================================================================================*/
 /* migrate() is a function that is hooked onto the 'allSpecies' global array.        */
 /* Members of a population will migrate to another population via SRS (excluding     */
 /* their origin population. As a side effect of this migration scheme, population    */
@@ -270,44 +298,19 @@ fstCalc = function(){
 
 };
 
-species.prototype.freqSummary = function(whichGen = 1) {
-    var toReturn = [];
-    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
-        whichGen = allSpecies.genNumber;
-    }
-    for (var i = 0; i < alleles.getUprBound(); i++) {
-        toReturn.push(this.freq[i][whichGen - 1]);
-    };
-    return toReturn;
-};
-
-species.prototype.freq2UpSummary = function(whichGen = 1) {
-    var toReturn = [];
-    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
-        whichGen = allSpecies.genNumber;
-    }
-    for (var i = 0; i < alleles.getUprBound(); i++) {
-        toReturn.push(this.freq2Up[i][whichGen - 1]);
-    };
-    return toReturn;
-};
-
-function output_TimerManagementChild() {
-    var temp = [], y = 0;
-    for (var rowIndex = 0; rowIndex < allSpecies.length; rowIndex++) {
-        temp = allSpecies[rowIndex].freqSummary(allSpecies.genNumber).reverse();
-        for (y = 1; y <= alleles.getUprBound(); y++) {
-            alleleFreq.data.setValue(rowIndex, y, temp[y-1]);
-        }
-        temp.length = 0;
-    };
-    alleleFreq.chart.draw(alleleFreq.data, alleleFreq.options);
-};
-
 function output_Interval() {
     if (allSpecies.genNumber >= timerVars.toGenNum) {
+        var genNumber_Zero = allSpecies.genNumber - 1;
         $('#output_genNum').html(allSpecies.genNumber);
         //$('#output_fst').html(0.123456789);
+
+        for (var x = 0; x < allSpecies.length; x++) {
+            for (var y = 1; y <= alleles.getUprBound(); y++) {
+                alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1][genNumber_Zero]);
+            };
+        };
+
+        alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
 
         $('.output_simButton').prop('disabled', false);
         $('#output_interrupt').prop('disabled', true);
@@ -350,12 +353,12 @@ function output_Initialise() {
         allSpecies.migrate = migrate;
         allSpecies.fstCalc = fstCalc;
 
-        // Notice that everything for the alleleFreq chart is in fact loaded 
-            // in reverse due to the native functionality of Google Charts...
+        // Create the fill table for the maximum number of populations and
+            // allele types.
         alleleFreq.data = new google.visualization.DataTable();
             alleleFreq.data.addColumn('string', 'Population');
             var initLabels = alleles.getLabels(true);
-            for (var i = initLabels.length - 1; i > -1; i--) {
+            for (var i = 0; i < initLabels.length; i++) {
                 alleleFreq.data.addColumn('number', initLabels[i]);
             };
             var fill = [];
@@ -368,23 +371,34 @@ function output_Initialise() {
                 };
             alleleFreq.data.addRows(fill);
 
-        alleleFreq.options.colors = alleles.getColours(true).reverse();
-
         alleleFreq.view = new google.visualization.DataView(alleleFreq.data);
 
         alleleFreq.chart = new google.visualization.ColumnChart(
             document.getElementById('output_alleleFreqChart')
         );
 
-        webpageLive = true;
-        initLabels.length = 0;
-        fill.length = 0;
+        webpageLive = true; // The webpage has loaded, so no more initilisation code
+                                // is required.
+        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
+                             // to clean the 'initLabels' array as it is a 
+                             // link to a private variable.
     };
 
-    // Subset the DataTable in 'alleleFreq.data' to visualise the simulation.
-    //alleleFreq.view setColumns(columnIndexes)
-    //alleleFreq.view setRows(rowIndexes)
-    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+    // Subset the DataTable in 'alleleFreq.data' to visualise what is in the 
+        // simulation routine. We load in the columns in reverse order to 
+        // work around the native functionality of Google Charts.
+    var toView = [0], absUprBnd = alleles.getLabels().length;
+        for (var k = 0; k < absUprBnd; k++) {
+            toView.push(absUprBnd - k);
+        };
+        alleleFreq.view.setColumns(toView);
+        alleleFreq.view.setRows(0, parameters.numOfPop - 1);
+    alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
+                                                                    // palette.
+
+    // Draw the charts.
+    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
+    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
 
     // Load into the simulation parameters into the corresponding <span>s.
     $('#output_numOfPop').text(parameters.numOfPop);
@@ -455,12 +469,7 @@ $(document).ready(function(){
 
 })
 
-/*var FST_Chart,
-    FST_Data,
-    FST_Options,
-    FST_DataCurrent = 1;
-
-fst.data = new google.visualization.DataTable();
+/*fst.data = new google.visualization.DataTable();
     fst.data.addColumn('number', 'Generation');
     fst.data.addColumn('number', 'FST');
 
@@ -477,23 +486,6 @@ function drawFST() {
     fst.data.removeRows(0, fst.data.getNumberOfRows());
 
 function drawCharts_Init() {
-    var temp = [];
-
-    FST_Options = {
-        title: 'FST over Time',
-        height: 400,
-        width: 800,
-        hAxis: {
-            title: 'Generation'
-        },
-        vAxis: {
-            title: 'Coancestry Coefficient (FST)'
-        },
-        legend: {
-            position: 'none'
-        }
-    };
-
     FST_Data.addColumn('number', 'Generation');
     FST_Data.addColumn('number', 'FST');
 };*/

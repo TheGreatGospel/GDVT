@@ -171,7 +171,7 @@
 <script>
     var parameters = {
             /* Parameters Tab */
-            numOfPop: 10,       // Number of Populations 
+            numOfPop: 8,       // Number of Populations 
             popSize: 500,       // Population Size
             numOfAlleles: 6,    // Number of Allele Types
             mutationDenom: 300,  // Mutation Denom
@@ -208,7 +208,7 @@
                 },
                 isStacked: 'percent',
                 animation: {
-                    duration: 1000, // in milliseconds
+                    duration: 500, // in milliseconds
                     easing: 'out'
                 }
             }
@@ -219,7 +219,22 @@
 
         fst = {
             options: {
-                title: 'Coancestry Coefficient (F<sub>ST</sub>)'
+                title: 'Coancestry Coefficient over Generations',
+                height: 400,
+                width: 600,
+                hAxis: {
+                    title: 'Generation'
+                },
+                vAxis: {
+                    title: 'Coancestry Coefficient (FST)'
+                },
+                legend: {
+                    position: 'none'
+                },
+                animation: {
+                    duration: 500, // in milliseconds
+                    easing: 'out'
+                }
             }
             // data:
             // chart:
