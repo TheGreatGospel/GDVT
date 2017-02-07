@@ -1,6 +1,6 @@
 /* Utility function to generate random integers */
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(math.random() * (max - min + 1)) + min;
 };
 
 /* Binary random number generator 'struct' */
