@@ -587,7 +587,6 @@ function output_Initialise() {
     $('#output_interrupt').prop('disabled', false);
 };
 
-
 // jQuery event listeners for the Output Tab.
 $(document).ready(function(){
 
