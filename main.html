@@ -225,7 +225,8 @@
                     title: 'Generation'
                 },
                 vAxis: {
-                    title: 'Coancestry Coefficient (FST)'
+                    title: 'Coancestry Coefficient (FST)',
+                    viewWindowMode: 'pretty'
                 },
                 legend: {
                     position: 'none'
@@ -242,8 +243,7 @@
         /**/
         scope = {
             // ni, twoNi, nBar, a to h
-        },
-        statFST = [];
+        };
 
     $('#output_genNum').html('. . .');
     $('#output_fst').html('. . .');

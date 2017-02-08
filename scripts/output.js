@@ -347,8 +347,8 @@ fstCalc = function(){
     } else {
         z = math.number(1);
     };
-    console.log(z);
-
+    
+    fst.data.addRow([allSpecies.genNumber + 1, math.number(math.round(z, 6))]);
     s1.length = 0, s2.length = 0;
 };
 
@@ -357,7 +357,7 @@ function output_Interval() {
     if (allSpecies.genNumber >= timerVars.toGenNum) {
         var genNumber_Zero = allSpecies.genNumber - 1;
         $('#output_genNum').html(allSpecies.genNumber);
-        //$('#output_fst').html(0.123456789);
+        $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
@@ -366,6 +366,7 @@ function output_Interval() {
         };
 
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+        fst.chart.draw(fst.data, fst.options);
 
         $('.output_simButton').prop('disabled', false);
         $('#output_interrupt').prop('disabled', true);
@@ -403,6 +404,7 @@ function output_Initialise() {
     if (webpageLive) {
         // Clean up previous simulation routine.
         allSpecies.length = 0;
+        fst.data.removeRows(0, fst.data.getNumberOfRows());
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
@@ -460,6 +462,12 @@ function output_Initialise() {
     alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
                                                                     // palette.
 
+    // Draw the charts.
+    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
+    fst.chart.draw(fst.data, fst.options); 
+    
+    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
+
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 
         // simulation routine.
@@ -500,10 +508,6 @@ function output_Initialise() {
         scope.g = x; 
     // (r - 1)*nBar
         scope.h = math.fraction(rMinusOne * scope.nBar); 
-    
-    // Draw the charts.
-    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
-    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
 
     // Load into the simulation parameters into the corresponding <span>s.
     $('#output_numOfPop').text(parameters.numOfPop);
@@ -572,20 +576,4 @@ $(document).ready(function(){
         };
     });
 
-})
-
-/*
-function drawFST() {
-    while (allSpecies[0].genNumber >= FST_DataCurrent) {
-        FST_Data.addRow([FST_DataCurrent, statsMaster['FST'][FST_DataCurrent - 1]]);
-        FST_DataCurrent++;
-    };
-    FST_Chart.draw(FST_Data, FST_Options);
-};
-
-    fst.data.removeRows(0, fst.data.getNumberOfRows());
-
-function drawCharts_Init() {
-    FST_Data.addColumn('number', 'Generation');
-    FST_Data.addColumn('number', 'FST');
-};*/
+});
