@@ -166,7 +166,6 @@
 <script src='scripts/main.js'></script>
 <script src='scripts/parameters.js'></script>
 <script src='scripts/output.js'></script>
-<script src='scripts/statCalc.js'></script>
 
 <script>
     var parameters = {
@@ -239,12 +238,12 @@
             // data:
             // chart:
         },
-        statFST = [];
 
-    
-    math.config({
-        number: 'Fraction'
-    });
+        /**/
+        scope = {
+            // ni, twoNi, nBar, a to h
+        },
+        statFST = [];
 
     $('#output_genNum').html('. . .');
     $('#output_fst').html('. . .');

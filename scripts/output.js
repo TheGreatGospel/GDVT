@@ -249,7 +249,6 @@ species.prototype.freq2UpSummary = function(whichGen = 1) {
     return toReturn;
 };
 */
-/*===================================================================================*/
 
 /*===================================================================================*/
 /* migrate() is a function that is hooked onto the 'allSpecies' global array.        */
@@ -295,10 +294,66 @@ migrate = function(){
 };
 
 fstCalc = function(){
+    var s1 = [], s2 = [], w = [];
+        
+    for (var i = 0; i < alleles.getUprBound(); i++) {
+        var x = 0, y = 0, z = 0;
 
+        for (var j = 0; j < allSpecies.length; j++) {
+            w.push(math.fraction(allSpecies[j].freq[i][allSpecies.genNumber], scope.twoNi));
+            
+            x = math.fraction(w[j] * scope.ni);
+            y = math.add(x, y);
+
+            x = math.subtract(w[j], math.fraction(allSpecies[j].freq2Up[i][allSpecies.genNumber], scope.ni));
+            x = math.multiply(scope.twoNi, x);
+            z = math.add(x, z);
+        };
+
+        var pDot = math.divide(y, scope.g);
+        var hDot = math.divide(z, scope.g);
+
+        var x = 0, y = 0, z = 0;
+        for (var j = 0; j < allSpecies.length; j++) {
+            x = math.subtract(w[j], pDot);
+            y = math.multiply(scope.ni, math.square(x));
+
+            z = math.add(y, z);
+        };
+        
+        var sSq = math.divide(z, scope.h);
+        s1.push(math.fraction(0)), s2.push(math.fraction(0));
+
+        var aSec = math.fraction(math.multiply(pDot, math.subtract(1, pDot)));
+        s1[i] = math.fraction(math.multiply(10000000,
+            sSq - (aSec - scope.b*sSq - hDot/4)/scope.a
+        ));
+        
+        s2[i] = math.fraction(math.multiply(10000000,
+            aSec - scope.nBar*(scope.d*aSec - sSq*scope.e/scope.nBar - scope.f*hDot)/scope.c
+        ));
+        
+        w.length = 0;
+    };
+
+    var x = 0, y = 0, z = 0;
+
+    for (var i = 0; i < alleles.getUprBound(); i++) {
+        x = math.add(x, s1[i]);
+        y = math.add(y, s2[i]);
+    };
+    if (y != 0) {
+        z = math.divide(x, y);
+    } else {
+        z = math.number(1);
+    };
+    console.log(z);
+
+    s1.length = 0, s2.length = 0;
 };
 
 function output_Interval() {
+    clearTimeout(timerVars.tickTock);
     if (allSpecies.genNumber >= timerVars.toGenNum) {
         var genNumber_Zero = allSpecies.genNumber - 1;
         $('#output_genNum').html(allSpecies.genNumber);
@@ -315,8 +370,6 @@ function output_Interval() {
         $('.output_simButton').prop('disabled', false);
         $('#output_interrupt').prop('disabled', true);
         $('#paraMag_submit').prop('disabled', false);
-
-        clearInterval(timerVars.tickTock);
     } else {
         if (allSpecies.genNumber == 0) {
             for (var i = 0; i < parameters.numOfPop; i++) {
@@ -330,7 +383,9 @@ function output_Interval() {
             };
         };
         allSpecies.fstCalc();
+        
         allSpecies.genNumber++;
+        timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
     };
 };
 
@@ -353,8 +408,8 @@ function output_Initialise() {
         allSpecies.migrate = migrate;
         allSpecies.fstCalc = fstCalc;
 
-        // Create the fill table for the maximum number of populations and
-            // allele types.
+        // Create the DataTable, Chart, and DataView for the maximum number 
+            // of populations and allele types.
         alleleFreq.data = new google.visualization.DataTable();
             alleleFreq.data.addColumn('string', 'Population');
             var initLabels = alleles.getLabels(true);
@@ -377,6 +432,15 @@ function output_Initialise() {
             document.getElementById('output_alleleFreqChart')
         );
 
+        // Create the DataTable, and Chart for the fst calculations
+        fst.data = new google.visualization.DataTable();
+        fst.data.addColumn('number', 'Generation');
+        fst.data.addColumn('number', 'FST');
+
+        fst.chart = new google.visualization.LineChart(
+            document.getElementById('output_fstChart')
+        );
+
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
         fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
@@ -396,6 +460,47 @@ function output_Initialise() {
     alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
                                                                     // palette.
 
+    // Setup the Fst constants to reduce the number of math operations in the timer.
+        // This can be done because the population sizes are fixed throughout the 
+        // simulation routine.
+    var x = 0, y = 0;
+    for (var l = 0; l < parameters.numOfPop; l++) {
+        x += parameters.popSize;
+        y += parameters.popSize * parameters.popSize;
+    };
+
+    var
+    // r
+        r = parameters.numOfPop,
+    // r - 1
+        rMinusOne = r - 1,
+    // (n_1 + . . . + n_r - [n_1^2 + . . . + n_r^2]/[n_1 + . . . + n_r])/(r - 1)
+        nC = math.fraction(x - y/x, rMinusOne);
+
+    // n_i
+        scope.ni = parameters.popSize;
+    // 2*n_i
+        scope.twoNi = 2*parameters.popSize;
+    // (n_1 + n_2 + . . . + n_r)/r
+        scope.nBar = math.fraction(x, parameters.numOfPop);
+
+    // nBar - 1
+        scope.a = math.fraction(scope.nBar - 1); 
+    // (r - 1)/1
+        scope.b = math.fraction(rMinusOne, r); 
+    // r*(nBar - 1)
+        scope.c = math.fraction(r * scope.a); 
+    // r*(nBar - nC)/nBar
+        scope.d = math.fraction(r * (scope.nBar - nC) / scope.nBar); 
+    // (nBar - 1)  + (r - 1)*(nBar - nC)        
+        scope.e = math.fraction(scope.a + rMinusOne*(scope.nBar - nC));
+    // (nBar - nC)/(4*nC^2)
+        scope.f = math.fraction((scope.nBar - nC)/(4*math.square(nC)));
+    // n_1 + n_2 + . . . + n_r
+        scope.g = x; 
+    // (r - 1)*nBar
+        scope.h = math.fraction(rMinusOne * scope.nBar); 
+    
     // Draw the charts.
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
     toView.length = 0; // Ensure that the 'toView' array has been cleaned.
@@ -411,7 +516,7 @@ function output_Initialise() {
 
     // Start the timer to run the 'output_Interval()' function.
     timerVars.toGenNum = parameters.init;
-    timerVars.tickTock = setInterval(output_Interval, allSpecies.simRate);
+    timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
     // Enable the interruption button.
     $('#output_interrupt').prop('disabled', false);
@@ -448,7 +553,7 @@ $(document).ready(function(){
 
         // Start the timer to run the 'output_Interval()' function.
         timerVars.toGenNum = parseInt(howMany) + allSpecies.genNumber;
-        timerVars.tickTock = setInterval(output_Interval, allSpecies.simRate);
+        timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
         // Enable the interruption button.
         $('#output_interrupt').prop('disabled', false);
@@ -469,12 +574,7 @@ $(document).ready(function(){
 
 })
 
-/*fst.data = new google.visualization.DataTable();
-    fst.data.addColumn('number', 'Generation');
-    fst.data.addColumn('number', 'FST');
-
-    fst.chart = new google.visualization.LineChart(document.getElementById('output_fstChart'));
-
+/*
 function drawFST() {
     while (allSpecies[0].genNumber >= FST_DataCurrent) {
         FST_Data.addRow([FST_DataCurrent, statsMaster['FST'][FST_DataCurrent - 1]]);
