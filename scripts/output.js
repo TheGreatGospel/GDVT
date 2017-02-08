@@ -293,51 +293,84 @@ migrate = function(){
     toMigrate.length = 0; // Ensure taht the 'toMigrate' array has been cleaned.
 };
 
+/*===================================================================================*/
+/* fstCalc() is a funciton that is hooked onto the 'allSpecies' global array.        */
+/* This function calculates the coancestry coefficient using the methodology found   */
+/* in pages 176-179 of 'Genetic Data Analysis II' by Bruce S. Weir. Due to the       */
+/* implementation of 'output_Interval()', this calculates the coancestry coefficient */
+/* of the most recent generation.                                                    */
+/*===================================================================================*/
+
 fstCalc = function(){
-    var s1 = [], s2 = [], w = [];
+    var s1 = [], s2 = [], w = []; // Declaring local arrays to work with.
         
-    for (var i = 0; i < alleles.getUprBound(); i++) {
-        var x = 0, y = 0, z = 0;
+    for (var i = 0; i < alleles.getUprBound(); i++) { // For each allele type 'i'...
+        var x = 0, y = 0, z = 0; // Declaring local variables to work with.
 
-        for (var j = 0; j < allSpecies.length; j++) {
-            w.push(math.fraction(allSpecies[j].freq[i][allSpecies.genNumber], scope.twoNi));
+        for (var j = 0; j < allSpecies.length; j++) { // within each population...
+            // Calculate the population's p_i.
+                w.push(math.fraction(allSpecies[j].freq[i][allSpecies.genNumber], scope.twoNi));
+
+            // Rescale p_i with the population size.
+                x = math.fraction(w[j] * scope.ni);
+            // 'y' is the sum of p_is.
+                y = math.add(x, y);
             
-            x = math.fraction(w[j] * scope.ni);
-            y = math.add(x, y);
+            // Calculate the frequency of heterozygous individuals that have allele type 'i'
+                // within the population (H_i).
+                x = math.subtract(
+                    w[j], math.fraction(allSpecies[j].freq2Up[i][allSpecies.genNumber], scope.ni)
+                );
+                x = math.multiply(scope.twoNi, x);
 
-            x = math.subtract(w[j], math.fraction(allSpecies[j].freq2Up[i][allSpecies.genNumber], scope.ni));
-            x = math.multiply(scope.twoNi, x);
-            z = math.add(x, z);
+            // 'z' is the sum of H_is.
+                z = math.add(x, z);
         };
 
-        var pDot = math.divide(y, scope.g);
-        var hDot = math.divide(z, scope.g);
+        // 'pDot_i' is the average of the sample allele type 'i' frequencies over all samples.
+            var pDot = math.divide(y, scope.g);
+        // 'hDot_i' is the frequency of heterozygous individuals that have allele type 'i',
+            // averaged over all samples.
+            var hDot = math.divide(z, scope.g);
 
-        var x = 0, y = 0, z = 0;
-        for (var j = 0; j < allSpecies.length; j++) {
-            x = math.subtract(w[j], pDot);
-            y = math.multiply(scope.ni, math.square(x));
+        var x = 0, y = 0, z = 0;  // Refresh the local variables to work with.
 
-            z = math.add(y, z);
-        };
+        // Calculate the sample variance of allele type 'i'.
+            for (var j = 0; j < allSpecies.length; j++) {
+                x = math.subtract(w[j], pDot); // p_i - pDot.
+                y = math.multiply(scope.ni, math.square(x)); // n_i * (p_i - pDot)^2
+
+                z = math.add(y, z);
+            };
+            var sSq = math.divide(z, scope.h);
+
         
-        var sSq = math.divide(z, scope.h);
-        s1.push(math.fraction(0)), s2.push(math.fraction(0));
+        // Push '0' into the 's1' and 's2' local arrays.
+            s1.push(math.fraction(0)), s2.push(math.fraction(0));
 
-        var aSec = math.fraction(math.multiply(pDot, math.subtract(1, pDot)));
+        // Calculate 'pDot * (1 - pDot)'
+            var aSec = math.fraction(math.multiply(pDot, math.subtract(1, pDot)));
+
+        // In order to get around Javascript's lack of precision with small numbers and
+            // the library math.js inability to do it with incredibly small numbers.
+            // We must multiply each s1 and s2 component by 10000000.
+
         s1[i] = math.fraction(math.multiply(10000000,
-            sSq - (aSec - scope.b*sSq - hDot/4)/scope.a
+            // Refer to 'output_Initialise()' on which scope variable is what.
+            sSq - (aSec - scope.b*sSq - hDot/4)/scope.a 
         ));
         
         s2[i] = math.fraction(math.multiply(10000000,
+            // Refer to 'output_Initialise()' on which scope variable is what.
             aSec - scope.nBar*(scope.d*aSec - sSq*scope.e/scope.nBar - scope.f*hDot)/scope.c
         ));
         
-        w.length = 0;
+        w.length = 0; // Ensure that the local array w has been cleaned.
     };
 
-    var x = 0, y = 0, z = 0;
+    var x = 0, y = 0, z = 0; // Refresh the local variables to work with.
 
+    // Calculate the coancestry coefficient.
     for (var i = 0; i < alleles.getUprBound(); i++) {
         x = math.add(x, s1[i]);
         y = math.add(y, s2[i]);
@@ -345,19 +378,28 @@ fstCalc = function(){
     if (y != 0) {
         z = math.divide(x, y);
     } else {
+        // Note that a ratio of zeroes does imply that fixation has happened.
+            // Hence why the Fst is set to 1.
         z = math.number(1);
     };
     
+    // Add the fst into the corresponding DataTable.
     fst.data.addRow([allSpecies.genNumber + 1, math.number(math.round(z, 6))]);
-    s1.length = 0, s2.length = 0;
+    s1.length = 0, s2.length = 0; // Ensure that the local arrays 's1' 
+                                      // and 's2' has been cleaned.
 };
 
+// Timeout functionality to run the simulation routine.
 function output_Interval() {
-    clearTimeout(timerVars.tickTock);
-    if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
-        var genNumber_Zero = allSpecies.genNumber - 1;
-        timerVars.toStop = false;
+    clearTimeout(timerVars.tickTock); // Cleanup the previous timeout.
 
+    // Stop iterating if we met the goal or the user interrupts.
+    if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
+        var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
+            // allSpecies.genNumber
+        timerVars.toStop = false; // Refresh timerVars.toStop
+
+        // Update the UI with the current generation information.
         $('#output_genNum').html(allSpecies.genNumber);
         $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
@@ -370,27 +412,37 @@ function output_Interval() {
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
         fst.chart.draw(fst.data, fst.options);
 
+        // Re-enable UI buttons and disable the interruption button.
         $('.output_simButton').prop('disabled', false);
         $('#output_interrupt').prop('disabled', true);
         $('#paraMag_submit').prop('disabled', false);
     } else {
-        if (allSpecies.genNumber == 0) {
+        if (allSpecies.genNumber == 0) { // Check if there is a new simulation routine.
+            // If so, create out new populations.
             for (var i = 0; i < parameters.numOfPop; i++) {
                 allSpecies.push(new species());
                 allSpecies[i].create();
             };
         } else {
+            // If not, conduct migration then mate the populations.
             allSpecies.migrate();
             for (var i = 0; i < allSpecies.length; i++) {
                 allSpecies[i].mate();
             };
         };
-        allSpecies.fstCalc();
+        allSpecies.fstCalc(); // Calculate the current generation coancestry
+                                  // coefficient.
         
-        allSpecies.genNumber++;
+        allSpecies.genNumber++; // Update which generation we're up to.
+
+        // Update the progress bar and indicator.
         timerVars.progress = math.add(timerVars.progress, timerVars.increment);
-            $('#output_progressNumberChild').text(math.round(100*timerVars.progress/timerVars.progressMax, 0));
+            $('#output_progressNumberChild').text(
+                math.round(100*timerVars.progress/timerVars.progressMax, 0)
+            );
             $('#output_progressBar').css('width', math.round(timerVars.progress, 0));
+
+        // Begin the next iteration.
         timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
     };
 };
@@ -570,7 +622,6 @@ $(document).ready(function(){
             $('#output_progressNumberChild').text(0);
             $('#output_progressBar').css('width', 0);
         timerVars.increment = math.fraction(timerVars.progressMax, howMany);
-        console.log(timerVars.increment);
         timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
         // Enable the interruption button.
