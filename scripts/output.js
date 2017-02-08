@@ -360,8 +360,6 @@ function output_Interval() {
 
         $('#output_genNum').html(allSpecies.genNumber);
         $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
-        //$('#output_progressNumberChild').text(100);
-        //$('#output_progressBar').css('width', 200);
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
