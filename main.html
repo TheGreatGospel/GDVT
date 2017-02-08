@@ -67,6 +67,15 @@
                     <input id='output_simInput' type='number' min=0 max=1000 value=100>
                 </li>
                 <li>
+                    <div id="output_progressBarContainer">
+                        <div id="output_progressBar">
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div id="output_progressNumber"><span id="output_progressNumberChild">0</span>%</div>
+                </li>
+                <li>
                     <button id='output_interrupt' disabled='true'>Interrupt Simulation</button>
                 </li>
                 <li>
@@ -187,7 +196,11 @@
         allSpecies = [],             // Stores the simulation routine,
         webpageLive = false,         // Tracks stuff 
         timerVars = {                // Stores the timer variables to get Javascript to think in more than two threads 
-            toGenNum: 0
+            toGenNum: 0,
+            toStop: false,
+            increment: 0,
+            progress: 0,
+            progressMax: parseInt($('#output_progressBarContainer').css('width'), 10)
             // tickTock:
         },
         

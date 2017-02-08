@@ -112,6 +112,28 @@ ul.output_ulL li.current {
     font-size: 14pt;
 }
 
+#output_progressBarContainer {
+    width: 200px;
+    height: 5px;
+    background-color: #ededed;
+    margin: 0px;
+    padding: 0px;
+}
+
+#output_progressBar {
+    width: 0%;
+    height: 100%;
+    background-color: green;
+}
+
+#output_progressNumber {
+    font-size: 10pt;
+    text-align: right;
+    width: 200px;
+    margin: 0px;
+    padding: 0px;
+}
+
 ul.output_ulR {
     margin: 0px;
 	padding: 0px;

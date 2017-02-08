@@ -354,10 +354,14 @@ fstCalc = function(){
 
 function output_Interval() {
     clearTimeout(timerVars.tickTock);
-    if (allSpecies.genNumber >= timerVars.toGenNum) {
+    if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
         var genNumber_Zero = allSpecies.genNumber - 1;
+        timerVars.toStop = false;
+
         $('#output_genNum').html(allSpecies.genNumber);
         $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
+        //$('#output_progressNumberChild').text(100);
+        //$('#output_progressBar').css('width', 200);
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
@@ -386,6 +390,9 @@ function output_Interval() {
         allSpecies.fstCalc();
         
         allSpecies.genNumber++;
+        timerVars.progress = math.add(timerVars.progress, timerVars.increment);
+            $('#output_progressNumberChild').text(math.round(100*timerVars.progress/timerVars.progressMax, 0));
+            $('#output_progressBar').css('width', math.round(timerVars.progress, 0));
         timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
     };
 };
@@ -520,6 +527,10 @@ function output_Initialise() {
 
     // Start the timer to run the 'output_Interval()' function.
     timerVars.toGenNum = parameters.init;
+    timerVars.progress = 0;
+        $('#output_progressNumberChild').text(0);
+        $('#output_progressBar').css('width', 0);
+    timerVars.increment = math.fraction(timerVars.progressMax, parameters.init);
     timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
     // Enable the interruption button.
@@ -557,13 +568,18 @@ $(document).ready(function(){
 
         // Start the timer to run the 'output_Interval()' function.
         timerVars.toGenNum = parseInt(howMany) + allSpecies.genNumber;
+        timerVars.progress = 0;
+            $('#output_progressNumberChild').text(0);
+            $('#output_progressBar').css('width', 0);
+        timerVars.increment = math.fraction(timerVars.progressMax, howMany);
+        console.log(timerVars.increment);
         timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
         // Enable the interruption button.
         $('#output_interrupt').prop('disabled', false);
     });
 
-    // jQuery event listener for the 'n =' input
+    // jQuery event listener for the 'n =' input.
     $('#output_simInput').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000 ) {
@@ -574,6 +590,15 @@ $(document).ready(function(){
                 $('#output_simInput').val(parameters.simInput);
             };
         };
+    });
+
+    // jQuery event listener for the 'Interrupt Simulation' button.
+    $('#output_interrupt').click(function(){
+        // Disable the interruption button to prevent multiple clicks.
+        $('#output_interrupt').prop('disabled', true);
+
+        // Set the flag off to stop the simulation routine.
+        timerVars.toStop = true; 
     });
 
 });
