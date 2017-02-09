@@ -395,21 +395,38 @@ function output_Interval() {
 
     // Stop iterating if we met the goal or the user interrupts.
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
-        var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
+        var genNumber_Zero = allSpecies.genNumber - 1, // zero indexed version of
             // allSpecies.genNumber
+            temp = [];
         timerVars.toStop = false; // Refresh timerVars.toStop
 
         // Update the UI with the current generation information.
         $('#output_genNum').html(allSpecies.genNumber);
         $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
+        var z = 0;
+        var string = 'color: '
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
                 alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1][genNumber_Zero]);
             };
+
+            /*for (var y = 0; y < allSpecies[x].popSize; y++) {
+                temp = allSpecies[x].allelesUnpack(allSpecies[x].currentPop[0][y]);
+                alleleVisual.data.setValue(z, 0, x + 0.75);
+                alleleVisual.data.setValue(z, 1, y);
+                alleleVisual.data.setValue(z, 2, string.concat(alleles.getColours(true)[temp[0]]));
+                    z++;
+
+                alleleVisual.data.setValue(z, 0, x + 1.25);
+                alleleVisual.data.setValue(z, 1, y);
+                alleleVisual.data.setValue(z, 2, string.concat(alleles.getColours(true)[temp[1]]));
+                    z++;
+            };*/
         };
 
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+        //alleleVisual.chart.draw(alleleVisual.view, alleleVisual.options);
         fst.chart.draw(fst.data, fst.options);
 
         // Re-enable UI buttons and disable the interruption button.
@@ -500,6 +517,27 @@ function output_Initialise() {
             document.getElementById('output_fstChart')
         );
 
+        // Create the DataTable, Chart, and DataView for the allele visualisation
+            // of a population.
+        /*alleleVisual.data = new google.visualization.DataTable();
+            alleleVisual.data.addColumn('number', 'Population');
+            alleleVisual.data.addColumn('number', 'Allele');
+            alleleVisual.data.addColumn({
+                type: 'string', label: 'AlleleType', role: 'style'
+            });
+            fill.length = 0; // Ensure that the 'fill' array has been cleaned.
+            for (var i = 0; i < 10000; i++) { // 2 * maximum population size * maximum
+                                                  // number of populations.
+                fill.push([0, 0, 'color: red']);
+            };
+            alleleVisual.data.addRows(fill);
+        
+        alleleVisual.view = new google.visualization.DataView(alleleVisual.data);
+
+        alleleVisual.chart = new google.visualization.ScatterChart(
+            document.getElementById('output_indivAlleleChart')
+        )*/
+
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
         fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
@@ -519,11 +557,20 @@ function output_Initialise() {
     alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
                                                                     // palette.
 
+    /*toView.length = 0, // Ensure that the 'toView' array has been cleaned.
+    absUprBnd = 2 * parameters.popSize * parameters.numOfPop; // Set up how many rows
+                                                                  // are required.
+        for (var l = 0; l < 1000; l++) {
+            toView.push(l);
+        };
+        alleleVisual.view.setRows(0, l - 1);*/
+
+    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
+
     // Draw the charts.
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
+    //alleleVisual.chart.draw(alleleVisual.view, alleleVisual.options); 
     fst.chart.draw(fst.data, fst.options); 
-    
-    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 

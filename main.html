@@ -49,12 +49,12 @@
             <ul class='output_ulL'>
                 <li class='current' data-tab='output_alleleFreqChart'>Allele Frequencies</li>
                 <li data-tab='output_fstChart'>Coancestry Coefficient</li>
-                <li data-tab='output_indivAlleleChart'>Inidividual Alleles</li>
+                <li data-tab='output_indivAlleleChart'>Individual Alleles</li>
             </ul>
             <div class='output_chartContainer'>
                 <div class='output_chartDim current' id='output_alleleFreqChart'></div>
                 <div class='output_chartDim' id='output_fstChart'></div>
-                <div class='output_chartDim' id='output_indivAlleleChart'>individual allele</div>
+                <div class='output_chartDim' id='output_indivAlleleChart'></div>
             </div>
         </div>
         <div id='output_R'>
@@ -250,6 +250,16 @@
                 }
             }
             // data:
+            // chart:
+        },
+
+        alleleVisual = {
+            options: {
+                height: 400,
+                width: 600
+            }
+            // data:
+            // view:
             // chart:
         },
 
