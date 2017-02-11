@@ -13,49 +13,49 @@
 /*      mutation under the one-step mutation model respecting boundaries.            */
 /*===================================================================================*/
 function allelePool() {
-    this.labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-        this.colourPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', 
-                            '#386cb0', '#f0027f', '#bf5b17', '#666666'],
-        this.uprBound = parameters.numOfAlleles,
-        this.uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
+    var labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        colourPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', 
+                      '#386cb0', '#f0027f', '#bf5b17', '#666666'],
+        uprBound = parameters.numOfAlleles,
+        uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
             // 'uprBound' private variable. This is to prevent .mutate() from doing 
             // unnecessary arithmetic.
-};
-
-allelePool.prototype.setUprBound = function() {
-    this.uprBound = parameters.numOfAlleles;
-    this.uprBound_Zero = parameters.numOfAlleles - 1;
-};
-
-allelePool.prototype.getUprBound = function() {
-    return this.uprBound;
-};
-
-allelePool.prototype.getLabels = function(all = false) {
-    if (all == true) {
-        return this.labelPool;
+    
+    this.setUprBound = function() {
+        uprBound = parameters.numOfAlleles;
+        uprBound_Zero = parameters.numOfAlleles - 1;
     };
-    return this.labelPool.slice(0, this.uprBound);
-};
 
-allelePool.prototype.getColours = function(all = false) {
-    if (all == true) {
-        return this.colourPool;
+    this.getUprBound = function() {
+        return uprBound;
     };
-    return this.colourPool.slice(0, this.uprBound);
-};
 
-allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) {
-    if (i == this.uprBound_Zero) {
-        i--; // 100% probability to go from state 'uprBound_Zero' to 
-                // state 'uprBound_Zero - 1'.
-    } else if (i == 0) {
-        i++; // 100% probability to go from state '0' to state '1'.
-    } else {
-        i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
-                                        // one-step either direction.
+    this.getLabels = function(all = false) {
+        if (all == true) {
+            return labelPool;
+        };
+        return labelPool.slice(0, uprBound);
     };
-    return i;
+
+    this.getColours = function(all = false) {
+        if (all == true) {
+            return colourPool;
+        };
+        return colourPool.slice(0, uprBound);
+    };
+
+    this.mutate = function(i = getRandomInt(0, uprBound_Zero)) {
+        if (i == uprBound_Zero) {
+            i--; // 100% probability to go from state 'uprBound_Zero' to 
+                    // state 'uprBound_Zero - 1'.
+        } else if (i == 0) {
+            i++; // 100% probability to go from state '0' to state '1'.
+        } else {
+            i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
+                                            // one-step either direction.
+        };
+        return i;
+    };
 };
 
 /*===================================================================================*/
@@ -122,7 +122,7 @@ species.prototype.allelesUnpack = function(toUnpack) {
 
 species.prototype.create = function() {
     // Declare the local variables 'allelePool' and 'poolSize'
-    var indivAllelePool = [],
+    var allelePool = [],
         poolSize = alleles.getUprBound();
 
     // Objects can use numbers as indices with the array indexing notation.
@@ -138,25 +138,21 @@ species.prototype.create = function() {
 
     for (i = 0; i < this.popSize; i++) {
         // Assign two alleles to 'allelePool'.
-        indivAllelePool.push(getRandomInt(0, poolSize));
-        indivAllelePool.push(getRandomInt(0, poolSize));
+        allelePool.push(getRandomInt(0, poolSize));
+        allelePool.push(getRandomInt(0, poolSize));
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(this.allelesPack(indivAllelePool));
+        this.currentPop[0].push(this.allelesPack(allelePool));
             
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]][0]++;
-        this.freq[indivAllelePool[1]][0]++;
-        if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]][0]++;
+        this.freq[allelePool[0]][0]++;
+        this.freq[allelePool[1]][0]++;
+        if (allelePool[0] === allelePool[1]) {
+            this.freq2Up[allelePool[0]][0]++;
         };
             
-        indivAllelePool.length = 0; // Ensure that the 'allelePool' array has been cleaned.
+        allelePool.length = 0; // Ensure that the 'allelePool' array has been cleaned.
     };
-
-    indivAllelePool = null;
-    poolSize = null;
-    i = null;
 };
 
 species.prototype.mate = function () {
@@ -167,7 +163,7 @@ species.prototype.mate = function () {
                                                 // bigger or smaller than '.popSize' 
                                                 //  due to migration.
         parents = [], parentAPool = [], // The last set of local variables to declare.
-        parentBPool = [], indivAllelePool = [];
+        parentBPool = [], allelePool = [];
 
     // Increase the length of the allele frequencies arrays by one.
     for (var i = 0; i < alleles.getUprBound(); i++) {
@@ -192,45 +188,39 @@ species.prototype.mate = function () {
 
         // The child inherits one random allele from each parent and each inhreited
             // allele will have a chance to mutate.                               
-        indivAllelePool.push(parentAPool[rngBin.get()]);
-        if (Math.random() <= this.mutaRate) {
-            indivAllelePool[0] = alleles.mutate(indivAllelePool[0]);
+        allelePool.push(parentAPool[rngBin.get()]);
+        if (math.random() <= this.mutaRate) {
+            allelePool[0] = alleles.mutate(allelePool[0]);
         };
-        indivAllelePool.push(parentBPool[rngBin.get()]);
-        if (Math.random() <= this.mutaRate) {
-            indivAllelePool[1] = alleles.mutate(indivAllelePool[1]);
+        allelePool.push(parentBPool[rngBin.get()]);
+        if (math.random() <= this.mutaRate) {
+            allelePool[1] = alleles.mutate(allelePool[1]);
         };
         
         // Add in some additional variation to the member's possible allele structure.
         if (rngBin.get() === 0) {
-            indivAllelePool.reverse();
+            allelePool.reverse();
         };
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(this.allelesPack(indivAllelePool));
+        this.currentPop[0].push(this.allelesPack(allelePool));
 
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]][allSpecies.genNumber]++;
-        this.freq[indivAllelePool[1]][allSpecies.genNumber]++;
-        if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]][allSpecies.genNumber]++;
+        this.freq[allelePool[0]][allSpecies.genNumber]++;
+        this.freq[allelePool[1]][allSpecies.genNumber]++;
+        if (allelePool[0] === allelePool[1]) {
+            this.freq2Up[allelePool[0]][allSpecies.genNumber]++;
         };
 
         // Ensure that the local arrays have been cleaned.
-        indivAllelePool.length = 0;
+        allelePool.length = 0;
         parents.length = 0;
         parentAPool.length = 0;
         parentBPool.length = 0;
     };
 
     // Ensure that the 'parentGen' array has been cleaned.
-    parentGen.length = 0; parentGen = null;
-    parentSize = null;
-    i = null;
-    indivAllelePool = null;
-    parents = null;
-    parentAPool = null;
-    parentBPool = null;
+    parentGen.length = 0;
 };
 
 /*===================================================================================*/
@@ -300,14 +290,7 @@ migrate = function(){
         this[toMigrate[i + 2]].currentPop[0].splice(toMigrate[i + 1], 0, toMigrate[i]);
     };
 
-    // Ensure that the 'toMigrate' array has been cleaned.
-    toMigrate.length = 0; toMigrate = null; 
-    numOfMigrants = null;
-    x = null;
-    i = null;
-    j = null;
-    numOfPop = null;
-    numOfPop_Zero = null;
+    toMigrate.length = 0; // Ensure taht the 'toMigrate' array has been cleaned.
 };
 
 /*===================================================================================*/
@@ -400,36 +383,51 @@ fstCalc = function(){
         z = math.number(1);
     };
     
-    $('#output_fst').html(math.number(math.round(z, 6)));
     // Add the fst into the corresponding DataTable.
-    //fst.data.addRow([allSpecies.genNumber + 1, math.number(math.round(z, 6))]);
+    fst.data.addRow([allSpecies.genNumber + 1, math.number(math.round(z, 6))]);
     s1.length = 0, s2.length = 0; // Ensure that the local arrays 's1' 
                                       // and 's2' has been cleaned.
-    s1 = null; s2 = null; w = null;
-    x = null; y = null; z = null;
 };
 
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
-    
+    clearTimeout(timerVars.tickTock); // Cleanup the previous timeout.
+
+    // Stop iterating if we met the goal or the user interrupts.
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
-        var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
-        timerVars.toStop = false;
-        timerVars.tickTock.stop();
+        var genNumber_Zero = allSpecies.genNumber - 1, // zero indexed version of
+            // allSpecies.genNumber
+            temp = [];
+        timerVars.toStop = false; // Refresh timerVars.toStop
 
         // Update the UI with the current generation information.
         $('#output_genNum').html(allSpecies.genNumber);
+        $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
-        /*for (var x = 0; x < allSpecies.length; x++) {
+        var z = 0;
+        var string = 'color: '
+        for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
                 alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1][genNumber_Zero]);
             };
+
+            /*for (var y = 0; y < allSpecies[x].popSize; y++) {
+                temp = allSpecies[x].allelesUnpack(allSpecies[x].currentPop[0][y]);
+                alleleVisual.data.setValue(z, 0, x + 0.75);
+                alleleVisual.data.setValue(z, 1, y);
+                alleleVisual.data.setValue(z, 2, string.concat(alleles.getColours(true)[temp[0]]));
+                    z++;
+
+                alleleVisual.data.setValue(z, 0, x + 1.25);
+                alleleVisual.data.setValue(z, 1, y);
+                alleleVisual.data.setValue(z, 2, string.concat(alleles.getColours(true)[temp[1]]));
+                    z++;
+            };*/
         };
-        genNumber_Zero = null;
-        x = null;
-        y = null;*/
-        //alleleFreq.chart.clearChart();
-        //alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+
+        alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+        //alleleVisual.chart.draw(alleleVisual.view, alleleVisual.options);
+        fst.chart.draw(fst.data, fst.options);
 
         // Re-enable UI buttons and disable the interruption button.
         $('.output_simButton').prop('disabled', false);
@@ -442,14 +440,12 @@ function output_Interval() {
                 allSpecies.push(new species());
                 allSpecies[i].create();
             };
-            i = null;
         } else {
             // If not, conduct migration then mate the populations.
             allSpecies.migrate();
             for (var i = 0; i < allSpecies.length; i++) {
                 allSpecies[i].mate();
             };
-            i = null;
         };
         allSpecies.fstCalc(); // Calculate the current generation coancestry
                                   // coefficient.
@@ -457,13 +453,14 @@ function output_Interval() {
         allSpecies.genNumber++; // Update which generation we're up to.
 
         // Update the progress bar and indicator.
-        timerVars.progress = timerVars.progress + timerVars.increment;
-            var a = Math.round(100 * timerVars.progress, 0),
-                b = Math.round(timerVars.progressMax * timerVars.progress, 0);
-            $('#output_progressNumberChild').html(a);
-            $('#output_progressBar').css('width', b);
-            a = null;
-            b = null;
+        timerVars.progress = math.add(timerVars.progress, timerVars.increment);
+            $('#output_progressNumberChild').text(
+                math.round(100*timerVars.progress/timerVars.progressMax, 0)
+            );
+            $('#output_progressBar').css('width', math.round(timerVars.progress, 0));
+
+        // Begin the next iteration.
+        timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
     };
 };
 
@@ -472,14 +469,16 @@ function output_Initialise() {
     // Disable the buttons which can begin the timer.
     $('.output_simButton').prop('disabled', true);
     $('#paraMag_submit').prop('disabled', true);
-
+    
     // Initialise independent parts of the simulation routine.
     alleles.setUprBound();
     allSpecies.genNumber = 0;
+    allSpecies.simRate = parameters.simRate;
 
     if (webpageLive) {
         // Clean up previous simulation routine.
         allSpecies.length = 0;
+        fst.data.removeRows(0, fst.data.getNumberOfRows());
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
@@ -503,48 +502,79 @@ function output_Initialise() {
                 };
             alleleFreq.data.addRows(fill);
 
-
         alleleFreq.view = new google.visualization.DataView(alleleFreq.data);
 
         alleleFreq.chart = new google.visualization.ColumnChart(
             document.getElementById('output_alleleFreqChart')
         );
 
-        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
-                             // to clean the 'initLabels' array as it is a 
-                             // link to a private variable.
-        fill = null;
-        i = null;
-        j = null;
+        // Create the DataTable, and Chart for the fst calculations
+        fst.data = new google.visualization.DataTable();
+        fst.data.addColumn('number', 'Generation');
+        fst.data.addColumn('number', 'FST');
+
+        fst.chart = new google.visualization.LineChart(
+            document.getElementById('output_fstChart')
+        );
+
+        // Create the DataTable, Chart, and DataView for the allele visualisation
+            // of a population.
+        /*alleleVisual.data = new google.visualization.DataTable();
+            alleleVisual.data.addColumn('number', 'Population');
+            alleleVisual.data.addColumn('number', 'Allele');
+            alleleVisual.data.addColumn({
+                type: 'string', label: 'AlleleType', role: 'style'
+            });
+            fill.length = 0; // Ensure that the 'fill' array has been cleaned.
+            for (var i = 0; i < 10000; i++) { // 2 * maximum population size * maximum
+                                                  // number of populations.
+                fill.push([0, 0, 'color: red']);
+            };
+            alleleVisual.data.addRows(fill);
+        
+        alleleVisual.view = new google.visualization.DataView(alleleVisual.data);
+
+        alleleVisual.chart = new google.visualization.ScatterChart(
+            document.getElementById('output_indivAlleleChart')
+        )*/
 
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
+        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
+                             // to clean the 'initLabels' array as it is a 
+                             // link to a private variable.
     };
 
     // Subset the DataTable in 'alleleFreq.data' to visualise what is in the 
         // simulation routine. We load in the columns in reverse order to 
         // work around the native functionality of Google Charts.
-    /*var toView = [0];
-        for (var k = 0; k < alleles.getUprBound(); k++) {
-            toView.push(alleles.getUprBound() - k);
+    var toView = [0], absUprBnd = alleles.getLabels().length;
+        for (var k = 0; k < absUprBnd; k++) {
+            toView.push(absUprBnd - k);
         };
         alleleFreq.view.setColumns(toView);
         alleleFreq.view.setRows(0, parameters.numOfPop - 1);
-   // alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
+    alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
                                                                     // palette.
+
+    /*toView.length = 0, // Ensure that the 'toView' array has been cleaned.
+    absUprBnd = 2 * parameters.popSize * parameters.numOfPop; // Set up how many rows
+                                                                  // are required.
+        for (var l = 0; l < 1000; l++) {
+            toView.push(l);
+        };
+        alleleVisual.view.setRows(0, l - 1);*/
+
     toView.length = 0; // Ensure that the 'toView' array has been cleaned.
-    toView = null;
-    k = null;*/
-   // reverse = null;
 
     // Draw the charts.
-    alleleFreq.chart.clearChart();
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
+    //alleleVisual.chart.draw(alleleVisual.view, alleleVisual.options); 
+    fst.chart.draw(fst.data, fst.options); 
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 
         // simulation routine.
-
     var x = 0, y = 0;
     for (var l = 0; l < parameters.numOfPop; l++) {
         x += parameters.popSize;
@@ -583,29 +613,22 @@ function output_Initialise() {
     // (r - 1)*nBar
         scope.h = math.fraction(rMinusOne * scope.nBar); 
 
-    r = null; rMinusOne = null; nC = null;
-    x = null; y = null;
-
     // Load into the simulation parameters into the corresponding <span>s.
-    $('#output_numOfPop').html(parameters.numOfPop);
-    $('#output_popSize').html(parameters.popSize);
-    $('#output_numOfAlleles').html(parameters.numOfAlleles);
-    $('#output_mutaDenom').html(parameters.mutationDenom);
-    $('#output_numOfMigrants').html(parameters.numOfMigrants);
-    $('#output_init').html(parameters.init);
-    $('#output_simRate').html(parameters.simRate/1000);
+    $('#output_numOfPop').text(parameters.numOfPop);
+    $('#output_popSize').text(parameters.popSize);
+    $('#output_numOfAlleles').text(parameters.numOfAlleles);
+    $('#output_mutaDenom').text(parameters.mutationDenom);
+    $('#output_numOfMigrants').text(parameters.numOfMigrants);
+    $('#output_init').text(parameters.init);
+    $('#output_simRate').text(parameters.simRate/1000);
 
     // Start the timer to run the 'output_Interval()' function.
     timerVars.toGenNum = parameters.init;
-    timerVars.tickTock.clear();
-    timerVars.tickTock.bind(parameters.simRate, output_Interval);
-    timerVars.tickTock.start();
-
-    // Refresh the progress bar.
     timerVars.progress = 0;
-        $('#output_progressNumberChild').html(0);
+        $('#output_progressNumberChild').text(0);
         $('#output_progressBar').css('width', 0);
-    timerVars.increment = timerVars.progressMax / parameters.init / timerVars.progressMax;
+    timerVars.increment = math.fraction(timerVars.progressMax, parameters.init);
+    timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
     // Enable the interruption button.
     $('#output_interrupt').prop('disabled', false);
@@ -624,9 +647,7 @@ $(document).ready(function(){
 
         // Gives visibility to the tab to swap to.
 		$(this).addClass('current');
-		$('#' + tab_id).addClass('current');
-
-        tab_id = null;
+		$('#'+tab_id).addClass('current');
 	});
 
     // jQuery event listeners for the 'n =' buttons.
@@ -641,44 +662,35 @@ $(document).ready(function(){
             howMany = $('#output_simInput').val();
         };
 
-        var howManyChild = parseInt(howMany, 10);
-
         // Start the timer to run the 'output_Interval()' function.
-        timerVars.toGenNum = howManyChild + allSpecies.genNumber;
-        timerVars.tickTock.start();
-
-        // Refresh the progress bar.
+        timerVars.toGenNum = parseInt(howMany) + allSpecies.genNumber;
         timerVars.progress = 0;
-            $('#output_progressNumberChild').html(0);
+            $('#output_progressNumberChild').text(0);
             $('#output_progressBar').css('width', 0);
-        timerVars.increment = timerVars.progressMax / howMany / timerVars.progressMax;
+        timerVars.increment = math.fraction(timerVars.progressMax, howMany);
+        timerVars.tickTock = setTimeout(output_Interval, allSpecies.simRate);
 
         // Enable the interruption button.
         $('#output_interrupt').prop('disabled', false);
-
-        howMany = null;
-        howManyChild = null;
     });
 
     // jQuery event listener for the 'n =' input.
     $('#output_simInput').change(function() {
         var x = Math.floor($(this).val());
         if (x < 1 || x > 1000 ) {
-            $(this).val(parameters.simInput);
+            $('#output_simInput').val(parameters.simInput);
         } else {
             parameters.simInput = x;
             if (x != $(this).val()) {
-                $(this).val(parameters.simInput);
+                $('#output_simInput').val(parameters.simInput);
             };
         };
-
-        x = null;
     });
 
     // jQuery event listener for the 'Interrupt Simulation' button.
     $('#output_interrupt').click(function(){
         // Disable the interruption button to prevent multiple clicks.
-        $(this).prop('disabled', true);
+        $('#output_interrupt').prop('disabled', true);
 
         // Set the flag off to stop the simulation routine.
         timerVars.toStop = true; 

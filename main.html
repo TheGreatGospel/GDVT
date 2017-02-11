@@ -11,6 +11,7 @@
 
     <script src='libraries/jquery-3.1.1.min.js'></script>
     <script src='libraries/math.min.js'></script>
+    <script src='libraries/Timer.js'></script>
 
     <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
     <script type='text/javascript'>
@@ -138,10 +139,10 @@
                 </span>
             </li>
             <li>
-                Simulation Rate: <input id='paraMag_simRate' type='number' min=0.001 max=5> <br>
-                <span class='paraMag_space'></span><input id='paraMag_simRateChild' type='range' min=0.001 max=5 step=0.001> <br>
+                Simulation Rate: <input id='paraMag_simRate' type='number' min=0.01 max=2 step=0.01> <br>
+                <span class='paraMag_space'></span><input id='paraMag_simRateChild' type='range' min=0.01 max=2 step=0.01> <br>
                 <span class='paraMag_Info'>
-                    Sets the timer rate of the executing consecutive simulations. The user interruption button will be more responsive if the Simulation Rate is set to a high value. Takes a value between 0.001 and 5.00 seconds (inclusive).
+                    Sets the timer rate of executing consecutive simulations. The user interruption button will be more responsive if the Simulation Rate is set to a high value. Takes a value between 0.01 and 2.00 seconds (inclusive).
                 </span>
             </li>
         </ul>
@@ -178,34 +179,53 @@
 
 <script>
     var parameters = {
-            /* Parameters Tab */
-            numOfPop: 8,       // Number of Populations 
-            popSize: 500,       // Population Size
-            numOfAlleles: 6,    // Number of Allele Types
-            mutationDenom: 300,  // Mutation Denom
-            numOfMigrants: 2,   // Number of Migrants
-            init: 1,            // Initial Number of Simulations
-            simRate: 1,         // Simulation Rate
+            // Parameters Tab.
+            numOfPop: 8,        // Number of Populations.
+            popSize: 500,       // Population Size.
+            numOfAlleles: 6,    // Number of Allele Types.
+            mutationDenom: 300, // Mutation Denom.
+            numOfMigrants: 2,   // Number of Migrants.
+            init: 1,            // Initial Number of Simulations.
+            simRate: 10,        // Simulation Rate.
 
-            /* Output Tab */
-            simInput: 100       // Number of simulations to do consecutively
+            // Output Tab.
+            simInput: 100       // Number of simulations to do consecutively.
         },
-        
-        alleles = new allelePool(),  // Stores the allelePool 'struct' and its methods
-        rngBin = new randomBinary(), // Stores the binary random number generator 'struct'
-        allSpecies = [],             // Stores the simulation routine,
-        webpageLive = false,         // Tracks stuff 
-        timerVars = {                // Stores the timer variables to get Javascript to think in more than two threads 
-            toGenNum: 0,
-            toStop: false,
-            increment: 0,
-            progress: 0,
-            progressMax: parseInt($('#output_progressBarContainer').css('width'), 10)
-            // tickTock:
+        alleles = new allelePool(),  // Stores the allelePool object and it's methods.
+        rngBin = new randomBinary(), // Stores the binary random number generator object.
+        allSpecies = [],             // Stores the simulation routine.
+        webpageLive = false,         // Tracks whether the webpage has been loaded already.
+        timerVars = {
+            // Stores the timer variables to get Javascript thinking in more than one thread.
+            toGenNum: 0,              // Tracks how many generations to process for the 
+                                          // simulation routine.
+            toStop: false,            // Tracks whether the user has interrupted the simulation
+                                          // routine.
+            tickTock: new Timer(10), // The timer object.
+            increment: 0,            // How much to increment the progress bar by.
+            progress: 0,             // Current state of the progress bar.
+            progressMax: parseInt(   // Parse the CSS field for how wide the progress bar is.
+                $('#output_progressBarContainer').css('width'), 10
+            )
         },
-        
-        /* To Comment */
+        scope = {
+            // Object variable to hold constants for fstCalc().
+          //ni: n_i,
+          //twoNi: 2*n_i,
+          //nBar: (n_1 + n_2 + . . . + n_r)/r,
+          //a: nBar - 1,
+          //b: (r - 1)/1,
+          //c: rp*(nBar - 1),
+          //d: r*(nBar - nC)/nBar,
+          //e: (nBar - 1)  + (r - 1)*(nBar - nC),
+          //f: (nBar - nC)/(4*nC^2)
+          //g: n_1 + n_2 + . . . + n_r,
+          //h: (r - 1)*nBar
+            // Where r: parameters.numOfPop, 
+            // and nC: (n_1 + . . . + n_r - [n_1^2 + . . . + n_r^2]/[n_1 + . . . + n_r])/(r - 1).
+        },
         alleleFreq = {
+            // Chart options for visualising the allele frequencies.
             options: {
                 title: 'Allele Frequencies',
                 height: 400,
@@ -224,11 +244,13 @@
                     easing: 'out'
                 }
             }
-            // data:
-            // chart:
-            // view:
-        },
-
+          //data: new google.visualization.DataTable(),    // Stores the datatable of allele
+                                                               // frequencies.
+          //chart: new google.visualization.ColumnChart(), // The chart object.
+          //view: new google.visualization.DataView()      // The view of the datatable object to
+                                                               // visualise.
+        };
+    /* To Comment 
         fst = {
             options: {
                 title: 'Coancestry Coefficient over Generations',
@@ -262,19 +284,14 @@
             // view:
             // chart:
         },
-
-        /**/
-        scope = {
-            // ni, twoNi, nBar, a to h
-        };
+*/
+    $('#paraMag_submit').prop('disabled', true);
+    $('.output_simButton').prop('disabled', true);
 
     $('#output_genNum').html('. . .');
     $('#output_fst').html('. . .');
 
-    $('#paraMag_submit').prop('disabled', true);
-    $('.output_simButton').prop('disabled', true);
     parameters_Initialise();
-
     google.charts.setOnLoadCallback(output_Initialise);
 </script>
 <!-- Initialisation of JS Functionality (End) -->
