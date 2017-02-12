@@ -14,8 +14,6 @@
 /*===================================================================================*/
 function allelePool() {
     this.labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-        this.colourPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', 
-                            '#386cb0', '#f0027f', '#bf5b17', '#666666'],
         this.uprBound = parameters.numOfAlleles,
         this.uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
             // 'uprBound' private variable. This is to prevent .mutate() from doing 
@@ -36,13 +34,6 @@ allelePool.prototype.getLabels = function(all = false) {
         return this.labelPool;
     };
     return this.labelPool.slice(0, this.uprBound);
-};
-
-allelePool.prototype.getColours = function(all = false) {
-    if (all == true) {
-        return this.colourPool;
-    };
-    return this.colourPool.slice(0, this.uprBound);
 };
 
 allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) {
@@ -402,7 +393,15 @@ fstCalc = function(){
     
     $('#output_fst').html(math.number(math.round(z, 6)));
     // Add the fst into the corresponding DataTable.
-    //fst.data.addRow([allSpecies.genNumber + 1, math.number(math.round(z, 6))]);
+    if (fst.data.getNumberOfRows() > allSpecies.genNumber) {
+        fst.data.setValue(
+            allSpecies.genNumber, 1, math.number(math.round(z, 6))
+        );
+    } else {
+        fst.data.addRow(
+            [allSpecies.genNumber + 1, math.number(math.round(z, 6))]
+        );
+    };
     s1.length = 0, s2.length = 0; // Ensure that the local arrays 's1' 
                                       // and 's2' has been cleaned.
     s1 = null; s2 = null; w = null;
@@ -420,21 +419,24 @@ function output_Interval() {
         // Update the UI with the current generation information.
         $('#output_genNum').html(allSpecies.genNumber);
 
-        /*for (var x = 0; x < allSpecies.length; x++) {
+        for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
                 alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1][genNumber_Zero]);
             };
         };
-        genNumber_Zero = null;
         x = null;
-        y = null;*/
-        //alleleFreq.chart.clearChart();
-        //alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+        y = null;
+        alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+
+        fst.view.setRows(0, genNumber_Zero);
+        fst.chart.draw(fst.view, fst.options);
 
         // Re-enable UI buttons and disable the interruption button.
         $('.output_simButton').prop('disabled', false);
         $('#output_interrupt').prop('disabled', true);
         $('#paraMag_submit').prop('disabled', false);
+
+        genNumber_Zero = null;
     } else {
         if (allSpecies.genNumber == 0) { // Check if there is a new simulation routine.
             // If so, create out new populations.
@@ -503,7 +505,6 @@ function output_Initialise() {
                 };
             alleleFreq.data.addRows(fill);
 
-
         alleleFreq.view = new google.visualization.DataView(alleleFreq.data);
 
         alleleFreq.chart = new google.visualization.ColumnChart(
@@ -517,6 +518,17 @@ function output_Initialise() {
         i = null;
         j = null;
 
+        // Create the DataTable, and Chart for the fst calculations
+        fst.data = new google.visualization.DataTable();
+        fst.data.addColumn('number', 'Generation');
+        fst.data.addColumn('number', 'FST');
+
+        fst.view = new google.visualization.DataView(fst.data);
+
+        fst.chart = new google.visualization.LineChart(
+            document.getElementById('output_fstChart')
+        );
+
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
     };
@@ -524,22 +536,22 @@ function output_Initialise() {
     // Subset the DataTable in 'alleleFreq.data' to visualise what is in the 
         // simulation routine. We load in the columns in reverse order to 
         // work around the native functionality of Google Charts.
-    /*var toView = [0];
+    var toView = [0];
         for (var k = 0; k < alleles.getUprBound(); k++) {
             toView.push(alleles.getUprBound() - k);
         };
         alleleFreq.view.setColumns(toView);
         alleleFreq.view.setRows(0, parameters.numOfPop - 1);
-   // alleleFreq.options.colors = alleles.getColours().reverse(); // Update the colour
-                                                                    // palette.
+        
     toView.length = 0; // Ensure that the 'toView' array has been cleaned.
     toView = null;
-    k = null;*/
-   // reverse = null;
+    k = null;
 
     // Draw the charts.
-    alleleFreq.chart.clearChart();
-    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options); 
+    alleleFreq.chart.clearChart(); 
+    alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+    fst.chart.clearChart(); 
+    fst.chart.draw(fst.view, fst.options);
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 

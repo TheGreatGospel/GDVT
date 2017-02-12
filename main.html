@@ -230,6 +230,9 @@
                 title: 'Allele Frequencies',
                 height: 400,
                 width: 600,
+                bar: {
+                    groupWidth: '70%'
+                },
                 hAxis: {
                     title: 'Population'
                 },
@@ -242,6 +245,9 @@
                 animation: {
                     duration: 500, // in milliseconds
                     easing: 'out'
+                },
+                tooltip: {
+                    isHtml: true
                 }
             }
           //data: new google.visualization.DataTable(),    // Stores the datatable of allele
@@ -249,15 +255,16 @@
           //chart: new google.visualization.ColumnChart(), // The chart object.
           //view: new google.visualization.DataView()      // The view of the datatable object to
                                                                // visualise.
-        };
-    /* To Comment 
+        },
         fst = {
+            // Chart options for visualising the conancestry coefficient.
             options: {
                 title: 'Coancestry Coefficient over Generations',
                 height: 400,
                 width: 600,
                 hAxis: {
-                    title: 'Generation'
+                    title: 'Generation',
+                    minValue: 1
                 },
                 vAxis: {
                     title: 'Coancestry Coefficient (FST)',
@@ -269,12 +276,21 @@
                 animation: {
                     duration: 500, // in milliseconds
                     easing: 'out'
+                },
+                tooltip: {
+                    isHtml: true
+                },
+                explorer: {
+                    axis: 'horizontal',
+                    keepInBounds: true
+                    //actions: ['dragToZoom', 'rightClickToReset']
                 }
             }
-            // data:
-            // chart:
-        },
-
+          //data: new google.visualization.DataTable(),
+          //chart: new google.visualization.LineChart(),
+          //view: new google.visualization.DataView()
+        };
+    /* To Comment
         alleleVisual = {
             options: {
                 height: 400,
