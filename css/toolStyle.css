@@ -140,6 +140,12 @@ ul.output_ulL li.current {
     display: inherit;
 }
 
+#output_indivAlleleChart {
+    background: white;
+    height: 400px;
+    width: 600px;
+}
+
 #output_R {
     height: 430px;
     width: 520px;
