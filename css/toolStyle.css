@@ -158,10 +158,12 @@ ul.output_ulL li.current {
 ul.output_curParaMag {
     margin: 0px;
 	padding: 0px;
-	list-style: none;
+	list-style: none;    
+    width: 600px;
 }
 
 ul.output_curParaMag li {
+    display: inline-block;
     font-size: 12px;
     padding-left: 12px;
     padding-bottom: 0px;

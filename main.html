@@ -15,7 +15,7 @@
 
     <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
     <script type='text/javascript'>
-        google.charts.load('current', {packages: ['corechart', 'bar', 'line']});
+        google.charts.load('current', {packages: ['corechart', 'bar', 'line', 'controls']});
     </script>
 </head>
 <!-- CSS and JS Libraries (End) -->
@@ -82,13 +82,16 @@
         </div>
         <div id='output_R'>
             <div class='output_chartContainerToo'>
-                <div id='output_fstChart'></div>
+                <div id='output_fstDashboard'>
+                    <div id='output_fstChart'></div>
+                    <div id='output_fstControl'></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div>
-        Current Parameters
+        Current Parameters:
         <ul class='output_curParaMag'>
             <li>Number of Populations: <span id='output_numOfPop'></span></li>
             <li>Population Size: <span id='output_popSize'></span></li>
@@ -249,51 +252,63 @@
                 },
                 isStacked: 'percent',
                 animation: {
-                    duration: 500, // in milliseconds
+                    duration: 1000, // in milliseconds
                     easing: 'out'
                 },
                 tooltip: {
                     isHtml: true
                 }
             }
-          //data: new google.visualization.DataTable(),    // Stores the datatable of allele
-                                                               // frequencies.
+          //data: new google.visualization.DataTable(),    // Stores the allele frequencies.
           //chart: new google.visualization.ColumnChart(), // The chart object.
           //view: new google.visualization.DataView()      // The view of the datatable object to
                                                                // visualise.
         },
         fst = {
             // Chart options for visualising the conancestry coefficient.
-            options: {
+            optionsChart: {
                 title: 'Coancestry Coefficient over Generations',
-                height: 400,
+                height: 350,
                 width: 500,
                 hAxis: {
                     title: 'Generation',
-                    minValue: 1
+                    minValue: 1,
+                    gridlines: {
+                        count: 5
+                    }
                 },
                 vAxis: {
                     title: 'Coancestry Coefficient (FST)',
-                    viewWindowMode: 'pretty'
+                    viewWindowMode: 'pretty',
                 },
                 legend: {
                     position: 'none'
                 },
                 animation: {
-                    duration: 500, // in milliseconds
+                    duration: 1000, // in milliseconds
                     easing: 'out'
                 },
                 tooltip: {
                     isHtml: true
-                },
-                explorer: {
-                    axis: 'horizontal',
-                    keepInBounds: true
+                }
+            },
+            optionsControl: {
+                filterColumnIndex: 0,
+                ui: {
+                    chartOptions: {
+                        height: 50,
+                        width: 500
+                    },
+                    snapToData: true
                 }
             }
-          //data: new google.visualization.DataTable(),
-          //chart: new google.visualization.LineChart(),
-          //view: new google.visualization.DataView()
+          //data: new google.visualization.DataTable(),     // Stores the conancestry coefficient.
+          //chart: new google.visualization.ChartWrapper(), // The chart object.
+          //view: new google.visualization.DataView(),      // The view of the datatable object to 
+                                                                // visualise.
+          //control: google.visualization.ControlWrapper(), // The controls object.
+          //dashboard: new google.visualization.Dashboard() // The dashboard instance which stores
+                                                                // the chart and control objects.
         };
     /* To Comment
         alleleVisual = {

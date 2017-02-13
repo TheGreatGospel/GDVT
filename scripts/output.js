@@ -407,6 +407,7 @@ fstCalc = function(){
     x = null; y = null; z = null;
 };
 
+
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
     
@@ -428,8 +429,15 @@ function output_Interval() {
         y = null;
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
 
+        // Draw the fst chart...
         fst.view.setRows(0, genNumber_Zero);
-        fst.chart.draw(fst.view, fst.options);
+        fst.dashboard.draw(fst.view);
+
+        // Manipulate the controls here to include the most recent FST calculations.
+        var bounds = fst.control.getState();
+        bounds.range.end = allSpecies.genNumber;
+        fst.chart.setOption('hAxis.maxValue', bounds.range.end);
+        bounds = null;
 
         // Re-enable UI buttons and disable the interruption button.
         $('.output_simButton').prop('disabled', false);
@@ -482,6 +490,8 @@ function output_Initialise() {
     if (webpageLive) {
         // Clean up previous simulation routine.
         allSpecies.length = 0;
+        alleleFreq.chart.clearChart(); 
+        fst.chart.getChart().clearChart();
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
@@ -518,16 +528,43 @@ function output_Initialise() {
         i = null;
         j = null;
 
-        // Create the DataTable, and Chart for the fst calculations
+        // Create the DataTable, DataView, Dashboard, Chart, Controls
+            //and event triggers for the fst calculations
         fst.data = new google.visualization.DataTable();
         fst.data.addColumn('number', 'Generation');
         fst.data.addColumn('number', 'FST');
 
         fst.view = new google.visualization.DataView(fst.data);
 
-        fst.chart = new google.visualization.LineChart(
-            document.getElementById('output_fstChart')
+        fst.chart = new google.visualization.ChartWrapper({
+            chartType: 'LineChart',
+            containerId: 'output_fstChart',
+            options: fst.optionsChart
+        });
+
+        fst.dashboard = new google.visualization.Dashboard(
+            document.getElementById('output_fstDashboard')
         );
+
+        fst.control = new google.visualization.ControlWrapper({
+            controlType: 'ChartRangeFilter',
+            containerId: 'output_fstControl',
+            options: fst.optionsControl
+        });
+
+        google.visualization.events.addListener(fst.control, 'statechange', controlAdjustment);
+
+        function controlAdjustment(obj) {
+            if (!obj.inProgress) {
+                // Adjust the view window of fst.chart once the user has settled on a range to view.
+                var bounds = fst.control.getState();
+                fst.chart.setOption('hAxis.minValue', bounds.range.start);
+                fst.chart.setOption('hAxis.maxValue', bounds.range.end);
+                bounds = null;
+            };
+        };
+
+        fst.dashboard.bind(fst.control, fst.chart);
 
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
@@ -548,10 +585,8 @@ function output_Initialise() {
     k = null;
 
     // Draw the charts.
-    alleleFreq.chart.clearChart(); 
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
-    fst.chart.clearChart(); 
-    fst.chart.draw(fst.view, fst.options);
+    fst.dashboard.draw(fst.view);
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 
