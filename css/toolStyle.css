@@ -64,6 +64,41 @@ ul.toolbar li.current {
     font-size: 16pt;
 }
 
+ul.output_headingList {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.output_headingList li {
+    width: 550px;
+    padding-bottom: 6px;
+}
+
+#output_progressBarContainer {
+    width: 500px;
+    height: 16px;
+    background-color: #ededed;
+    margin-left: 20px;
+    padding: 0px;
+}
+
+#output_progressBar {
+    position: relative;
+    width: 0%;
+    height: 100%;
+    background-color: green;
+}
+
+#output_progressNumber {
+    color: white;
+    line-height: 16px;
+    font-size: 8pt;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+
 #output_L {
     position: relative;
     height: 430px;
@@ -106,42 +141,6 @@ ul.output_ulL li.current {
 
 #output_R {
     padding-left: 24px;
-}
-
-#output_Heading {
-    font-size: 14pt;
-}
-
-#output_progressBarContainer {
-    width: 200px;
-    height: 5px;
-    background-color: #ededed;
-    margin: 0px;
-    padding: 0px;
-}
-
-#output_progressBar {
-    width: 0%;
-    height: 100%;
-    background-color: green;
-}
-
-#output_progressNumber {
-    font-size: 10pt;
-    text-align: right;
-    width: 200px;
-    margin: 0px;
-    padding: 0px;
-}
-
-ul.output_ulR {
-    margin: 0px;
-	padding: 0px;
-	list-style: none;
-}
-
-ul.output_ulR li {
-    padding-bottom: 12px;
 }
 
 ul.output_curParaMag {

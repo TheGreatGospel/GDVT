@@ -43,7 +43,7 @@ allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) 
     } else if (i == 0) {
         i++; // 100% probability to go from state '0' to state '1'.
     } else {
-        i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
+        i = i + (1 - 2 * rngBin.get()); // 50% probability for the current state to go
                                         // one-step either direction.
     };
     return i;
@@ -391,7 +391,6 @@ fstCalc = function(){
         z = math.number(1);
     };
     
-    $('#output_fst').html(math.number(math.round(z, 6)));
     // Add the fst into the corresponding DataTable.
     if (fst.data.getNumberOfRows() > allSpecies.genNumber) {
         fst.data.setValue(
@@ -418,6 +417,7 @@ function output_Interval() {
 
         // Update the UI with the current generation information.
         $('#output_genNum').html(allSpecies.genNumber);
+        $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {

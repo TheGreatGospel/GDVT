@@ -37,31 +37,34 @@
 <!-- Output Tab HTML (Start) -->
 <div class='main toolbar-content current' id='jsBody_Output'>
     <div id='output_heading'>
-        <span id='output_headingChild'>
-            Generation: <span id='output_genNum'></span><br>
-        </span>
-        <span id='output_headingChildToo'>
-            F<sub>ST</sub>: <span id='output_fst'></span>
-        </span>
-
-        <ul class='output_ulR'>
+        <ul class='output_headingList'>
             <li>
-                Simulate next <i>n</i> generations: <br>
+                <span id='output_headingChild'>
+                    Generation: <span id='output_genNum'></span>
+                </span>
+                <span class='paraMag_space'></span>
+                <span id='output_headingChildToo'>
+                    F<sub>ST</sub>: <span id='output_fst'></span>
+                </span>
+            </li>
+            <li>
+                <span class='paraMag_space'></span>
+                Simulate next <i>n</i> generations: 
                 <button class='output_simButton' howMany='1'>n = 1 </button> 
                 <button class='output_simButton' howMany='10'>n = 10</button>
                 <button class='output_simButton' howMany='output_simInput'>n =</button>
                 <input id='output_simInput' type='number' min=0 max=1000 value=100>
                 <span class='paraMag_space'></span>
-                <button id='output_interrupt' disabled='true'>Interrupt Simulation</button>
+                <button id='output_interrupt' disabled='true'>Stop</button>
             </li>
             <li>
                 <div id="output_progressBarContainer">
                     <div id="output_progressBar">
+                        <div id="output_progressNumber">
+                            <span id="output_progressNumberChild">0</span>%
+                        </div>
                     </div>
                 </div>
-            </li>
-            <li>
-                <div id="output_progressNumber"><span id="output_progressNumberChild">0</span>%</div>
             </li>
         </ul>
     </div>

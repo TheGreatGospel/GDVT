@@ -6,8 +6,8 @@ function getRandomInt(min, max) {
 /* Binary random number generator 'struct' */
 function randomBinary() {
     /* When randomBinary is initialised, create the following two variables */
-    var index = 0; // Keeps track of when to refresh the base
-    var base = getRandomInt(-2147483648 , 2147483647);
+    this.index = 0; // Keeps track of when to refresh the base
+    this.base = getRandomInt(-2147483648 , 2147483647);
 };
 
 randomBinary.prototype.get = function() {
