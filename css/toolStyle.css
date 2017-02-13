@@ -1,14 +1,11 @@
 body {
     font-family: sans-serif;
     font-size: 12pt;
+    width: 1160px;
 }
 
 div.main {
     padding: 5px 5px 10px 5px;
-}
-
-button {
-    font-size: 12pt;
 }
 
 #jsBody_Container {
@@ -57,6 +54,124 @@ ul.toolbar li.current {
 /* Top Matter CSS (End) */
 /*======================*/
 
+/*========================*/
+/* Output Tab CSS (Start) */
+/*========================*/
+#output_heading {
+    padding-bottom: 12px;
+}
+
+#output_headingChild {
+    font-size: 16pt;
+}
+
+ul.output_headingList {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.output_headingList li {
+    width: 550px;
+    padding-bottom: 6px;
+}
+
+#output_progressBarContainer {
+    width: 500px;
+    height: 16px;
+    background-color: #ededed;
+    margin-left: 20px;
+    padding: 0px;
+}
+
+#output_progressBar {
+    position: relative;
+    width: 0%;
+    height: 100%;
+    background-color: green;
+}
+
+#output_progressNumber {
+    color: white;
+    line-height: 16px;
+    font-size: 8pt;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
+
+#output_L {
+    position: relative;
+    height: 430px;
+    width: 620px;
+}
+
+ul.output_ulL {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+    font-size: 10pt;
+}
+
+ul.output_ulL li {
+    background: none;
+    display: inline-block;
+    padding: 2.5px 10px 0px 10px;
+    cursor: pointer;
+}
+
+ul.output_ulL li.current {
+    background: #ededed;
+}
+
+.output_chartContainer {
+    display: inherit;
+    background: #ededed;
+    height: 400px;
+    width: 600px;
+    padding: 10px;
+}
+
+.output_chartDim {
+    display: none;
+}
+
+.output_chartDim.current {
+    display: inherit;
+}
+
+#output_R {
+    height: 430px;
+    width: 520px;
+    padding-top: 17.5px;
+    padding-left: 12px;
+}
+
+.output_chartContainerToo {
+    display: inherit;
+    background: #ededed;
+    height: 400px;
+    width: 500px;
+    padding: 10px;
+}
+
+ul.output_curParaMag {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;    
+    width: 600px;
+}
+
+ul.output_curParaMag li {
+    display: inline-block;
+    font-size: 12px;
+    padding-left: 12px;
+    padding-bottom: 0px;
+}
+/*======================*/
+/* Output Tab CSS (End) */
+/*======================*/
+
 /*============================*/
 /* Parameters Tab CSS (Start) */
 /*============================*/
@@ -82,16 +197,12 @@ ul.paraMag li {
 .paraMag_space {
     padding-left: 20px;
 }
+
+#paraMag_submit {
+    font-size: 12pt;
+}
 /*==========================*/
 /* Parameters Tab CSS (End) */
-/*==========================*/
-
-/*============================*/
-/* Simulation Tab CSS (Start) */
-/*============================*/
-
-/*==========================*/
-/* Simulation Tab CSS (End) */
 /*==========================*/
 
 /*==========================*/
@@ -104,22 +215,6 @@ ul.paraMag li {
 /*========================*/
 /* Bottom Matter CSS (End) */
 /*========================*/
-
-
-#subheading {
-    font-size: 16pt;
-}
-
-#subtoolbar {
-    line-height: 1.5;
-    padding: 0 0 10px 0;
-}
-
-.jsBody_Child {
-    padding: 1px 0 1px 0;
-}
-
-
 
 /* Simulation */
 
