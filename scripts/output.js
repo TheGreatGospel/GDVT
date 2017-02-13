@@ -491,7 +491,15 @@ function output_Initialise() {
         // Clean up previous simulation routine.
         allSpecies.length = 0;
         alleleFreq.chart.clearChart(); 
+
         fst.chart.getChart().clearChart();
+        fst.view.setRows(0, 0);
+        var bounds = fst.control.getState();
+        fst.chart.setOption('hAxis.minValue', 1);
+        fst.chart.setOption('hAxis.maxValue', 2);
+        bounds.range.start = 1;
+        bounds.range.end = 2;
+        bounds = null;
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
