@@ -14,6 +14,7 @@
 /*===================================================================================*/
 function allelePool() {
     this.labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        this.colorPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666'],
         this.uprBound = parameters.numOfAlleles,
         this.uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
             // 'uprBound' private variable. This is to prevent .mutate() from doing 
@@ -34,6 +35,13 @@ allelePool.prototype.getLabels = function(all = false) {
         return this.labelPool;
     };
     return this.labelPool.slice(0, this.uprBound);
+};
+
+allelePool.prototype.getColors = function(all = false) {
+    if (all == true) {
+        return this.colorPool;
+    };
+    return this.colorPool.slice(0, this.uprBound);
 };
 
 allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) {
@@ -410,7 +418,6 @@ fstCalc = function(){
 
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
-    
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
         var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
         timerVars.toStop = false;
@@ -574,6 +581,9 @@ function output_Initialise() {
 
         fst.dashboard.bind(fst.control, fst.chart);
 
+        // Call the initialisation functionality to visualise the individual alleles.
+        indivAllele_initialise();
+
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
     };
@@ -593,8 +603,12 @@ function output_Initialise() {
     k = null;
 
     // Draw the charts.
+    var newColors = alleles.getColors().reverse();
+    alleleFreq.options.colors = newColors;
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
     fst.dashboard.draw(fst.view);
+    indivAllele_refresh();
+    newColors = null;
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 

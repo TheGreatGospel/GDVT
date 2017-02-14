@@ -73,11 +73,15 @@
         <div id='output_L'>
             <ul class='output_ulL'>
                 <li class='current' data-tab='output_alleleFreqChart'>Allele Frequencies</li>
-                <li data-tab='output_indivAlleleChart'>Individual Alleles</li>
+                <li data-tab='output_indivAlleleContainer'>Individual Alleles</li>
             </ul>
             <div class='output_chartContainer'>
                 <div class='output_chartDim current' id='output_alleleFreqChart'></div>
-                <canvas class='output_chartDim' id='output_indivAlleleChart'></canvas>
+                <div class='output_chartDim' id='output_indivAlleleContainer'>
+                    <canvas class='output_indivAlleleChart' id='output_iacForeground'></canvas>
+                    <canvas class='output_indivAlleleChart' id='output_iacMidground'></canvas>
+                    <canvas class='output_indivAlleleChart' id='output_iacBackground'></canvas>
+                </div>
             </div>
         </div>
         <div id='output_R'>
@@ -185,6 +189,7 @@
 <script src='scripts/main.js'></script>
 <script src='scripts/parameters.js'></script>
 <script src='scripts/output.js'></script>
+<script src='scripts/indivAllele.js'></script>
 
 <script>
     var parameters = {
@@ -309,18 +314,21 @@
           //control: google.visualization.ControlWrapper(), // The controls object.
           //dashboard: new google.visualization.Dashboard() // The dashboard instance which stores
                                                                 // the chart and control objects.
-        };
-    /* To Comment
-        alleleVisual = {
+        },
+        indivAllele = {
             options: {
+                titleFont: 'bold 14px sans-serif',
+                axisFont: 'italic 12px sans-serif',
+                legendFont: '12px sans-serif',
+                backgroundColor: 'white',
                 height: 400,
                 width: 600
-            }
-            // data:
-            // view:
-            // chart:
-        },
-*/
+            },
+            backgroundLayer: $('#output_iacBackground')[0].getContext('2d'),
+            midgroundLayer: $('#output_iacMidground')[0].getContext('2d'),
+            foregroundLayer: $('#output_iacForeground')[0].getContext('2d')
+        };
+
     $('#paraMag_submit').prop('disabled', true);
     $('.output_simButton').prop('disabled', true);
 

@@ -140,10 +140,24 @@ ul.output_ulL li.current {
     display: inherit;
 }
 
-#output_indivAlleleChart {
-    background: white;
-    height: 400px;
-    width: 600px;
+.output_indivAlleleChart {
+    position: absolute;
+}
+
+#output_indivAlleleContainer {    
+    position: relative;
+}
+
+#output_iacBackground {
+    z-index: 1;
+}
+
+#output_iacMidground {
+    z-index: 2;
+}
+
+#output_iacForeground {
+    z-index: 3;
 }
 
 #output_R {
