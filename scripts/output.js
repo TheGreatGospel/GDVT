@@ -14,6 +14,7 @@
 /*===================================================================================*/
 function allelePool() {
     this.labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        this.colorPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666'],
         this.uprBound = parameters.numOfAlleles,
         this.uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
             // 'uprBound' private variable. This is to prevent .mutate() from doing 
@@ -34,6 +35,13 @@ allelePool.prototype.getLabels = function(all = false) {
         return this.labelPool;
     };
     return this.labelPool.slice(0, this.uprBound);
+};
+
+allelePool.prototype.getColors = function(all = false) {
+    if (all == true) {
+        return this.colorPool;
+    };
+    return this.colorPool.slice(0, this.uprBound);
 };
 
 allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) {
@@ -410,7 +418,6 @@ fstCalc = function(){
 
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
-    
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
         var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
         timerVars.toStop = false;
@@ -432,6 +439,9 @@ function output_Interval() {
         // Draw the fst chart...
         fst.view.setRows(0, genNumber_Zero);
         fst.dashboard.draw(fst.view);
+
+        // Draw the indivAllele chart...
+        indivAllele_draw();
 
         // Manipulate the controls here to include the most recent FST calculations.
         var bounds = fst.control.getState();
@@ -491,7 +501,15 @@ function output_Initialise() {
         // Clean up previous simulation routine.
         allSpecies.length = 0;
         alleleFreq.chart.clearChart(); 
+
         fst.chart.getChart().clearChart();
+        fst.view.setRows(0, 0);
+        var bounds = fst.control.getState();
+        fst.chart.setOption('hAxis.minValue', 1);
+        fst.chart.setOption('hAxis.maxValue', 2);
+        bounds.range.start = 1;
+        bounds.range.end = 2;
+        bounds = null;
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
@@ -566,6 +584,27 @@ function output_Initialise() {
 
         fst.dashboard.bind(fst.control, fst.chart);
 
+        // Call the initialisation function to visualise the individual alleles and set up the
+        // DataTable and DataView.
+        indivAllele_initialise();
+        indivAllele.data = new google.visualization.DataTable();
+            indivAllele.data.addColumn('number', 'MemberNo');
+            indivAllele.data.addColumn('number', 'PopNo');
+            indivAllele.data.addColumn('number', 'AllelePositionOne');
+            indivAllele.data.addColumn('number', 'AllelePositionTwo');
+            var fill = [];
+                for (i = 0; i < 5000; i++) {
+                    fill.push([0, 0, 0, 0]);
+                };
+            indivAllele.data.addRows(fill);
+
+        indivAllele.view = new google.visualization.DataView(indivAllele.data);
+
+        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
+                             // to clean the 'initLabels' array as it is a 
+                             // link to a private variable.
+        fill = null;
+
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
     };
@@ -584,9 +623,17 @@ function output_Initialise() {
     toView = null;
     k = null;
 
+    // Subset the DataTable in 'indivAllele.data' to visualise what is in the
+        // simulation routine. 
+    indivAllele.view.setRows(0, parameters.numOfPop * parameters.popSize - 1);
+
     // Draw the charts.
+    var newColors = alleles.getColors().reverse();
+    alleleFreq.options.colors = newColors;
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
     fst.dashboard.draw(fst.view);
+    indivAllele_refresh();
+    newColors = null;
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 
