@@ -1,4 +1,77 @@
+indivAllele_drawChild = function () {
+    // Shift to zero-indexed land.
+    var zeroIndex = indivAllele.tickTock.ticks() - 1;
+
+    // Drawing a memeber's alleles...
+    // Begin by locating where in the DataView should we look.
+    var memNo = indivAllele.view.getValue(zeroIndex, 0),
+        popNo = indivAllele.view.getValue(zeroIndex, 1),
+        posOne = indivAllele.view.getValue(zeroIndex, 2),
+        posTwo = indivAllele.view.getValue(zeroIndex, 3),
+
+        x = indivAllele.popPosition[popNo],
+        y = indivAllele.options.height - 35 - memNo * indivAllele.rectHeight;
+    
+    indivAllele.foregroundLayer.fillStyle = indivAllele.currentColors[posOne];
+    indivAllele.foregroundLayer.fillRect(
+        x, // x co-ordinate.
+        y, // y co-ordinate.
+        indivAllele.rectWidth, // width of rect.
+        indivAllele.rectHeight); // height of rect.
+    indivAllele.foregroundLayer.fillStyle = indivAllele.currentColors[posTwo];
+    indivAllele.foregroundLayer.fillRect(
+        x + indivAllele.rectWidth, // x co-ordinate.
+        y, // y co-ordinate.
+        indivAllele.rectWidth, // width of rect.
+        indivAllele.rectHeight); // height of rect.
+
+    // Stop the timer when we reach the final iteration.
+    if (indivAllele.tickTock.ticks() == indivAllele.view.getNumberOfRows()) {
+        indivAllele.tickTock.stop();
+        
+    };
+
+    // Clean-up
+    zeroIndex = null;    
+};
+
+indivAllele_draw = function() {
+    // Refresh the foreground canvas.
+    $('#output_iacForeground')[0].width += 0;
+
+    // Pause any current drawing of the indivAllele Chart.
+    if (indivAllele.tickTock.running()) {
+        indivAllele.tickTock.stop();
+    };
+    
+    // Populate the DataTable//DataView with the most recent information.
+    var i = 0,
+        temp = [];
+    for (var j = 0; j < allSpecies.length; j++) {
+        for (var k = 0; k < allSpecies[j].currentPop[0].length; k++) {
+            indivAllele.data.setValue(i, 0, k + 1); // Member Number.
+            indivAllele.data.setValue(i, 1, j); // Population Number.
+            temp = allSpecies[j].allelesUnpack(allSpecies[j].currentPop[0][k]);
+            indivAllele.data.setValue(i, 2, temp[0]);
+            indivAllele.data.setValue(i, 3, temp[1]);
+            i++;
+        };
+    };
+    temp.length = 0;
+    temp = null;
+
+    // Commence drawing of the indivAllele Chart.
+    indivAllele.tickTock.clear();
+    indivAllele.tickTock.bind(2, indivAllele_drawChild);
+    indivAllele.tickTock.start();
+};
+
 indivAllele_refresh = function () {
+    // Pause any current drawing of the indivAllele Chart.
+    if (indivAllele.tickTock.running()) {
+        indivAllele.tickTock.stop();
+    };
+
     // Refresh the miground and foreground canvases
     $('#output_iacMidground')[0].width += 0;
     $('#output_iacForeground')[0].width += 0;
@@ -41,9 +114,9 @@ indivAllele_refresh = function () {
         indivAllele.popPosition.length = 0;
     };
     indivAllele.midgroundLayer.font = indivAllele.options.axisFont;
-    indivAllele.midgroundLayer.textAlign = 'right'; // alignment is weird with <canvas>
+    indivAllele.midgroundLayer.textAlign = 'center'; // alignment is weird with <canvas>
     for (var i = 0; i < parameters.numOfPop; i++) {
-        indivAllele.popPosition.push(65 + i * howMuch);
+        indivAllele.popPosition.push(60 + i * howMuch);
         indivAllele.midgroundLayer.fillText(
             '#' + (i + 1),
             indivAllele.popPosition[i] + indivAllele.rectWidth, // x co-ordinate.

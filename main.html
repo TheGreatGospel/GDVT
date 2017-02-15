@@ -327,8 +327,10 @@
             },
             backgroundLayer: $('#output_iacBackground')[0].getContext('2d'),
             midgroundLayer: $('#output_iacMidground')[0].getContext('2d'),
-            foregroundLayer: $('#output_iacForeground')[0].getContext('2d')
-          
+            foregroundLayer: $('#output_iacForeground')[0].getContext('2d'),
+            tickTock: new Timer(2)
+          //data
+          //view
         };
 
     $('#paraMag_submit').prop('disabled', true);

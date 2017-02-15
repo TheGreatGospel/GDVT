@@ -440,6 +440,9 @@ function output_Interval() {
         fst.view.setRows(0, genNumber_Zero);
         fst.dashboard.draw(fst.view);
 
+        // Draw the indivAllele chart...
+        indivAllele_draw();
+
         // Manipulate the controls here to include the most recent FST calculations.
         var bounds = fst.control.getState();
         bounds.range.end = allSpecies.genNumber;
@@ -581,8 +584,26 @@ function output_Initialise() {
 
         fst.dashboard.bind(fst.control, fst.chart);
 
-        // Call the initialisation functionality to visualise the individual alleles.
+        // Call the initialisation function to visualise the individual alleles and set up the
+        // DataTable and DataView.
         indivAllele_initialise();
+        indivAllele.data = new google.visualization.DataTable();
+            indivAllele.data.addColumn('number', 'MemberNo');
+            indivAllele.data.addColumn('number', 'PopNo');
+            indivAllele.data.addColumn('number', 'AllelePositionOne');
+            indivAllele.data.addColumn('number', 'AllelePositionTwo');
+            var fill = [];
+                for (i = 0; i < 5000; i++) {
+                    fill.push([0, 0, 0, 0]);
+                };
+            indivAllele.data.addRows(fill);
+
+        indivAllele.view = new google.visualization.DataView(indivAllele.data);
+
+        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
+                             // to clean the 'initLabels' array as it is a 
+                             // link to a private variable.
+        fill = null;
 
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
@@ -601,6 +622,10 @@ function output_Initialise() {
     toView.length = 0; // Ensure that the 'toView' array has been cleaned.
     toView = null;
     k = null;
+
+    // Subset the DataTable in 'indivAllele.data' to visualise what is in the
+        // simulation routine. 
+    indivAllele.view.setRows(0, parameters.numOfPop * parameters.popSize - 1);
 
     // Draw the charts.
     var newColors = alleles.getColors().reverse();
