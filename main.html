@@ -194,11 +194,11 @@
 <script>
     var parameters = {
             // Parameters Tab.
-            numOfPop: 8,        // Number of Populations.
-            popSize: 500,       // Population Size.
-            numOfAlleles: 6,    // Number of Allele Types.
+            numOfPop: 10,       // Number of Populations.
+            popSize: 50,       // Population Size.
+            numOfAlleles: 8,    // Number of Allele Types.
             mutationDenom: 300, // Mutation Denom.
-            numOfMigrants: 2,   // Number of Migrants.
+            numOfMigrants: 0,   // Number of Migrants.
             init: 1,            // Initial Number of Simulations.
             simRate: 10,        // Simulation Rate.
 
@@ -318,7 +318,8 @@
         indivAllele = {
             options: {
                 titleFont: 'bold 14px sans-serif',
-                axisFont: 'italic 12px sans-serif',
+                axisTitleFont: 'italic 12px sans-serif',
+                axisFont: '12px sans-serif',
                 legendFont: '12px sans-serif',
                 backgroundColor: 'white',
                 height: 400,
@@ -327,6 +328,7 @@
             backgroundLayer: $('#output_iacBackground')[0].getContext('2d'),
             midgroundLayer: $('#output_iacMidground')[0].getContext('2d'),
             foregroundLayer: $('#output_iacForeground')[0].getContext('2d')
+          
         };
 
     $('#paraMag_submit').prop('disabled', true);
