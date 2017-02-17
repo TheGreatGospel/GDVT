@@ -174,7 +174,35 @@
 
 <!-- About Tab HTML (Start) -->
 <div class='main toolbar-content' id='jsBody_About'>
-
+The mutation scheme used is based on the stepwise mutation model proposed
+by Kimura & Ohta (1978), with a minor modification to respect the bound-
+aries. For example, there are five possible alleles in a population, Alleles A, B,
+C, D, and E. Allele B can mutate to either Allele A or Allele C, and a similar
+process applies to Allele D, and Allele E. However, Allele A and Allele E can
+only mutate to Allele B and Allele D respectively.
+<br>
+<br>
+<span id='small'>Kimura, M., & Ohta, T. (1978). Stepwise mutation model and distribution of
+allelic frequencies in a finite population. Proceedings of the National Academy of
+Sciences, 75(6), 2868–2872.</span>
+<hr>
+The migration scheme uses simple random sampling to select a fixed number
+of migrants. These migrants then immigrate to a randomly chosen population,
+excluding their population of origin. As a result, populations before breeding
+are not necessarily the specified population size. However, this simple scheme
+is computationally quick to execute as there are no constraints to inform. Since
+the end users are typically going to be students, implementing a more complex
+migration scheme that might significantly increase the simulation time, which
+may frustrate the end user.
+<hr>
+Libraries and resources used for this web application include:
+    <ul>
+        <li>Math.js from http://mathjs.org</li>
+        <li>Google Charts API from https://developers.google.com/chart/</li>
+        <li>ColorBrewer from http://colorbrewer2.org/</li>
+        <li>Timer.js from https://github.com/fschaefer/Timer.js</li>
+        <li>jQuery from https://jquery.com</li>
+    </ul>
 </div>
 <!-- About Tab HTML (End) -->
 
