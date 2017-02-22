@@ -13,48 +13,66 @@
 /*      mutation under the one-step mutation model respecting boundaries.            */
 /*===================================================================================*/
 function allelePool() {
-    this.labelPool = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-        this.colorPool = ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f', '#bf5b17', '#666666'],
-        this.uprBound = parameters.numOfAlleles,
-        this.uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 
-            // 'uprBound' private variable. This is to prevent .mutate() from doing 
-            // unnecessary arithmetic.
-};
+    var labelPool = [
+			['A'],
+			['A', 'B'],
+			['A', 'B', 'C'],
+			['A', 'B', 'C', 'D'],
+			['A', 'B', 'C', 'D', 'E'],
+			['A', 'B', 'C', 'D', 'E', 'F'],
+			['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+			['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+		],
+		colorPool = [
+			['#7fc97f'],
+			['#beaed4', '#7fc97f'],
+			['#fdc086', '#beaed4', '#7fc97f'],
+			['#ffff99', '#fdc086', '#beaed4', '#7fc97f'],
+			['#386cb0', '#ffff99', '#fdc086', '#beaed4', '#7fc97f'],
+			['#f0027f', '#386cb0', '#ffff99', '#fdc086', '#beaed4', '#7fc97f'],
+			['#bf5b17', '#f0027f', '#386cb0', '#ffff99', '#fdc086', '#beaed4', '#7fc97f'],
+			['#666666', '#bf5b17', '#f0027f', '#386cb0', '#ffff99', '#fdc086', '#beaed4', '#7fc97f']
+		],
+		uprBound = parameters.numOfAlleles,
+		uprBound_Zero = parameters.numOfAlleles - 1;
+            // Zero-indexed version of the 'uprBound' private variable. This is to 
+            // prevent '.mutate()' from doing unnecessary arithmetic.
+			
+	this.setUprBound = function() {
+		uprBound = parameters.numOfAlleles;
+		uprBound_Zero = parameters.numOfAlleles - 1;
+	};
+	
+	this.getUprBound = function() {
+		return uprBound;
+	};
 
-allelePool.prototype.setUprBound = function() {
-    this.uprBound = parameters.numOfAlleles;
-    this.uprBound_Zero = parameters.numOfAlleles - 1;
-};
+	this.getLabels = function(all = false) {
+		if (all == true) {
+			return labelPool[7];
+		};
+		return labelPool[uprBound_Zero];
+	};
 
-allelePool.prototype.getUprBound = function() {
-    return this.uprBound;
-};
+	this.getColors = function(all = false) {
+		if (all == true) {
+			return colorPool[7];
+		};
+		return colorPool[uprBound_Zero];
+	};
 
-allelePool.prototype.getLabels = function(all = false) {
-    if (all == true) {
-        return this.labelPool;
-    };
-    return this.labelPool.slice(0, this.uprBound);
-};
-
-allelePool.prototype.getColors = function(all = false) {
-    if (all == true) {
-        return this.colorPool;
-    };
-    return this.colorPool.slice(0, this.uprBound);
-};
-
-allelePool.prototype.mutate = function(i = getRandomInt(0, this.uprBound_Zero)) {
-    if (i == this.uprBound_Zero) {
-        i--; // 100% probability to go from state 'uprBound_Zero' to 
-                // state 'uprBound_Zero - 1'.
-    } else if (i == 0) {
-        i++; // 100% probability to go from state '0' to state '1'.
-    } else {
-        i = i + (1 - 2 * rngBin.get()); // 50% probability for the current state to go
-                                        // one-step either direction.
-    };
-    return i;
+	this.mutate = function(i = getRandomInt(0, uprBound_Zero)) {
+		if (i == uprBound_Zero) {
+			i -= 1; // 100% probability to go from state 'uprBound_Zero' to 
+					// state 'uprBound_Zero - 1'.
+		} else if (i == 0) {
+			i += 1; // 100% probability to go from state '0' to state '1'.
+		} else {
+			i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
+											// one-step either direction.
+		};
+		return i;
+	};
 };
 
 /*===================================================================================*/
@@ -94,8 +112,8 @@ function species() {
     this.mutaRate = -1,
     this.numOfMigrants = parameters.numOfMigrants,
     this.currentPop = [],
-    this.freq = {},
-    this.freq2Up = {};
+    this.freq = [],
+    this.freq2Up = [];
 
     if (parameters.mutationDenom != 0) {
         this.mutaRate = math.fraction(1, parameters.mutationDenom);
@@ -126,8 +144,8 @@ species.prototype.create = function() {
 
     // Objects can use numbers as indices with the array indexing notation.
     for (var i = 0; i < poolSize; i++) {
-        this.freq[i] = [0];
-        this.freq2Up[i] = [0];
+        this.freq.push([0]);
+        this.freq2Up.push([0]);
     };
 
     this.currentPop.push([]) // Pushes an empty array into '.currentPop' to store 
@@ -159,6 +177,7 @@ species.prototype.create = function() {
 };
 
 species.prototype.mate = function () {
+	// Child generation to implement
     var parentGen = this.currentPop.shift(), // Remove the oldest population from the 
                                                 // '.currentPop' array to be the parent 
                                                 // generation.
@@ -441,7 +460,7 @@ function output_Interval() {
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
-        indivAllele_draw();
+        //indivAllele_draw();
 
         // Manipulate the controls here to include the most recent FST calculations.
         var bounds = fst.control.getState();
@@ -450,9 +469,9 @@ function output_Interval() {
         bounds = null;
 
         // Re-enable UI buttons and disable the interruption button.
-        $('.output_simButton').prop('disabled', false);
-        $('#output_interrupt').prop('disabled', true);
-        $('#paraMag_submit').prop('disabled', false);
+        output_simButtons.prop('disabled', false);
+        output_interrupt.prop('disabled', true);
+        paraMag_submit.prop('disabled', false);
 
         genNumber_Zero = null;
     } else {
@@ -480,8 +499,8 @@ function output_Interval() {
         timerVars.progress = timerVars.progress + timerVars.increment;
             var a = Math.round(100 * timerVars.progress, 0),
                 b = Math.round(timerVars.progressMax * timerVars.progress, 0);
-            $('#output_progressNumberChild').html(a);
-            $('#output_progressBar').css('width', b);
+            output_progressNumberChild.html(a);
+            output_progressBar.css('width', b);
             a = null;
             b = null;
     };
@@ -490,8 +509,8 @@ function output_Interval() {
 // Launches a new simulation routine with the current parameters.
 function output_Initialise() {
     // Disable the buttons which can begin the timer.
-    $('.output_simButton').prop('disabled', true);
-    $('#paraMag_submit').prop('disabled', true);
+    output_simButtons.prop('disabled', true);
+    paraMag_submit.prop('disabled', true);
 
     // Initialise independent parts of the simulation routine.
     alleles.setUprBound();
@@ -510,6 +529,7 @@ function output_Initialise() {
         bounds.range.start = 1;
         bounds.range.end = 2;
         bounds = null;
+		// redraw fst chart???
     } else {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
@@ -586,7 +606,7 @@ function output_Initialise() {
 
         // Call the initialisation function to visualise the individual alleles and set up the
         // DataTable and DataView.
-        indivAllele_initialise();
+        //indivAllele_initialise();
         indivAllele.data = new google.visualization.DataTable();
             indivAllele.data.addColumn('number', 'MemberNo');
             indivAllele.data.addColumn('number', 'PopNo');
@@ -628,11 +648,11 @@ function output_Initialise() {
     indivAllele.view.setRows(0, parameters.numOfPop * parameters.popSize - 1);
 
     // Draw the charts.
-    var newColors = alleles.getColors().reverse();
+    var newColors = alleles.getColors();
     alleleFreq.options.colors = newColors;
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
     fst.dashboard.draw(fst.view);
-    indivAllele_refresh();
+    //indivAllele_refresh();
     newColors = null;
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
@@ -681,13 +701,13 @@ function output_Initialise() {
     x = null; y = null;
 
     // Load into the simulation parameters into the corresponding <span>s.
-    $('#output_numOfPop').html(parameters.numOfPop);
-    $('#output_popSize').html(parameters.popSize);
-    $('#output_numOfAlleles').html(parameters.numOfAlleles);
-    $('#output_mutaDenom').html(parameters.mutationDenom);
-    $('#output_numOfMigrants').html(parameters.numOfMigrants);
-    $('#output_init').html(parameters.init);
-    $('#output_simRate').html(parameters.simRate/1000);
+    output_numOfPop.html(parameters.numOfPop);
+    output_popSize.html(parameters.popSize);
+    output_numOfAlleles.html(parameters.numOfAlleles);
+    output_mutaDenom.html(parameters.mutationDenom);
+    output_numOfMigrants.html(parameters.numOfMigrants);
+    output_init.html(parameters.init);
+    output_simRate.html(parameters.simRate/1000);
 
     // Start the timer to run the 'output_Interval()' function.
     timerVars.toGenNum = parameters.init;
@@ -697,42 +717,61 @@ function output_Initialise() {
 
     // Refresh the progress bar.
     timerVars.progress = 0;
-        $('#output_progressNumberChild').html(0);
-        $('#output_progressBar').css('width', 0);
+        output_progressNumberChild.html(0);
+        output_progressBar.css('width', 0);
     timerVars.increment = timerVars.progressMax / parameters.init / timerVars.progressMax;
 
     // Enable the interruption button.
-    $('#output_interrupt').prop('disabled', false);
+    output_interrupt.prop('disabled', false);
 };
 
-// jQuery event listeners for the Output Tab.
+/* Setup global variables to refer to the HTML DOM elements for the Output Tab. */
+var output_numOfPop = $('#output_numOfPop'),
+	output_popSize = $('#output_popSize'),
+	output_numOfAlleles = $('#output_numOfAlleles'),
+	output_mutaDenom = $('#output_mutaDenom'),
+	output_numOfMigrants = $('#output_numOfMigrants'),
+	output_init = $('#output_init'),
+	output_simRate = $('#output_simRate'),
+
+	output_interrupt = $('#output_interrupt'),
+	output_naviLBar = $('ul.output_ulL li'),
+	output_naviLContent = $('.output_chartDim'),
+	output_progressBar = $('#output_progressBar'),
+	output_progressNumberChild = $('#output_progressNumberChild'),
+	output_simButtons = $('.output_simButton');
+
+/* jQuery event listeners for the Output Tab. */
 $(document).ready(function(){
 
-    // jQuery event listener to operate the plot toolbar.
-    $('ul.output_ulL li').click(function(){
-		var tab_id = $(this).attr('data-tab'); // Returns the tab to swap to.
+    // jQuery event listener to operate the left window toolbar.
+    output_naviLBar.click(function(){
+		var output_naviLItem = $(this),
+			tab_id = output_naviLItem.attr('data-tab'); // Returns the tab to swap to.
 
         // Removes the visibility of the current tab.
-		$('ul.output_ulL li').removeClass('current');
-	    $('.output_chartDim').removeClass('current');
+		output_naviLBar.removeClass('current');
+	    output_naviLContent.removeClass('current');
 
         // Gives visibility to the tab to swap to.
-		$(this).addClass('current');
+		output_naviLItem.addClass('current');
 		$('#' + tab_id).addClass('current');
 
-        tab_id = null;
+        output_naviLItem = null, tab_id = null;
 	});
 
     // jQuery event listeners for the 'n =' buttons.
-    $('.output_simButton').click(function(){
+    output_simButtons.click(function(){
+		var whichButton = $(this);
+		
         // Disable the buttons which can begin the timer.
-        $('.output_simButton').prop('disabled', true);
-        $('#paraMag_submit').prop('disabled', true);
+        output_simButtons.prop('disabled', true);
+        paraMag_submit.prop('disabled', true);
 
         // Figure out how many generations to we need to simulate to.
-        var howMany = $(this).attr('howMany');
+        var howMany = whichButton.attr('howMany');
         if (howMany == 'output_simInput') {
-            howMany = $('#output_simInput').val();
+            howMany = output_simInput.val();
         };
 
         var howManyChild = parseInt(howMany, 10);
@@ -743,26 +782,25 @@ $(document).ready(function(){
 
         // Refresh the progress bar.
         timerVars.progress = 0;
-            $('#output_progressNumberChild').html(0);
-            $('#output_progressBar').css('width', 0);
+            output_progressNumberChild.html(0);
+            output_progressBar.css('width', 0);
         timerVars.increment = timerVars.progressMax / howMany / timerVars.progressMax;
 
         // Enable the interruption button.
-        $('#output_interrupt').prop('disabled', false);
+        output_interrupt.prop('disabled', false);
 
-        howMany = null;
-        howManyChild = null;
+        howMany = null, howManyChild = null, whichButton = null;
     });
 
     // jQuery event listener for the 'n =' input.
-    $('#output_simInput').change(function() {
-        var x = Math.floor($(this).val());
-        if (x < 1 || x > 1000 ) {
-            $(this).val(parameters.simInput);
+    output_simInput.change(function() {
+        var x = Math.floor(output_simInput.val());
+        if (x < 1 || x > 1000 ) { // Current interval: [1, 1000]
+            output_simInput.val(parameters.simInput);
         } else {
             parameters.simInput = x;
-            if (x != $(this).val()) {
-                $(this).val(parameters.simInput);
+            if (x !=  output_simInput.val()) {
+                output_simInput.val(parameters.simInput);
             };
         };
 
@@ -770,9 +808,9 @@ $(document).ready(function(){
     });
 
     // jQuery event listener for the 'Interrupt Simulation' button.
-    $('#output_interrupt').click(function(){
+    output_interrupt.click(function(){
         // Disable the interruption button to prevent multiple clicks.
-        $(this).prop('disabled', true);
+        output_interrupt.prop('disabled', true);
 
         // Set the flag off to stop the simulation routine.
         timerVars.toStop = true; 

@@ -5,40 +5,46 @@ function getRandomInt(min, max) {
 
 /* Binary random number generator 'struct' */
 function randomBinary() {
-    /* When randomBinary is initialised, create the following two variables */
-    this.index = 0; // Keeps track of when to refresh the base
-    this.base = getRandomInt(-2147483648 , 2147483647);
+    // When randomBinary is initialised, create the following two variables.
+    var index = 0, // Keeps track of when to refresh the base.
+		base = getRandomInt(-2147483648 , 2147483647);
+	
+	this.get = function() {
+		var toReturn = base & 1; // Bitwise mask the last bit.
+		if (index % 32 === 0) {
+			// If the index is divisble by 32, refresh the base and the index.
+			base = getRandomInt(-2147483648 , 2147483647);
+			index = 0;
+		} else {
+			base >>= 1; // Shift the base one bit to the right.
+			index += 1; // Increment the index.
+		}   
+		return toReturn;
+	};
+	
 };
 
-randomBinary.prototype.get = function() {
-    var toReturn = this.base & 1; // Bitwise mask the last bit
-    if (this.index % 32 === 0) {
-        /* If the index is divisble by 32, refresh the base and the index*/
-        this.base = getRandomInt(-2147483648 , 2147483647);
-        this.index = 0;
-    } else {
-        this.base >>= 1; // Shift the base one bit to the right
-        this.index++; // Increment the index
-    }   
-    return toReturn;
-};
+/* Setup global variables to refer to the Navigation Bar's HTML DOM elements. */
+var navi_bar = $('ul.toolbar li'),
+	navi_content = $('.toolbar-content');
 
 /* jQuery event listeners for the Navigation Bar */
 $(document).ready(function(){
 
-    /* jQuery event listener to operate the Navigation Bar */
-	$('ul.toolbar li').click(function(){
-		var tab_id = $(this).attr('data-tab'); // Returns the tab to swap to
+    // jQuery event listener to operate the Navigation Bar.
+	navi_bar.click(function(){
+		var navi_item = $(this), // We must use '$(this)' to isolate the navigation item.
+			tab_id = navi_item.attr('data-tab'); // Returns the tab to swap to.
 
-        /* Removes the visibility of the current tab */
-		$('ul.toolbar li').removeClass('current');
-	    $('.toolbar-content').removeClass('current');
+        // Removes the visibility of the current tab.
+		navi_bar.removeClass('current');
+	    navi_content.removeClass('current');
 
-        /* Gives visibility to the tab to swap to */
-		$(this).addClass('current');
+        // Gives visibility to the tab to swap to.
+		navi_item.addClass('current');
 		$('#' + tab_id).addClass('current');
 
-        tab_id = null;
+		navi_item = null, tab_id = null;
 	});
 
 });

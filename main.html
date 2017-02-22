@@ -53,9 +53,11 @@
                 <button class='output_simButton' howMany='1'>n = 1 </button> 
                 <button class='output_simButton' howMany='10'>n = 10</button>
                 <button class='output_simButton' howMany='output_simInput'>n =</button>
-                <input id='output_simInput' type='number' min=0 max=1000 value=100>
+                <input id='output_simInput' type='number' min=1 max=1000>
                 <span class='paraMag_space'></span>
                 <button id='output_interrupt' disabled='true'>Stop</button>
+				<span class='paraMag_space'></span>
+				<button id='output_reset' disabled='true'>Reset</button>
             </li>
             <li>
                 <div id="output_progressBarContainer">
@@ -133,7 +135,7 @@
                 </span>
             </li>
             <li>
-                Mutation Denominator: <input id='paraMag_mutaDenom' type='number' min=1 max=1000> <br>
+                Mutation Denominator: <input id='paraMag_mutaDenom' type='number' min=0 max=1000> <br>
                 <span class='paraMag_space'></span><input class='paraMag_slider' id='paraMag_mutaDenomChild' type='range' min=0 max=1000 step=1> <br>
                 <span class='paraMag_Info'>
                     Sets the denominator of an allele's mutation rate. An allele currently has <br> <span id='paraMag_mutaDenomChildToo'></span> chance to mutate into a different allele type. Takes an integer <br> value between 1 and 1000 (inclusive).
@@ -208,7 +210,7 @@ Libraries and resources used for this web application include:
 
 <!-- Bottom Matter HTML (Start) -->
 <div class='main' id='copyright'>
-    Genetic Drift Visualisation Tool ver 0.2.2 <br>
+    Genetic Drift Visualisation Tool ver 0.3.0 <br>
     &copy 2016-2017 David Chan
 </div>
 <!-- Bottom Matter HTML (End) -->
@@ -217,10 +219,10 @@ Libraries and resources used for this web application include:
 <script src='scripts/main.js'></script>
 <script src='scripts/parameters.js'></script>
 <script src='scripts/output.js'></script>
-<script src='scripts/indivAllele.js'></script>
+<!--<script src='scripts/indivAllele.js'></script>-->
 
 <script>
-    var parameters = {
+	var parameters = {
             // Parameters Tab.
             numOfPop: 10,       // Number of Populations.
             popSize: 50,       // Population Size.
@@ -361,8 +363,8 @@ Libraries and resources used for this web application include:
           //view
         };
 
-    $('#paraMag_submit').prop('disabled', true);
-    $('.output_simButton').prop('disabled', true);
+    paraMag_submit.prop('disabled', true);
+    output_simButtons.prop('disabled', true);
 
     $('#output_genNum').html('. . .');
     $('#output_fst').html('. . .');
