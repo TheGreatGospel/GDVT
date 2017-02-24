@@ -36,7 +36,7 @@ function parameters_Initialise() {
 };
 
 /* jQuery event listeners for the Parameters Tab. */
-$(document).ready(function(){
+$(document).ready(function() {
 
     // jQuery event listener fopr the 'Submit Parameters' button.
     paraMag_submit.click(function () {

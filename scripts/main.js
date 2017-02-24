@@ -29,10 +29,10 @@ var navi_bar = $('ul.toolbar li'),
 	navi_content = $('.toolbar-content');
 
 /* jQuery event listeners for the Navigation Bar */
-$(document).ready(function(){
+$(document).ready(function() {
 
     // jQuery event listener to operate the Navigation Bar.
-	navi_bar.click(function(){
+	navi_bar.click(function() {
 		var navi_item = $(this), // We must use '$(this)' to isolate the navigation item.
 			tab_id = navi_item.attr('data-tab'); // Returns the tab to swap to.
 

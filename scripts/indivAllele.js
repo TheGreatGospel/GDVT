@@ -96,9 +96,6 @@ indivAllele_refresh = function () {
     };
     i = null;
 
-    currentLabels.length = 0;
-    currentLabels = null;
-
     // Determine where to draw the left edges.
         var howMuch = (indivAllele.options.width - 115) / parameters.numOfPop; 
     // Determine the width and height of the rects to visualise the individual alleles.

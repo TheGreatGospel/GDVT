@@ -1,12 +1,14 @@
 /*===================================================================================*/
 /* allelePool() is an object which allows the other functions to interface with the  */
-/* allele type pool. The functionality included relies on setting the upper bound of */
+/* allele pool. The functionality included relies on setting the upper bound of      */
 /* the pool size before starting the simulation routine.                             */
 /*                                                                                   */
 /* These are the public methods available within the allelePool() object:            */
-/* - .setUprBound(): Sets the upper bound of the allele type pool size to            */
+/* - .setUprBound(): Sets the upper bound of the allele pool size to                 */
 /*      parameters.numOfAlleles.                                                     */
-/* - .getUprBound(): Returns the upper bound of the allele type pool size.           */
+/* - .getUprBound(): Returns the upper bound of the allele pool size.                */
+/* - .getUprBound_Zero(): Returns the upper bound of the allele pool size in         */
+/*		zero-indexed form.                                                           */
 /* - .getLabels(all = false): Returns the labels of the allele type pool.            */
 /* - .getColours(all = false): Returns the colours of the allele type pool.          */
 /* - .mutate(i = getRandomInt()): Returns an integer of a successful allele type     */
@@ -34,9 +36,8 @@ function allelePool() {
 			['#666666', '#bf5b17', '#f0027f', '#386cb0', '#ffff99', '#fdc086', '#beaed4', '#7fc97f']
 		],
 		uprBound = parameters.numOfAlleles,
-		uprBound_Zero = parameters.numOfAlleles - 1;
-            // Zero-indexed version of the 'uprBound' private variable. This is to 
-            // prevent '.mutate()' from doing unnecessary arithmetic.
+		uprBound_Zero = parameters.numOfAlleles - 1; // Zero-indexed version of the 'uprBound' 
+			// private variable. This is to prevent '.mutate()' from doing unnecessary arithmetic.
 			
 	this.setUprBound = function() {
 		uprBound = parameters.numOfAlleles;
@@ -46,30 +47,34 @@ function allelePool() {
 	this.getUprBound = function() {
 		return uprBound;
 	};
+	
+	this.getUprBound_Zero = function() {
+		return uprBound_Zero;
+	};
 
 	this.getLabels = function(all = false) {
-		if (all == true) {
+		if (all === true) {
 			return labelPool[7];
 		};
 		return labelPool[uprBound_Zero];
 	};
 
 	this.getColors = function(all = false) {
-		if (all == true) {
+		if (all === true) {
 			return colorPool[7];
 		};
 		return colorPool[uprBound_Zero];
 	};
 
 	this.mutate = function(i = getRandomInt(0, uprBound_Zero)) {
-		if (i == uprBound_Zero) {
+		if (i === uprBound_Zero) {
 			i -= 1; // 100% probability to go from state 'uprBound_Zero' to 
-					// state 'uprBound_Zero - 1'.
-		} else if (i == 0) {
+				// state 'uprBound_Zero - 1'.
+		} else if (i === 0) {
 			i += 1; // 100% probability to go from state '0' to state '1'.
 		} else {
 			i += (1 - 2 * rngBin.get()); // 50% probability for the current state to go
-											// one-step either direction.
+				// one-step either direction.
 		};
 		return i;
 	};
@@ -106,6 +111,7 @@ function allelePool() {
 /*      initialises the '.freq' and '.freq2Up' objects.                              */
 /* - .mate(): Mates the current population to sire a new population to load into     */
 /*      '.currentPop'.                                                               */
+/* - .destroy(): Cleans up the species object.                                       */
 /*===================================================================================*/
 function species() {
     this.popSize = parameters.popSize,
@@ -138,12 +144,11 @@ species.prototype.allelesUnpack = function(toUnpack) {
 };
 
 species.prototype.create = function() {
-    // Declare the local variables 'allelePool' and 'poolSize'
-    var indivAllelePool = [],
-        poolSize = alleles.getUprBound();
+    var indivAllelePool = []; // Create a local variable 'indivAllelePool' 
+			// to store a member's alleles.
 
-    // Objects can use numbers as indices with the array indexing notation.
-    for (var i = 0; i < poolSize; i++) {
+    // Expand the frequency arrays.
+    for (var i = 0; i < alleles.getUprBound(); i++) {
         this.freq.push([0]);
         this.freq2Up.push([0]);
     };
@@ -151,12 +156,11 @@ species.prototype.create = function() {
     this.currentPop.push([]) // Pushes an empty array into '.currentPop' to store 
                                 // membership information. The implementation is to 
                                 // assist future updates to the tool.
-    poolSize--; // Subtract 'poolSize' by one to make it a zero-indexed number.
 
     for (i = 0; i < this.popSize; i++) {
         // Assign two alleles to 'allelePool'.
-        indivAllelePool.push(getRandomInt(0, poolSize));
-        indivAllelePool.push(getRandomInt(0, poolSize));
+        indivAllelePool[0] = getRandomInt(0, alleles.getUprBound_Zero());
+        indivAllelePool[1] = getRandomInt(0, alleles.getUprBound_Zero());
 
         // Compress 'allelePool' and add the member to the population.
         this.currentPop[0].push(this.allelesPack(indivAllelePool));
@@ -167,17 +171,14 @@ species.prototype.create = function() {
         if (indivAllelePool[0] === indivAllelePool[1]) {
             this.freq2Up[indivAllelePool[0]][0]++;
         };
-            
-        indivAllelePool.length = 0; // Ensure that the 'allelePool' array has been cleaned.
     };
+	
+	indivAllelePool.length = 0; // Flush the 'indivAllelePool' array.
 
-    indivAllelePool = null;
-    poolSize = null;
-    i = null;
+    indivAllelePool = null, i = null;
 };
 
 species.prototype.mate = function () {
-	// Child generation to implement
     var parentGen = this.currentPop.shift(), // Remove the oldest population from the 
                                                 // '.currentPop' array to be the parent 
                                                 // generation.
@@ -185,7 +186,7 @@ species.prototype.mate = function () {
                                                 // bigger or smaller than '.popSize' 
                                                 //  due to migration.
         parents = [], parentAPool = [], // The last set of local variables to declare.
-        parentBPool = [], indivAllelePool = [];
+        parentBPool = [], indivAllelePool = [0, 0];
 
     // Increase the length of the allele frequencies arrays by one.
     for (var i = 0; i < alleles.getUprBound(); i++) {
@@ -210,11 +211,11 @@ species.prototype.mate = function () {
 
         // The child inherits one random allele from each parent and each inhreited
             // allele will have a chance to mutate.                               
-        indivAllelePool.push(parentAPool[rngBin.get()]);
+        indivAllelePool[0] = parentAPool[rngBin.get()];
         if (Math.random() <= this.mutaRate) {
             indivAllelePool[0] = alleles.mutate(indivAllelePool[0]);
         };
-        indivAllelePool.push(parentBPool[rngBin.get()]);
+        indivAllelePool[1] = parentBPool[rngBin.get()];
         if (Math.random() <= this.mutaRate) {
             indivAllelePool[1] = alleles.mutate(indivAllelePool[1]);
         };
@@ -235,11 +236,13 @@ species.prototype.mate = function () {
         };
 
         // Ensure that the local arrays have been cleaned.
-        indivAllelePool.length = 0;
+        
         parents.length = 0;
         parentAPool.length = 0;
         parentBPool.length = 0;
     };
+	
+	indivAllelePool.length = 0;
 
     // Ensure that the 'parentGen' array has been cleaned.
     parentGen.length = 0; parentGen = null;
@@ -434,7 +437,6 @@ fstCalc = function(){
     x = null; y = null; z = null;
 };
 
-
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
@@ -443,8 +445,8 @@ function output_Interval() {
         timerVars.tickTock.stop();
 
         // Update the UI with the current generation information.
-        $('#output_genNum').html(allSpecies.genNumber);
-        $('#output_fst').html(fst.data.getValue(allSpecies.genNumber - 1, 1));
+        output_genNum.html(allSpecies.genNumber);
+        output_fst.html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
@@ -460,12 +462,12 @@ function output_Interval() {
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
-        //indivAllele_draw();
+        indivAllele_draw();
 
         // Manipulate the controls here to include the most recent FST calculations.
         var bounds = fst.control.getState();
         bounds.range.end = allSpecies.genNumber;
-        fst.chart.setOption('hAxis.maxValue', bounds.range.end);
+        //fst.chart.setOption('hAxis.maxValue', bounds.range.end);
         bounds = null;
 
         // Re-enable UI buttons and disable the interruption button.
@@ -490,7 +492,10 @@ function output_Interval() {
             };
             i = null;
         };
-        allSpecies.fstCalc(); // Calculate the current generation coancestry
+		
+		//this.parentRefPop = this.childPop.slice(); // Store the current child population to visualise.
+        
+		allSpecies.fstCalc(); // Calculate the current generation coancestry
                                   // coefficient.
         
         allSpecies.genNumber++; // Update which generation we're up to.
@@ -606,7 +611,7 @@ function output_Initialise() {
 
         // Call the initialisation function to visualise the individual alleles and set up the
         // DataTable and DataView.
-        //indivAllele_initialise();
+        indivAllele_initialise();
         indivAllele.data = new google.visualization.DataTable();
             indivAllele.data.addColumn('number', 'MemberNo');
             indivAllele.data.addColumn('number', 'PopNo');
@@ -652,7 +657,7 @@ function output_Initialise() {
     alleleFreq.options.colors = newColors;
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
     fst.dashboard.draw(fst.view);
-    //indivAllele_refresh();
+    indivAllele_refresh();
     newColors = null;
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
@@ -739,7 +744,11 @@ var output_numOfPop = $('#output_numOfPop'),
 	output_naviLContent = $('.output_chartDim'),
 	output_progressBar = $('#output_progressBar'),
 	output_progressNumberChild = $('#output_progressNumberChild'),
-	output_simButtons = $('.output_simButton');
+	output_reset = $('.output_reset'),
+	output_simButtons = $('.output_simButton'),
+	
+	output_genNum = $('#output_genNum'),
+    output_fst = $('#output_fst');
 
 /* jQuery event listeners for the Output Tab. */
 $(document).ready(function(){
@@ -761,7 +770,7 @@ $(document).ready(function(){
 	});
 
     // jQuery event listeners for the 'n =' buttons.
-    output_simButtons.click(function(){
+    output_simButtons.click(function() {
 		var whichButton = $(this);
 		
         // Disable the buttons which can begin the timer.
@@ -791,6 +800,11 @@ $(document).ready(function(){
 
         howMany = null, howManyChild = null, whichButton = null;
     });
+	
+	// jQuery event listener for the 'Reset' button.
+	output_reset.click(function() {
+		
+	});
 
     // jQuery event listener for the 'n =' input.
     output_simInput.change(function() {

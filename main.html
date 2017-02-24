@@ -87,6 +87,9 @@
             </div>
         </div>
         <div id='output_R'>
+		    <ul class='output_ulR'>
+                <li class='current'>Conancestry Coefficient</li>
+            </ul>
             <div class='output_chartContainerToo'>
                 <div id='output_fstDashboard'>
                     <div id='output_fstChart'></div>
@@ -96,7 +99,7 @@
         </div>
     </div>
 
-    <div>
+    <div id='output_curParaMagContainer'>
         Current Parameters:
         <ul class='output_curParaMag'>
             <li>Number of Populations: <span id='output_numOfPop'></span></li>
@@ -219,7 +222,7 @@ Libraries and resources used for this web application include:
 <script src='scripts/main.js'></script>
 <script src='scripts/parameters.js'></script>
 <script src='scripts/output.js'></script>
-<!--<script src='scripts/indivAllele.js'></script>-->
+<script src='scripts/indivAllele.js'></script>
 
 <script>
 	var parameters = {
@@ -272,7 +275,7 @@ Libraries and resources used for this web application include:
             // Chart options for visualising the allele frequencies.
             options: {
                 title: 'Allele Frequencies',
-                height: 400,
+                height: 500,
                 width: 600,
                 bar: {
                     groupWidth: '70%'
@@ -303,7 +306,7 @@ Libraries and resources used for this web application include:
             // Chart options for visualising the conancestry coefficient.
             optionsChart: {
                 title: 'Coancestry Coefficient over Generations',
-                height: 350,
+                height: 450,
                 width: 500,
                 hAxis: {
                     title: 'Generation',
@@ -352,7 +355,7 @@ Libraries and resources used for this web application include:
                 axisFont: '12px sans-serif',
                 legendFont: '12px sans-serif',
                 backgroundColor: 'white',
-                height: 400,
+                height: 500,
                 width: 600
             },
             backgroundLayer: $('#output_iacBackground')[0].getContext('2d'),
@@ -364,10 +367,11 @@ Libraries and resources used for this web application include:
         };
 
     paraMag_submit.prop('disabled', true);
+	// Reset???
     output_simButtons.prop('disabled', true);
 
-    $('#output_genNum').html('. . .');
-    $('#output_fst').html('. . .');
+    output_genNum.html('. . .');
+    output_fst.html('. . .');
 
     parameters_Initialise();
     google.charts.setOnLoadCallback(output_Initialise);
