@@ -51,7 +51,7 @@ indivAllele_draw = function() {
         for (var k = 0; k < allSpecies[j].currentPop[0].length; k++) {
             indivAllele.data.setValue(i, 0, k + 1); // Member Number.
             indivAllele.data.setValue(i, 1, j); // Population Number.
-            temp = allSpecies[j].allelesUnpack(allSpecies[j].currentPop[0][k]);
+            temp = allelesUnpack(allSpecies[j].currentPop[0][k]);
             indivAllele.data.setValue(i, 2, temp[0]);
             indivAllele.data.setValue(i, 3, temp[1]);
             i++;
@@ -77,7 +77,7 @@ indivAllele_refresh = function () {
     $('#output_iacForeground')[0].width += 0;
 
     // Draw the legend
-    indivAllele.currentColors = alleles.getColors();
+    indivAllele.currentColors = alleles.getColors(); // Needs to be updated.
     var currentLabels = alleles.getLabels();
     indivAllele.midgroundLayer.font = indivAllele.options.legendFont;
     for (var i = 0; i < indivAllele.currentColors.length; i++) {

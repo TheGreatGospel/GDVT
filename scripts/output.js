@@ -81,6 +81,31 @@ function allelePool() {
 };
 
 /*===================================================================================*/
+/* - allelesPack(toPack = [i, j]): Compresses the allele type information of a       */
+/*      member into a singular number with bitwise operators. Note that Javascript   */
+/*      always prints numbers in base 10.                                            */
+/* - allelesUnpack(toUnpack = i): Takes a number and uncompresses the allele type    */
+/*      information of a member into an array of length 2.                           */
+/*===================================================================================*/
+
+allelesPack = function(toPack) {
+    var toReturn = 0;
+    toReturn |= toPack[0];
+    toReturn <<= 3; // Since the user can only use up to eight alleles, we only need to 
+                        // shift by three bits.
+    toReturn |= toPack[1];
+    return toReturn;
+};
+
+allelesUnpack = function(toUnpack) {
+    var toReturn = [];
+    toReturn.unshift(toUnpack & 7); // 7 = 111 in binary and is required bitwise mask.
+    toUnpack >>= 3;
+    toReturn.unshift(toUnpack & 7);
+    return toReturn;
+};
+
+/*===================================================================================*/
 /* species() is an object which stores a population's current generation in a        */
 /* detailed form and the allele type frequencies of previous generations. The        */
 /* methods for the species() object are implemented with the .prototype keyword in   */
@@ -102,21 +127,22 @@ function allelePool() {
 /*      'A' alleles). (Retrieve with '.freq2Up[alleleType][generation]')             */
 /*                                                                                   */
 /* These are the public methods available within the species() object:               */
-/* - .allelesPack(toPack = [i, j]): Compresses the allele type information of a      */
-/*      member into a singular number with bitwise operators. Note that Javascript   */
-/*      always prints numbers in base 10.                                            */
-/* - .allelesUnpack(toUnpack = i): Takes a number and uncompresses the allele type   */
-/*      information of a member into an array of length 2.                           */
 /* - .create(): Creates a population and loads it into '.currentPop'. Also, it       */
 /*      initialises the '.freq' and '.freq2Up' objects.                              */
 /* - .mate(): Mates the current population to sire a new population to load into     */
 /*      '.currentPop'.                                                               */
-/* - .destroy(): Cleans up the species object.                                       */
+/* - .recycle(): Recycles the species object for further use.                        */
 /*===================================================================================*/
 function species() {
     this.popSize = parameters.popSize,
     this.mutaRate = -1,
     this.numOfMigrants = parameters.numOfMigrants,
+	this.currentIndex = 0,
+	
+	this.populations = [[], []],
+	this.alleleFreq = [[], []],
+	this.homozygousFreq = [[], []],
+	
     this.currentPop = [],
     this.freq = [],
     this.freq2Up = [];
@@ -126,31 +152,14 @@ function species() {
     };
 };
 
-species.prototype.allelesPack = function(toPack) {
-    var toReturn = 0;
-    toReturn |= toPack[0];
-    toReturn <<= 3; // Since the user can only use up to eight alleles, we only need to 
-                        // shift by three bits.
-    toReturn |= toPack[1];
-    return toReturn;
-};
-
-species.prototype.allelesUnpack = function(toUnpack) {
-    var toReturn = [];
-    toReturn.unshift(toUnpack & 7); // 7 = 111 in binary and is required bitwise mask.
-    toUnpack >>= 3;
-    toReturn.unshift(toUnpack & 7);
-    return toReturn;
-};
-
 species.prototype.create = function() {
     var indivAllelePool = []; // Create a local variable 'indivAllelePool' 
 			// to store a member's alleles.
 
     // Expand the frequency arrays.
     for (var i = 0; i < alleles.getUprBound(); i++) {
-        this.freq.push([0]);
-        this.freq2Up.push([0]);
+        this.freq.push(0);
+        this.freq2Up.push(0);
     };
 
     this.currentPop.push([]) // Pushes an empty array into '.currentPop' to store 
@@ -163,13 +172,13 @@ species.prototype.create = function() {
         indivAllelePool[1] = getRandomInt(0, alleles.getUprBound_Zero());
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(this.allelesPack(indivAllelePool));
+        this.currentPop[0].push(allelesPack(indivAllelePool));
             
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]][0]++;
-        this.freq[indivAllelePool[1]][0]++;
+        this.freq[indivAllelePool[0]]++;
+        this.freq[indivAllelePool[1]]++;
         if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]][0]++;
+            this.freq2Up[indivAllelePool[0]]++;
         };
     };
 	
@@ -188,10 +197,10 @@ species.prototype.mate = function () {
         parents = [], parentAPool = [], // The last set of local variables to declare.
         parentBPool = [], indivAllelePool = [0, 0];
 
-    // Increase the length of the allele frequencies arrays by one.
+    // Refresh the allele frequencies arrays
     for (var i = 0; i < alleles.getUprBound(); i++) {
-        this.freq[i].push(0);
-        this.freq2Up[i].push(0);
+        this.freq[i] = 0;
+        this.freq2Up[i] = 0;
     };
     this.currentPop.push([]); // Pushes an empty array into '.currentPop' to store 
                                 // membership information. The implementation is to 
@@ -206,8 +215,8 @@ species.prototype.mate = function () {
         };
 
         // Uncompress the parents' alleles.
-        parentAPool = this.allelesUnpack(parentGen[parents[0]]);
-        parentBPool = this.allelesUnpack(parentGen[parents[1]]);
+        parentAPool = allelesUnpack(parentGen[parents[0]]);
+        parentBPool = allelesUnpack(parentGen[parents[1]]);
 
         // The child inherits one random allele from each parent and each inhreited
             // allele will have a chance to mutate.                               
@@ -226,13 +235,13 @@ species.prototype.mate = function () {
         };
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(this.allelesPack(indivAllelePool));
+        this.currentPop[0].push(allelesPack(indivAllelePool));
 
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]][allSpecies.genNumber]++;
-        this.freq[indivAllelePool[1]][allSpecies.genNumber]++;
+        this.freq[indivAllelePool[0]]++;
+        this.freq[indivAllelePool[1]]++;
         if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]][allSpecies.genNumber]++;
+            this.freq2Up[indivAllelePool[0]]++;
         };
 
         // Ensure that the local arrays have been cleaned.
@@ -253,33 +262,6 @@ species.prototype.mate = function () {
     parentAPool = null;
     parentBPool = null;
 };
-
-/*===================================================================================*/
-/* Debugging functionality that isn't used in the actual web-app itself.             */
-/*===================================================================================*/
-/*
-species.prototype.freqSummary = function(whichGen = 1) {
-    var toReturn = [];
-    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
-        whichGen = allSpecies.genNumber;
-    }
-    for (var i = 0; i < alleles.getUprBound(); i++) {
-        toReturn.push(this.freq[i][whichGen - 1]);
-    };
-    return toReturn;
-};
-
-species.prototype.freq2UpSummary = function(whichGen = 1) {
-    var toReturn = [];
-    if (whichGen < 1 || whichGen > allSpecies.genNumber) {
-        whichGen = allSpecies.genNumber;
-    }
-    for (var i = 0; i < alleles.getUprBound(); i++) {
-        toReturn.push(this.freq2Up[i][whichGen - 1]);
-    };
-    return toReturn;
-};
-*/
 
 /*===================================================================================*/
 /* migrate() is a function that is hooked onto the 'allSpecies' global array.        */
@@ -347,7 +329,7 @@ fstCalc = function(){
 
         for (var j = 0; j < allSpecies.length; j++) { // within each population...
             // Calculate the population's p_i.
-                w.push(math.fraction(allSpecies[j].freq[i][allSpecies.genNumber], scope.twoNi));
+                w.push(math.fraction(allSpecies[j].freq[i], scope.twoNi));
 
             // Rescale p_i with the population size.
                 x = math.fraction(w[j] * scope.ni);
@@ -357,7 +339,7 @@ fstCalc = function(){
             // Calculate the frequency of heterozygous individuals that have allele type 'i'
                 // within the population (H_i).
                 x = math.subtract(
-                    w[j], math.fraction(allSpecies[j].freq2Up[i][allSpecies.genNumber], scope.ni)
+                    w[j], math.fraction(allSpecies[j].freq2Up[i], scope.ni)
                 );
                 x = math.multiply(scope.twoNi, x);
 
@@ -450,7 +432,7 @@ function output_Interval() {
 
         for (var x = 0; x < allSpecies.length; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
-                alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1][genNumber_Zero]);
+                alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1]);
             };
         };
         x = null;
@@ -539,6 +521,7 @@ function output_Initialise() {
         // Setup functionality for the simulation route.
         allSpecies.migrate = migrate;
         allSpecies.fstCalc = fstCalc;
+		allSpecies.numOfPop = 0;
 
         // Create the DataTable, Chart, and DataView for the maximum number 
             // of populations and allele types.
@@ -670,6 +653,8 @@ function output_Initialise() {
         y += parameters.popSize * parameters.popSize;
     };
 
+	allSpecies.numOfPop = parameters.numOfPop;
+	
     var
     // r
         r = parameters.numOfPop,

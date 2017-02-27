@@ -48,3 +48,32 @@ $(document).ready(function() {
 	});
 
 });
+
+/*
+	var i = 0;
+	console.log(i);
+	i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+		i += 1;
+	i %= 2;
+	console.log(i);
+	setup for recursive 0 1*/
