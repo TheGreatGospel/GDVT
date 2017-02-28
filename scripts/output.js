@@ -107,64 +107,55 @@ allelesUnpack = function(toUnpack) {
 
 /*===================================================================================*/
 /* species() is an object which stores a population's current generation in a        */
-/* detailed form and the allele type frequencies of previous generations. The        */
+/* detailed form and the allele frequencies. The 	         						 */
 /* methods for the species() object are implemented with the .prototype keyword in   */
 /* order to minimise the browser's memeory usage.                                    */
 /*                                                                                   */
-/* These are the public variables available within the species() object:             */
-/* - .popSize: The population size as determined by parameters.popSize.              */
-/* - .mutaRate: The population's allele type mutation rate deteremined by            */
-/*      '1/parameters.mutationDenom'. Stored as a 'math.fraction' to avoid problems  */
-/*      with Javascript's lack of precision for small numbers.                       */
-/* - .numOfMigrants: The number of migrants this population should send each         */
-/*      generation.                                                                  */
-/* - .currentPop: The detailed makeup of the population's current generation.        */
-/* - .freq: An object which contains up to '.getUprBound()' arrays to store general  */
-/*      allele type frequency information. (Retrieve with                            */
-/*      '.freq[alleleType][generation]')                                             */
-/* - .freq2Up: An object which contains up to '.getUprBound()' arrays to store       */
-/*      double-up allele type frequency information (for example, a member has two   */
-/*      'A' alleles). (Retrieve with '.freq2Up[alleleType][generation]')             */
-/*                                                                                   */
 /* These are the public methods available within the species() object:               */
-/* - .create(): Creates a population and loads it into '.currentPop'. Also, it       */
-/*      initialises the '.freq' and '.freq2Up' objects.                              */
+/* - .create(): Creates a population and loads it into '.populations'. Also, it      */
+/*      initialises the '.alleleFreq' and '.homozygousFreq' objects.                 */
 /* - .mate(): Mates the current population to sire a new population to load into     */
-/*      '.currentPop'.                                                               */
-/* - .recycle(): Recycles the species object for further use.                        */
+/*      '.populations'.                                                              */
+/* - .recycle(): Recycles the species object.                                        */
 /*===================================================================================*/
 function species() {
-    this.popSize = parameters.popSize,
-    this.mutaRate = -1,
-    this.numOfMigrants = parameters.numOfMigrants,
-	this.currentIndex = 0,
+    this.popSize = 0, // Save the specified parameter size with the object
+    this.mutaRate = -1, // ...and the specified mutation rate with the object...
+    this.numOfMigrants = 0, // ...and the number of migrants.
 	
-	this.populations = [[], []],
-	this.alleleFreq = [[], []],
-	this.homozygousFreq = [[], []],
+	this.toMutate = false, // A set of booleans to minimise the number of computing operations.
+	this.toMigrate = false,
 	
-    this.currentPop = [],
-    this.freq = [],
-    this.freq2Up = [];
-
-    if (parameters.mutationDenom != 0) {
-        this.mutaRate = math.fraction(1, parameters.mutationDenom);
-    };
+	this.currentIndex = 0, // Probably better noted as a binary switch variable. Allows
+		// us to keep track on the focus generation (i.e. the population visualised in
+		// the left window).
+	
+	this.populations = {0: [], 1: []}, // Note the binary indices.
+	this.alleleFreq = {0: [], 1: []}, // ' '.
+	this.homozygousFreq = {0: [], 1: []}; // ' '.
 };
 
 species.prototype.create = function() {
     var indivAllelePool = []; // Create a local variable 'indivAllelePool' 
 			// to store a member's alleles.
-
+	
+	// Load in the parameters that are specific to a population.
+	if (parameters.mutationDenom != 0) {
+        this.mutaRate = math.fraction(1, parameters.mutationDenom);
+    };
+	
+	this.popSize = parameters.popSize,
+	this.numOfMigrants = parameters.numOfMigrants,
+	this.toMutate = this.mutaRate > 0,
+	this.toMigrate = this.numOfMigrants > 0;
+	
     // Expand the frequency arrays.
     for (var i = 0; i < alleles.getUprBound(); i++) {
-        this.freq.push(0);
-        this.freq2Up.push(0);
+		this.alleleFreq[0].push(0);
+		this.alleleFreq[1].push(0);
+		this.homozygousFreq[0].push(0);
+		this.homozygousFreq[1].push(0);
     };
-
-    this.currentPop.push([]) // Pushes an empty array into '.currentPop' to store 
-                                // membership information. The implementation is to 
-                                // assist future updates to the tool.
 
     for (i = 0; i < this.popSize; i++) {
         // Assign two alleles to 'allelePool'.
@@ -172,13 +163,13 @@ species.prototype.create = function() {
         indivAllelePool[1] = getRandomInt(0, alleles.getUprBound_Zero());
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(allelesPack(indivAllelePool));
+        this.populations[this.currentIndex].push(allelesPack(indivAllelePool));
             
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]]++;
-        this.freq[indivAllelePool[1]]++;
+        this.alleleFreq[this.currentIndex][indivAllelePool[0]]++;
+        this.alleleFreq[this.currentIndex][indivAllelePool[1]]++;
         if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]]++;
+            this.homozygousFreq[this.currentIndex][indivAllelePool[0]]++;
         };
     };
 	
@@ -188,7 +179,7 @@ species.prototype.create = function() {
 };
 
 species.prototype.mate = function () {
-    var parentGen = this.currentPop.shift(), // Remove the oldest population from the 
+    var parentGen = this.populations[this.currentIndex].slice(), // Remove the oldest population from the 
                                                 // '.currentPop' array to be the parent 
                                                 // generation.
         parentSize = parentGen.length - 1, // The parent generation could be 
@@ -199,12 +190,11 @@ species.prototype.mate = function () {
 
     // Refresh the allele frequencies arrays
     for (var i = 0; i < alleles.getUprBound(); i++) {
-        this.freq[i] = 0;
-        this.freq2Up[i] = 0;
+        this.alleleFreq[this.currentIndex][i] = 0;
+        this.homozygousFreq[this.currentIndex][i] = 0;
     };
-    this.currentPop.push([]); // Pushes an empty array into '.currentPop' to store 
-                                // membership information. The implementation is to 
-                                // assist future updates to the tool.                         
+    
+	this.populations[this.currentIndex].length = 0;
 
     for (i = 0; i < this.popSize; i++) {
         // Acquire some uniquely indexed parents with SRS.
@@ -235,13 +225,13 @@ species.prototype.mate = function () {
         };
 
         // Compress 'allelePool' and add the member to the population.
-        this.currentPop[0].push(allelesPack(indivAllelePool));
+        this.populations[this.currentIndex].push(allelesPack(indivAllelePool));
 
         // Increase the corresponding frequencies.
-        this.freq[indivAllelePool[0]]++;
-        this.freq[indivAllelePool[1]]++;
+        this.alleleFreq[this.currentIndex][indivAllelePool[0]]++;
+        this.alleleFreq[this.currentIndex][indivAllelePool[1]]++;
         if (indivAllelePool[0] === indivAllelePool[1]) {
-            this.freq2Up[indivAllelePool[0]]++;
+            this.homozygousFreq[this.currentIndex][indivAllelePool[0]]++;
         };
 
         // Ensure that the local arrays have been cleaned.
@@ -263,6 +253,19 @@ species.prototype.mate = function () {
     parentBPool = null;
 };
 
+species.prototype.recycle = function() {
+	// Flush the embedded arrays.
+	this.alleleFreq[0].length = 0,
+	this.alleleFreq[1].length = 0,
+	this.homozygousFreq[0].length = 0,
+	this.homozygousFreq[1].length = 0,
+	this.populations[0].length = 0,
+	this.populations[1].length = 0;
+	
+	// Reset the '.mutaRate' variable to -1.
+	this.mutaRate = -1;
+};
+
 /*===================================================================================*/
 /* migrate() is a function that is hooked onto the 'allSpecies' global array.        */
 /* Members of a population will migrate to another population via SRS (excluding     */
@@ -271,18 +274,16 @@ species.prototype.mate = function () {
 /*===================================================================================*/
 migrate = function(){
     var toMigrate = [], // An array to store the migration information.
-        x = 0, numOfMigrants = 0. // Local variables to work with.
-        numOfPop = this.length, // 'this.length' == 'allSpecies.length' (the number of 
-                                    // populations in the simulation routine).
-        numOfPop_Zero = numOfPop - 1; // Zero-indexed version of 'numOfPop'.
+        x = 0, numOfMigrants = 0, // Local variables to work with.
+        numOfPop_Zero = this.numOfPop - 1; // Zero-indexed version of 'numOfPop'.
     
-    for (var i = 0; i < numOfPop; i++) {
+    for (var i = 0; i < this.numOfPop; i++) {
         numOfMigrants = this[i].numOfMigrants; // 'this[i].numOfMigrants' == 
                                                    // 'allSpecies[i].numOfMigrants'.
         for (var j = 0; j < numOfMigrants; j++) {
             // Remove a member from population 'i' 
-            x = getRandomInt(0, this[i].currentPop[0].length - 1);
-            toMigrate.push(this[i].currentPop[0].splice(x, 1)[0]);
+            x = getRandomInt(0, this[i].populations[this.currentIndex].length - 1);
+            toMigrate.push(this[i].populations[this.currentIndex].splice(x, 1)[0]);
 
             // Store indice information.
             toMigrate.push(x);
@@ -300,7 +301,7 @@ migrate = function(){
     for (i = 0; i < numOfMigrants; i += 3) { // Increments of three due to the way 
                                                  // 'toMigrate'is structured.
         // 'i': member information; 'i + 1': indice information; 'i + 2': destination.
-        this[toMigrate[i + 2]].currentPop[0].splice(toMigrate[i + 1], 0, toMigrate[i]);
+        this[toMigrate[i + 2]].populations[this.currentIndex].splice(toMigrate[i + 1], 0, toMigrate[i]);
     };
 
     // Ensure that the 'toMigrate' array has been cleaned.
@@ -327,9 +328,9 @@ fstCalc = function(){
     for (var i = 0; i < alleles.getUprBound(); i++) { // For each allele type 'i'...
         var x = 0, y = 0, z = 0; // Declaring local variables to work with.
 
-        for (var j = 0; j < allSpecies.length; j++) { // within each population...
+        for (var j = 0; j < allSpecies.numOfPop; j++) { // within each population...
             // Calculate the population's p_i.
-                w.push(math.fraction(allSpecies[j].freq[i], scope.twoNi));
+                w.push(math.fraction(allSpecies[j].alleleFreq[allSpecies[j].currentIndex][i], scope.twoNi));
 
             // Rescale p_i with the population size.
                 x = math.fraction(w[j] * scope.ni);
@@ -339,7 +340,7 @@ fstCalc = function(){
             // Calculate the frequency of heterozygous individuals that have allele type 'i'
                 // within the population (H_i).
                 x = math.subtract(
-                    w[j], math.fraction(allSpecies[j].freq2Up[i], scope.ni)
+                    w[j], math.fraction(allSpecies[j].homozygousFreq[allSpecies[j].currentIndex][i], scope.ni)
                 );
                 x = math.multiply(scope.twoNi, x);
 
@@ -356,7 +357,7 @@ fstCalc = function(){
         var x = 0, y = 0, z = 0;  // Refresh the local variables to work with.
 
         // Calculate the sample variance of allele type 'i'.
-            for (var j = 0; j < allSpecies.length; j++) {
+            for (var j = 0; j < allSpecies.numOfPop; j++) {
                 x = math.subtract(w[j], pDot); // p_i - pDot.
                 y = math.multiply(scope.ni, math.square(x)); // n_i * (p_i - pDot)^2
 
@@ -428,11 +429,11 @@ function output_Interval() {
 
         // Update the UI with the current generation information.
         output_genNum.html(allSpecies.genNumber);
-        output_fst.html(fst.data.getValue(allSpecies.genNumber - 1, 1));
+        //output_fst.html(fst.data.getValue(allSpecies.genNumber - 1, 1));
 
-        for (var x = 0; x < allSpecies.length; x++) {
+        for (var x = 0; x < allSpecies.numOfPop; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
-                alleleFreq.data.setValue(x, y, allSpecies[x].freq[y - 1]);
+                alleleFreq.data.setValue(x, y, allSpecies[x].alleleFreq[allSpecies[x].currentIndex][y - 1]);
             };
         };
         x = null;
@@ -440,7 +441,7 @@ function output_Interval() {
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
 
         // Draw the fst chart...
-        fst.view.setRows(0, genNumber_Zero);
+        //fst.view.setRows(0, genNumber_Zero);
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
@@ -460,20 +461,23 @@ function output_Interval() {
         genNumber_Zero = null;
     } else {
         if (allSpecies.genNumber == 0) { // Check if there is a new simulation routine.
-            // If so, create out new populations.
-            for (var i = 0; i < parameters.numOfPop; i++) {
-                allSpecies.push(new species());
-                allSpecies[i].create();
+            for (var i = 0; i < allSpecies.numOfPop; i++) {
+				if (allSpecies[i] == null) { // If there isn't a species object, create one.
+					allSpecies.push(new species()); 
+				} else {
+					allSpecies[i].recycle(); // If there is a species object, recycle it.
+				};
+                allSpecies[i].create(); // Initialise the species object.
             };
             i = null;
-        } else {
-            // If not, conduct migration then mate the populations.
-            allSpecies.migrate();
-            for (var i = 0; i < allSpecies.length; i++) {
-                allSpecies[i].mate();
-            };
-            i = null;
+			allSpecies.genNumber += 1; // Increment the generation number
         };
+		
+		allSpecies.migrate();
+        for (var i = 0; i < allSpecies.numOfPop; i++) {
+            allSpecies[i].mate();
+        };
+        i = null;
 		
 		//this.parentRefPop = this.childPop.slice(); // Store the current child population to visualise.
         
