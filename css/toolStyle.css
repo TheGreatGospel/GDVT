@@ -177,7 +177,7 @@ ul.output_ulR li {
     background: none;
     display: inline-block;
     padding: 2.5px 10px 0px 10px;
-    /*cursor: pointer;*/
+    cursor: pointer;
 }
 
 ul.output_ulR li.current {
@@ -190,6 +190,14 @@ ul.output_ulR li.current {
     height: 500px;
     width: 500px;
     padding: 10px;
+}
+
+.output_chartDimToo {
+    display: none;
+}
+
+.output_chartDimToo.current {
+    display: inherit;
 }
 
 #output_curParaMagContainer {

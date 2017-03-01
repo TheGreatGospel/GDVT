@@ -48,10 +48,10 @@ indivAllele_draw = function() {
     var i = 0,
         temp = [];
     for (var j = 0; j < allSpecies.length; j++) {
-        for (var k = 0; k < allSpecies[j].populations[allSpecies[j].currentIndex].length; k++) {
+        for (var k = 0; k < allSpecies[j].populations[allSpecies.currentIndex].length; k++) {
             indivAllele.data.setValue(i, 0, k + 1); // Member Number.
             indivAllele.data.setValue(i, 1, j); // Population Number.
-            temp = allelesUnpack(allSpecies[j].populations[allSpecies[j].currentIndex][k]);
+            temp = allelesUnpack(allSpecies[j].populations[allSpecies.currentIndex][k]);
             indivAllele.data.setValue(i, 2, temp[0]);
             indivAllele.data.setValue(i, 3, temp[1]);
             i++;

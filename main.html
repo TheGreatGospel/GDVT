@@ -57,7 +57,7 @@
                 <span class='paraMag_space'></span>
                 <button id='output_interrupt' disabled='true'>Stop</button>
 				<span class='paraMag_space'></span>
-				<button id='output_reset' disabled='true'>Reset</button>
+				<button id='output_reset'>Reset</button>
             </li>
             <li>
                 <div id="output_progressBarContainer">
@@ -88,12 +88,15 @@
         </div>
         <div id='output_R'>
 		    <ul class='output_ulR'>
-                <li class='current'>Conancestry Coefficient</li>
+                <li class='current' data-tab='output_fstDashboard'>Conancestry Coefficient</li>
+                <li data-tab='output_alleleFreqChartToo'>Allele Frequencies (Child Gen.)</li>
             </ul>
             <div class='output_chartContainerToo'>
-                <div id='output_fstDashboard'>
+                <div class='output_chartDimToo current' id='output_fstDashboard'>
                     <div id='output_fstChart'></div>
                     <div id='output_fstControl'></div>
+                </div>
+                <div class='output_chartDimToo' id='output_alleleFreqChartToo'>
                 </div>
             </div>
         </div>
@@ -364,10 +367,41 @@ Libraries and resources used for this web application include:
             tickTock: new Timer(2)
           //data
           //view
+        },
+		alleleFreqChild = {
+            // Chart options for visualising the allele frequencies.
+            options: {
+                title: 'Allele Frequencies (Child Generation)',
+                height: 500,
+                width: 500,
+                bar: {
+                    groupWidth: '70%'
+                },
+                hAxis: {
+                    title: 'Population'
+                },
+                vAxis: {
+                    title: 'Allele Frequency (%)',
+                    minValue: 0,
+                    maxValue: 1
+                },
+                isStacked: 'percent',
+                animation: {
+                    duration: 1000, // in milliseconds
+                    easing: 'out'
+                },
+                tooltip: {
+                    isHtml: true
+                }
+            }
+          //data: new google.visualization.DataTable(),    // Stores the allele frequencies.
+          //chart: new google.visualization.ColumnChart(), // The chart object.
+          //view: new google.visualization.DataView()      // The view of the datatable object to
+                                                               // visualise.
         };
 
     paraMag_submit.prop('disabled', true);
-	// Reset???
+	output_reset.prop('disabled', true);
     output_simButtons.prop('disabled', true);
 
     output_genNum.html('. . .');
