@@ -182,34 +182,52 @@
 
 <!-- About Tab HTML (Start) -->
 <div class='main toolbar-content' id='jsBody_About'>
-The mutation scheme used is based on the stepwise mutation model proposed
-by Kimura & Ohta (1978), with a minor modification to respect the bound-
-aries. For example, there are five possible alleles in a population, Alleles A, B,
-C, D, and E. Allele B can mutate to either Allele A or Allele C, and a similar
-process applies to Allele D, and Allele E. However, Allele A and Allele E can
-only mutate to Allele B and Allele D respectively.
-<br>
-<br>
-<span id='small'>Kimura, M., & Ohta, T. (1978). Stepwise mutation model and distribution of
-allelic frequencies in a finite population. Proceedings of the National Academy of
-Sciences, 75(6), 2868–2872.</span>
-<hr>
-The migration scheme uses simple random sampling to select a fixed number
-of migrants. These migrants then immigrate to a randomly chosen population,
-excluding their population of origin. As a result, populations before breeding
-are not necessarily the specified population size. However, this simple scheme
-is computationally quick to execute as there are no constraints to inform. Since
-the end users are typically going to be students, implementing a more complex
-migration scheme that might significantly increase the simulation time, which
-may frustrate the end user.
-<hr>
-Libraries and resources used for this web application include:
+    F<sub>ST</sub> is a useful statistic for summarising the observed genetic drift for a group of populations (Weir, 1996). F<sub>ST</sub> 
+    is defined to be a value between 0 and 1 (inclusive). A small value of F<sub>ST</sub> proposes that the individuals
+    in the same subpopulation are not very related to each other. A high value of F<sub>ST</sub> suggests that individuals in the same 
+    subpopulation are quite related to each other. We estimate F<sub>ST</sub> using an analysis of variance framework. Hence, F<sub>ST</sub> 
+    can produce a negative estimate, which is out of the bounds of because an unbiased estimator is used to estimate F<sub>ST</sub>. But, 
+    the size of the bias is quite minute, and F<sub>ST</sub> is only imprecise when the true F<sub>ST</sub> is exceptionally close to zero. 
+    There is also a case when F<sub>ST</sub> is a ratio of zeroes. The phenomenon occurs when the same allele is present in all populations.
+    Hence, for this particular event, F<sub>ST</sub> is defined to be equal to one because the observed populations are in fact inbred,
+    just not in the expected fashion.
+    <br>
+    <br>
+    <span id='small'>
+        Weir, B. S. (1996). Genetic data analysis II. methods for discrete population genetic
+        data. Sinauer Associates, Inc. Publishers.
+    </span>
+    <hr>
+    The mutation scheme used was based on the stepwise mutation model proposed
+    by Kimura & Ohta (1978), with a minor modication to respect the
+    boundaries. For example, there are ve possible alleles in a population, Alleles
+    A, B, C, D, and E. Allele B can mutate to either Allele A or Allele C,
+    and a similar process applies to Allele D, and Allele E. However, Allele A and
+    Allele E can only mutate to Allele B and Allele D, respectively.
+    <br>
+    <br>
+    <span id='small'>
+        Kimura, M., & Ohta, T. (1978). Stepwise mutation model and distribution of
+        allelic frequencies in a finite population. Proceedings of the National Academy of
+        Sciences, 75(6), 2868–2872.
+    </span>
+    <hr>
+    The migration scheme used simple random sampling to select a xed number
+    of migrants from each of the populations. These migrants then immigrated
+    to a randomly chosen population, excluding their population of origin. As a
+    result, populations before breeding were not necessarily the specied population
+    size. However, this simple scheme was computationally quick to execute
+    as there are no constraints to enforce. Since the end users are typically going
+    to be students, implementing a more complex migration scheme that might
+    signicantly increase the simulation time could frustrate the end user.
+    <hr>
+    Libraries and resources used for this web application include:
     <ul>
-        <li>Math.js from http://mathjs.org</li>
-        <li>Google Charts API from https://developers.google.com/chart/</li>
-        <li>ColorBrewer from http://colorbrewer2.org/</li>
-        <li>Timer.js from https://github.com/fschaefer/Timer.js</li>
-        <li>jQuery from https://jquery.com</li>
+        <li>ColorBrewer from <a href='http://colorbrewer2.org/'>colorbrewer2.org/</a>.</li>
+        <li>Google Charts API from <a href='https://developers.google.com/chart/'>developers.google.com/chart/</a>.</li>
+        <li>jQuery from <a href='https://jquery.com'>jquery.com</a>.</li>
+        <li>Math.js from <a href='http://mathjs.org'>mathjs.org</a>.</li>
+        <li>Timer.js from <a href='https://github.com/fschaefer/Timer.js'>github.com/fschaefer/Timer.js</a>.</li>
     </ul>
 </div>
 <!-- About Tab HTML (End) -->
