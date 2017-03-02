@@ -419,37 +419,31 @@ fstCalc = function(){
 // Timeout functionality to run the simulation routine.
 function output_Interval() {
     if (allSpecies.genNumber >= timerVars.toGenNum || timerVars.toStop) {
-        var genNumber_Zero = allSpecies.genNumber - 1; // zero indexed version of
         timerVars.toStop = false;
         timerVars.tickTock.stop();
-
-		
-		
+        
         // Update the UI with the current generation information.
-        output_genNum.html(allSpecies.genNumber);
-        output_fst.html(fst.data.getValue(allSpecies.genNumber - 1, 1));
+        output_genNum.html(allSpecies.genNumber - 1);
+        output_fst.html(fst.data.getValue(allSpecies.genNumber - 2, 1));
 
         for (var x = 0; x < allSpecies.numOfPop; x++) {
             for (var y = 1; y <= alleles.getUprBound(); y++) {
-                alleleFreq.data.setValue(x, y, allSpecies[x].alleleFreq[allSpecies.currentIndex][y - 1]);
+                alleleFreq.data.setValue(x, y, allSpecies[x].alleleFreq[allSpecies.previousIndex][y - 1]);
+                  alleleFreqChild.data.setValue(x, y, allSpecies[x].alleleFreq[allSpecies.currentIndex][y - 1]);
             };
         };
-        x = null;
-        y = null;
         alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+          alleleFreqChild.chart.draw(alleleFreqChild.view, alleleFreqChild.options);
 
         // Draw the fst chart...
-        fst.view.setRows(0, genNumber_Zero);
+        fst.view.setRows(0, allSpecies.genNumber - 2);
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
         indivAllele_draw();
 
         // Manipulate the controls here to include the most recent FST calculations.
-        var bounds = fst.control.getState();
-        bounds.range.end = allSpecies.genNumber;
-        //fst.chart.setOption('hAxis.maxValue', bounds.range.end);
-        bounds = null;
+        fst.control.getState().range.end = allSpecies.genNumber - 1;
 
         // Re-enable UI buttons and disable the interruption button.
         output_simButtons.prop('disabled', false);
@@ -457,9 +451,8 @@ function output_Interval() {
         paraMag_submit.prop('disabled', false);
 		output_reset.prop('disabled', false);
 
-        genNumber_Zero = null;
+        x = null, y = null;
     } else {
-		//this.parentRefPop = this.childPop.slice(); // Store the current child population to visualise BEFORE MIGRATION AND ROLL.
         if (allSpecies.genNumber == 0) { // Check if there is a new simulation routine.
             for (var i = 0; i < allSpecies.numOfPop; i++) {
 				if (allSpecies[i] == null) { // If there isn't a species object, create one.
@@ -469,36 +462,41 @@ function output_Interval() {
 				};
                 allSpecies[i].create(); // Initialise the species object.
             };
-            i = null;
-        } else {
-            allSpecies.migrate();
-            for (var i = 0; i < allSpecies.numOfPop; i++) {
-                allSpecies[i].mate();
-            };
+            allSpecies.fstCalc(); // Calculate the coancestry coefficient.
+            allSpecies.genNumber += 1; // Increment which the generation number
+
             i = null;
         };
 
+        // Shift the binary switch foward and copy and paste the generation at the previous index into the 
+            // current index.
+        allSpecies.previousIndex = allSpecies.currentIndex;
+        allSpecies.currentIndex += 1;
+	    allSpecies.currentIndex %= 2;
+        for (var j = 0; j < allSpecies.numOfPop; j++) {
+            allSpecies[j].populations[allSpecies.currentIndex] = allSpecies[j].populations[allSpecies.previousIndex].slice();
+        };
 
-		// Persona 3 ONE MORE mate BUT WHERE!
-		// Ehhh Reset button shenanigans????
-		
-        
+        allSpecies.migrate();
+        for ( j = 0; j < allSpecies.numOfPop; j++) {
+            allSpecies[j].mate();
+        };
 		allSpecies.fstCalc(); // Calculate the coancestry coefficient.
         allSpecies.genNumber += 1; // Increment which the generation number
 
         // Update the progress bar and indicator.
         timerVars.progress = timerVars.progress + timerVars.increment;
-            var a = Math.round(100 * timerVars.progress, 0),
-                b = Math.round(timerVars.progressMax * timerVars.progress, 0);
-            output_progressNumberChild.html(a);
-            output_progressBar.css('width', b);
-            a = null;
-            b = null;
+        var a = Math.round(100 * timerVars.progress, 0),
+            b = Math.round(timerVars.progressMax * timerVars.progress, 0);
+        output_progressNumberChild.html(a);
+        output_progressBar.css('width', b);
+
+        a = null, b = null, j = null;
     };
 };
 
 // Launches a new simulation routine with the current parameters.
-function output_Initialise() {
+function output_Initialise(resetTrue = false) {
     // Disable the buttons which can begin the timer.
     output_simButtons.prop('disabled', true);
     paraMag_submit.prop('disabled', true);
@@ -507,60 +505,59 @@ function output_Initialise() {
     // Initialise independent parts of the simulation routine.
     alleles.setUprBound();
     allSpecies.genNumber = 0;
+    allSpecies.numOfPop = parameters.numOfPop;
 	allSpecies.currentIndex = 0; // Probably better noted as a binary switch variable. Allows
-		// us to keep track on the focus generation (i.e. the population visualised in
-		// the left window).
+		// us to keep track on where generations are visulised in the app.
+    allSpecies.previousIndex = 0;
 
     if (webpageLive) {
-        // Clean up previous simulation routine.
-        //allSpecies.length = 0;
-        alleleFreq.chart.clearChart(); 
+        // Clear the alleleFreq and the alleleFreqChild charts.
+        alleleFreq.chart.clearChart();
+        alleleFreqChild.chart.clearChart();
 
-        fst.chart.getChart().clearChart();
         fst.view.setRows(0, 0);
-        var bounds = fst.control.getState();
-        fst.chart.setOption('hAxis.minValue', 1);
-        fst.chart.setOption('hAxis.maxValue', 2);
-        bounds.range.start = 1;
-        bounds.range.end = 2;
-        bounds = null;
-		// redraw fst chart???
+
+        if (!resetTrue) {
+            // Only clear the fst chart if it is resetted with the 'Submit Parameters' button.
+            fst.chart.getChart().clearChart();
+        };
     } else {
-        // Setup functionality for the simulation route.
+        // Setup functionality for the simulation routine.
         allSpecies.migrate = migrate;
         allSpecies.fstCalc = fstCalc;
-		allSpecies.numOfPop = 0;
 
         // Create the DataTable, Chart, and DataView for the maximum number 
-            // of populations and allele types.
+            // of populations and alleles. Do this for both the parent and child generations...
         alleleFreq.data = new google.visualization.DataTable();
-            alleleFreq.data.addColumn('string', 'Population');
-            var initLabels = alleles.getLabels(true);
-            for (var i = 0; i < initLabels.length; i++) {
-                alleleFreq.data.addColumn('number', initLabels[i]);
+          alleleFreqChild.data = new google.visualization.DataTable();
+        alleleFreq.data.addColumn('string', 'Population');
+          alleleFreqChild.data.addColumn('string', 'Population');
+        for (var i = 0; i < alleles.getLabels(true).length; i++) {
+            alleleFreq.data.addColumn('number', alleles.getLabels(true)[i]);
+              alleleFreqChild.data.addColumn('number', alleles.getLabels(true)[i]);
+        };
+        var fill = [];
+        for (i = 0; i < 10; i++) {
+            fill.push([]);
+            fill[i].push('#' + (i + 1));
+            for (var j = 0; j < alleles.getLabels(true).length; j++) {
+                fill[i].push(0);
             };
-            var fill = [];
-                for (i = 0; i < 10; i++) {
-                    fill.push([]);
-                    fill[i].push('#' + (i + 1));
-                    for (var j = 0; j < initLabels.length; j++) {
-                        fill[i].push(0);
-                    };
-                };
-            alleleFreq.data.addRows(fill);
+        };
+        alleleFreq.data.addRows(fill);
+          alleleFreqChild.data.addRows(fill);
 
         alleleFreq.view = new google.visualization.DataView(alleleFreq.data);
+          alleleFreqChild.view = new google.visualization.DataView(alleleFreqChild.data);
 
         alleleFreq.chart = new google.visualization.ColumnChart(
             document.getElementById('output_alleleFreqChart')
         );
+          alleleFreqChild.chart = new google.visualization.ColumnChart(
+              document.getElementById('output_alleleFreqChartToo')
+          );
 
-        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
-                             // to clean the 'initLabels' array as it is a 
-                             // link to a private variable.
-        fill = null;
-        i = null;
-        j = null;
+        fill.length = 0; // Flush the local array.
 
         // Create the DataTable, DataView, Dashboard, Chart, Controls
             //and event triggers for the fst calculations
@@ -601,28 +598,26 @@ function output_Initialise() {
         fst.dashboard.bind(fst.control, fst.chart);
 
         // Call the initialisation function to visualise the individual alleles and set up the
-        // DataTable and DataView.
+            // DataTable and DataView.
         indivAllele_initialise();
         indivAllele.data = new google.visualization.DataTable();
-            indivAllele.data.addColumn('number', 'MemberNo');
-            indivAllele.data.addColumn('number', 'PopNo');
-            indivAllele.data.addColumn('number', 'AllelePositionOne');
-            indivAllele.data.addColumn('number', 'AllelePositionTwo');
-            var fill = [];
-                for (i = 0; i < 5000; i++) {
-                    fill.push([0, 0, 0, 0]);
-                };
-            indivAllele.data.addRows(fill);
+        indivAllele.data.addColumn('number', 'MemberNo');
+        indivAllele.data.addColumn('number', 'PopNo');
+        indivAllele.data.addColumn('number', 'AllelePositionOne');
+        indivAllele.data.addColumn('number', 'AllelePositionTwo');
+        for (i = 0; i < 5000; i++) {
+            fill.push([0, 0, 0, 0]);
+        };
+        indivAllele.data.addRows(fill);
 
         indivAllele.view = new google.visualization.DataView(indivAllele.data);
 
-        fill.length = 0; // Ensure that the 'fill' array has been cleaned. We don't
-                             // to clean the 'initLabels' array as it is a 
-                             // link to a private variable.
-        fill = null;
-
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
+
+        fill.length = 0; // Flush the local array.
+
+        fill = null, i = null, j = null;
     };
 
     // Subset the DataTable in 'alleleFreq.data' to visualise what is in the 
@@ -633,41 +628,37 @@ function output_Initialise() {
             toView.push(alleles.getUprBound() - k);
         };
         alleleFreq.view.setColumns(toView);
+          alleleFreqChild.view.setColumns(toView);
         alleleFreq.view.setRows(0, parameters.numOfPop - 1);
+          alleleFreqChild.view.setRows(0, parameters.numOfPop - 1);
         
-    toView.length = 0; // Ensure that the 'toView' array has been cleaned.
-    toView = null;
-    k = null;
+    toView.length = 0; //Flush the 'toView' array.
 
     // Subset the DataTable in 'indivAllele.data' to visualise what is in the
         // simulation routine. 
     indivAllele.view.setRows(0, parameters.numOfPop * parameters.popSize - 1);
 
     // Draw the charts.
-    var newColors = alleles.getColors();
-    alleleFreq.options.colors = newColors;
+    alleleFreq.options.colors = alleles.getColors();
     alleleFreq.chart.draw(alleleFreq.view, alleleFreq.options);
+      alleleFreqChild.options.colors = alleles.getColors();
+      alleleFreqChild.chart.draw(alleleFreqChild.view, alleleFreqChild.options);
     fst.dashboard.draw(fst.view);
     indivAllele_refresh();
-    newColors = null;
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 
         // simulation routine.
-
     var x = 0, y = 0;
     for (var l = 0; l < parameters.numOfPop; l++) {
         x += parameters.popSize;
         y += parameters.popSize * parameters.popSize;
     };
-
-	allSpecies.numOfPop = parameters.numOfPop;
 	
     var
-    // r
-        r = parameters.numOfPop,
+    // r = allSpecies.numOfPop
     // r - 1
-        rMinusOne = r - 1,
+        rMinusOne = allSpecies.numOfPop - 1,
     // (n_1 + . . . + n_r - [n_1^2 + . . . + n_r^2]/[n_1 + . . . + n_r])/(r - 1)
         nC = math.fraction(x - y/x, rMinusOne);
 
@@ -676,16 +667,16 @@ function output_Initialise() {
     // 2*n_i
         scope.twoNi = 2*parameters.popSize;
     // (n_1 + n_2 + . . . + n_r)/r
-        scope.nBar = math.fraction(x, parameters.numOfPop);
+        scope.nBar = math.fraction(x, allSpecies.numOfPop);
 
     // nBar - 1
         scope.a = math.fraction(scope.nBar - 1); 
     // (r - 1)/1
-        scope.b = math.fraction(rMinusOne, r); 
+        scope.b = math.fraction(rMinusOne, allSpecies.numOfPop); 
     // r*(nBar - 1)
-        scope.c = math.fraction(r * scope.a); 
+        scope.c = math.fraction(allSpecies.numOfPop * scope.a); 
     // r*(nBar - nC)/nBar
-        scope.d = math.fraction(r * (scope.nBar - nC) / scope.nBar); 
+        scope.d = math.fraction(allSpecies.numOfPop * (scope.nBar - nC) / scope.nBar); 
     // (nBar - 1)  + (r - 1)*(nBar - nC)        
         scope.e = math.fraction(scope.a + rMinusOne*(scope.nBar - nC));
     // (nBar - nC)/(4*nC^2)
@@ -694,9 +685,6 @@ function output_Initialise() {
         scope.g = x; 
     // (r - 1)*nBar
         scope.h = math.fraction(rMinusOne * scope.nBar); 
-
-    r = null; rMinusOne = null; nC = null;
-    x = null; y = null;
 
     // Load into the simulation parameters into the corresponding <span>s.
     output_numOfPop.html(parameters.numOfPop);
@@ -721,6 +709,8 @@ function output_Initialise() {
 
     // Enable the interruption button.
     output_interrupt.prop('disabled', false);
+
+    toView = null, k = null, x = null, y = null, l = null, rMinusOne = null, nC = null;
 };
 
 /* Setup global variables to refer to the HTML DOM elements for the Output Tab. */
@@ -743,7 +733,8 @@ var output_numOfPop = $('#output_numOfPop'),
 	output_simButtons = $('.output_simButton'),
 	
 	output_genNum = $('#output_genNum'),
-    output_fst = $('#output_fst');
+    output_fst = $('#output_fst'),
+    output_fstDashboard = $('#output_fstDashboard');
 
 /* jQuery event listeners for the Output Tab. */
 $(document).ready(function(){
@@ -815,7 +806,12 @@ $(document).ready(function(){
 	
 	// jQuery event listener for the 'Reset' button.
 	output_reset.click(function() {
-		// Load in the current parameters before triggering
+        // First save the parameters specified in the parameters tab.
+        var holdingPen = [parameters.numOfPop, parameters.popSize, parameters.numOfAlleles,
+                parameters.mutationDenom, parameters.numOfMigrants, parameters.init,
+                parameters.simRate];
+
+		// Load in the current parameters before triggering output_Initialise.
 		parameters.numOfPop = Number(output_numOfPop.html());
 		parameters.popSize = Number(output_popSize.html());
 		parameters.numOfAlleles = Number(output_numOfAlleles.html());
@@ -824,7 +820,22 @@ $(document).ready(function(){
 		parameters.init = Number(output_init.html());
 		parameters.simRate = Number(output_simRate.html())*1000;
 		
-		output_Initialise(); // Starts a new simulation routine.
+        // Starts a new simulation routine.
+		output_Initialise(resetTrue = true); 
+
+        // Reload the parameters specified in the parameters tab into the object.
+        parameters.numOfPop = holdingPen[0];
+		parameters.popSize = holdingPen[1];
+		parameters.numOfAlleles = holdingPen[2];
+		parameters.mutationDenom = holdingPen[3];
+		parameters.numOfMigrants = holdingPen[4];
+		parameters.init = holdingPen[5];
+		parameters.simRate = holdingPen[6];
+
+        // Flush the local array.
+        holdingPen.length = 0;
+
+        holdingPen = null;
 	});
 
     // jQuery event listener for the 'n =' input.

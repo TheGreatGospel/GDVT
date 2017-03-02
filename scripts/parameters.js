@@ -40,7 +40,7 @@ $(document).ready(function() {
 
     // jQuery event listener fopr the 'Submit Parameters' button.
     paraMag_submit.click(function () {
-        dummy_output.click(); // Forces a click on the toolbar's Output button.
+        setTimeout(function () {dummy_output.click();}, 50); // Forces a click on the toolbar's Output button.
         output_Initialise(); // Starts a new simulation routine.
     });
 

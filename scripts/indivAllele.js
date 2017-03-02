@@ -48,10 +48,10 @@ indivAllele_draw = function() {
     var i = 0,
         temp = [];
     for (var j = 0; j < allSpecies.length; j++) {
-        for (var k = 0; k < allSpecies[j].populations[allSpecies.currentIndex].length; k++) {
+        for (var k = 0; k < allSpecies[j].populations[allSpecies.previousIndex].length; k++) {
             indivAllele.data.setValue(i, 0, k + 1); // Member Number.
             indivAllele.data.setValue(i, 1, j); // Population Number.
-            temp = allelesUnpack(allSpecies[j].populations[allSpecies.currentIndex][k]);
+            temp = allelesUnpack(allSpecies[j].populations[allSpecies.previousIndex][k]);
             indivAllele.data.setValue(i, 2, temp[0]);
             indivAllele.data.setValue(i, 3, temp[1]);
             i++;
@@ -120,8 +120,7 @@ indivAllele_refresh = function () {
             indivAllele.options.height - 19 // y co-ordinate.
         );
     };
-    i = null;
-    howMuch = null;
+    i = null, howMuch = null;
 
     // Y-axis gridlines and 'ticks'.
     indivAllele.midgroundLayer.textAlign = 'right';
@@ -151,8 +150,7 @@ indivAllele_refresh = function () {
             indivAllele.midgroundLayer.stroke();
             };
     };
-    i = null;
-    whereToPlot = null;
+    i = null, whereToPlot = null;
 };
 
 indivAllele_initialise = function () {
@@ -171,7 +169,7 @@ indivAllele_initialise = function () {
         // Title.
         indivAllele.backgroundLayer.font = indivAllele.options.titleFont;
         indivAllele.backgroundLayer.fillText(
-            'Individual Alleles', 
+            'Individual Alleles (Parent Generation)', 
             75, // x co-ordinate.
             20 // y co-ordinate.
         );
