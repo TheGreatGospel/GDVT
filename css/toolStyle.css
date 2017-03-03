@@ -72,7 +72,7 @@ ul.output_headingList {
 }
 
 ul.output_headingList li {
-    width: 550px;
+    width: 750px;
     padding-bottom: 6px;
 }
 
@@ -102,7 +102,7 @@ ul.output_headingList li {
 
 #output_L {
     position: relative;
-    height: 430px;
+    height: 530px;
     width: 620px;
 }
 
@@ -127,7 +127,7 @@ ul.output_ulL li.current {
 .output_chartContainer {
     display: inherit;
     background: #ededed;
-    height: 400px;
+    height: 500px;
     width: 600px;
     padding: 10px;
 }
@@ -161,18 +161,47 @@ ul.output_ulL li.current {
 }
 
 #output_R {
-    height: 430px;
+    height: 530px;
     width: 520px;
-    padding-top: 17.5px;
     padding-left: 12px;
+}
+
+ul.output_ulR {
+    margin: 0px;
+	padding: 0px;
+	list-style: none;
+    font-size: 10pt;
+}
+
+ul.output_ulR li {
+    background: none;
+    display: inline-block;
+    padding: 2.5px 10px 0px 10px;
+    cursor: pointer;
+}
+
+ul.output_ulR li.current {
+    background: #ededed;
 }
 
 .output_chartContainerToo {
     display: inherit;
     background: #ededed;
-    height: 400px;
+    height: 500px;
     width: 500px;
     padding: 10px;
+}
+
+.output_chartDimToo {
+    display: none;
+}
+
+.output_chartDimToo.current {
+    display: inherit;
+}
+
+#output_curParaMagContainer {
+	padding: 20px 0px 0px 0px;
 }
 
 ul.output_curParaMag {
@@ -229,7 +258,7 @@ ul.paraMag li {
 /* About Tab CSS (Start) */
 /*=======================*/
 #jsBody_About {
-    width: 600px;
+    width: 650px;
 }
 /*=====================*/
 /* About Tab CSS (End) */
