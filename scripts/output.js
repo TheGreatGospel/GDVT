@@ -440,7 +440,7 @@ function output_Interval() {
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
-        indivAllele_draw();
+        indivAllele.chart.draw();
 
         // Manipulate the controls here to include the most recent FST calculations.
         fst.control.getState().range.end = allSpecies.genNumber - 1;
@@ -599,7 +599,11 @@ function output_Initialise(resetTrue = false) {
 
         // Call the initialisation function to visualise the individual alleles and set up the
             // DataTable and DataView.
-        indivAllele_initialise();
+        indivAllele.chart = new indivAlleleChart(
+          $('#output_iacBackground'), 
+          $('#output_iacMidground'), 
+          $('#output_iacForeground')
+        );
         indivAllele.data = new google.visualization.DataTable();
         indivAllele.data.addColumn('number', 'MemberNo');
         indivAllele.data.addColumn('number', 'PopNo');
@@ -644,7 +648,7 @@ function output_Initialise(resetTrue = false) {
       alleleFreqChild.options.colors = alleles.getColors();
       alleleFreqChild.chart.draw(alleleFreqChild.view, alleleFreqChild.options);
     fst.dashboard.draw(fst.view);
-    indivAllele_refresh();
+    indivAllele.chart.refresh();
 
     // Setup the Fst constants to reduce the number of math operations in the timer.
         // This can be done because the population sizes are fixed throughout the 

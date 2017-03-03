@@ -1,3 +1,182 @@
+function indivAlleleChart(backgroundCanvas, midgroundCanvas, foregroundCanvas) {
+    var layer = [backgroundCanvas[0], midgroundCanvas[0], foregroundCanvas[0]],
+      layerContext = [backgroundCanvas[0].getContext('2d'), midgroundCanvas[0].getContext('2d'),
+        foregroundCanvas[0].getContext('2d')];
+    
+    // Setup the size of the visualisation object.
+    layer.forEach(function(element, index, array) {
+      element.height =  indivAllele.options.height;
+      element.width =  indivAllele.options.width;
+    });
+    
+    // Colour in the background with css.
+    backgroundCanvas.css('background', indivAllele.options.backgroundColor);
+    
+    // Draw the axes, axis titles, and the graph title.
+    layerContext[0].font = 'bold 12px sans-serif'; // Title font settings.
+    layerContext[0].fillText(
+      indivAllele.options.title, // Title.
+      75, // X co-ordinate.
+      15 // Y co-ordinate.
+    );
+    
+    // X-axis title.
+    layerContext[0].font = 'italic 11px sans-serif';
+    layerContext[0].textAlign = 'center';
+    layerContext[0].fillText(
+      'Population', 
+      (indivAllele.options.width - 30)/2, // x co-ordinate.
+      indivAllele.options.height - 5 // y co-ordinate.
+    );
+    
+    // X-axis line.
+    layerContext[0].beginPath();
+    layerContext[0].lineWidth = 0.25;
+    layerContext[0].moveTo(
+      50, // x co-ordinate.
+      indivAllele.options.height - 30 // y co-ordinate.
+    );
+    layerContext[0].lineTo(
+      indivAllele.options.width - 60, // x co-ordinate.
+      indivAllele.options.height - 30 // y co-ordinate.
+    );
+    layerContext[0].closePath();
+    layerContext[0].stroke();
+    
+    // Y-axis title.
+    layerContext[0].save();
+    layerContext[0].translate(0, indivAllele.options.height);
+    layerContext[0].rotate(-Math.PI/2);
+    layerContext[0].textAlign = 'center';
+    layerContext[0].fillText(
+      'Member Number', 
+      indivAllele.options.height/2, // x co-ordinate.
+      15 // y co-ordinate.
+    );
+    layerContext[0].restore();
+    
+    // Y-axis line.
+    layerContext[0].beginPath();
+    layerContext[0].lineWidth = 0.25;
+    layerContext[0].moveTo(
+      50, // x co-ordinate.
+      25 // y co-ordinate.
+    );
+    layerContext[0].lineTo(
+      50, // x co-ordinate.
+      indivAllele.options.height - 29 // y co-ordinate.
+        // 29px(?) to make it pixel perfect.
+    );
+    layerContext[0].closePath();
+    layerContext[0].stroke();
+    
+    this.refresh = function () {
+      // Pause any current drawing of the indivAllele Chart.
+      if (indivAllele.tickTock.running()) {
+        indivAllele.tickTock.stop();
+      };
+      
+      // Refresh the miground and foreground canvases
+      layer[1].width += 0;
+      layer[2].width += 0;
+      
+      // Draw the legend
+      if (indivAllele.currentColors != null) {
+        indivAllele.currentColors.length = 0; // Flush out the contents if required.
+      };
+      
+      // A bit annoying that we have to '.slice' and whatnot... But the number of 
+        // Google API charts outnumber the base Javasript charts.
+      indivAllele.currentColors = alleles.getColors().slice().reverse();
+      
+      layerContext[1].font = '12px sans-serif';
+      for (var i = 0; i < indivAllele.currentColors.length; i++) {
+        layerContext[1].fillStyle = indivAllele.currentColors[i];
+        layerContext[1].fillRect(
+          indivAllele.options.width - 50, // x co-ordinate.
+          75 + i * 17, // y co-ordinate.
+          25, // width of rect.
+          12); // height of rect.
+        layerContext[1].fillStyle = 'black';
+        layerContext[1].fillText(
+          alleles.getLabels()[i], 
+          indivAllele.options.width - 20, // x co-ordinate.
+          86 + i * 17 // y co-ordinate.
+        );
+      };
+      
+      // Determine where the left edges for each population is.
+      var howMuch = (indivAllele.options.width - 115) / parameters.numOfPop; 
+      
+      // Determine the width and height of the rects to visualise the individual alleles.
+        // We'll adjust them later if required.
+      var trueWorkingWidth = howMuch - 7.5;
+      indivAllele.rectHeight = (indivAllele.options.height - 55) / parameters.popSize;
+      indivAllele.rectWidth = trueWorkingWidth/2;
+      
+      // X-axis 'ticks'.
+      if (indivAllele.popPosition == null) {
+        indivAllele.popPosition = []; // Saves the center point for each population.
+      } else {
+        indivAllele.popPosition.length = 0; // Flush the array.
+      };
+      
+      layerContext[1].font = '11px sans-serif';
+      layerContext[1].textAlign = 'center'; // alignment is weird with <canvas>
+      for (i = 0; i < parameters.numOfPop; i++) {
+        indivAllele.popPosition.push(60 + i * howMuch + indivAllele.rectWidth);
+        layerContext[1].fillText(
+          '#' + (i + 1),
+          indivAllele.popPosition[i], // x co-ordinate.
+          indivAllele.options.height - 17 // y co-ordinate.
+        );
+      };
+      
+      // Now we adjust 'indivAllele.rectWidth' to prevent the bars from becoming
+        // too wide.
+      if (indivAllele.rectWidth > 30) {
+        indivAllele.rectWidth = 30;
+      };
+      
+      // Y-axis gridlines and 'ticks'.
+      layerContext[1].font = '12px sans-serif';
+      layerContext[1].textAlign = 'right';
+      layerContext[1].textBaseline = 'middle';
+      var whereToPlot = 0;
+      for (i = 0; i <= 1.0; i += 0.25) {
+        whereToPlot = Math.floor(parameters.popSize * i);
+        layerContext[1].fillStyle = 'black';
+        layerContext[1].fillText(
+          whereToPlot,
+          45, // x co-ordinate.
+          indivAllele.options.height - 30 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
+        );
+        if (i > 0) {
+          layerContext[1].fillStyle = 'gray';
+          layerContext[1].beginPath();
+          layerContext[1].lineWidth = 0.1;
+          layerContext[1].moveTo(
+            50, // x co-ordinate.
+            indivAllele.options.height - 29 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
+          );
+          layerContext[1].lineTo(
+            indivAllele.options.width - 60, // x co-ordinate.
+            indivAllele.options.height - 29 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
+          );
+          layerContext[1].closePath();
+          layerContext[1].stroke();
+        };
+      };
+      
+      i = null, howMuch = null, trueWorkingWidth = null, whereToPlot = null;
+    };
+    
+  this.draw = function () {
+    
+  };
+
+};
+
 indivAllele_drawChild = function () {
     // Shift to zero-indexed land.
     var zeroIndex = indivAllele.tickTock.ticks() - 1;
@@ -64,162 +243,4 @@ indivAllele_draw = function() {
     indivAllele.tickTock.clear();
     indivAllele.tickTock.bind(2, indivAllele_drawChild);
     indivAllele.tickTock.start();
-};
-
-indivAllele_refresh = function () {
-    // Pause any current drawing of the indivAllele Chart.
-    if (indivAllele.tickTock.running()) {
-        indivAllele.tickTock.stop();
-    };
-
-    // Refresh the miground and foreground canvases
-    $('#output_iacMidground')[0].width += 0;
-    $('#output_iacForeground')[0].width += 0;
-
-    // Draw the legend
-    indivAllele.currentColors = alleles.getColors(); // Needs to be updated.
-    var currentLabels = alleles.getLabels();
-    indivAllele.midgroundLayer.font = indivAllele.options.legendFont;
-    for (var i = 0; i < indivAllele.currentColors.length; i++) {
-        indivAllele.midgroundLayer.fillStyle = indivAllele.currentColors[i];
-        indivAllele.midgroundLayer.fillRect(
-            indivAllele.options.width - 50, // x co-ordinate.
-            75 + i * 17, // y co-ordinate.
-            25, // width of rect.
-            12); // height of rect.
-        indivAllele.midgroundLayer.fillStyle = 'black';
-        indivAllele.midgroundLayer.fillText(
-            currentLabels[i], 
-            indivAllele.options.width - 20, // x co-ordinate.
-            86 + i * 17 // y co-ordinate.
-        );
-    };
-    i = null;
-
-    // Determine where to draw the left edges.
-        var howMuch = (indivAllele.options.width - 115) / parameters.numOfPop; 
-    // Determine the width and height of the rects to visualise the individual alleles.
-        var trueWorkingWidth = howMuch - 7.5;
-        indivAllele.rectHeight = (indivAllele.options.height - 75) / parameters.popSize;
-        indivAllele.rectWidth = trueWorkingWidth/2;
-
-    // X-axis 'ticks'.
-    if (indivAllele.popPosition == null) {
-        indivAllele.popPosition = []; // Save the starting point of the left edge for each
-                                          // population.
-    } else {
-        indivAllele.popPosition.length = 0;
-    };
-    indivAllele.midgroundLayer.font = indivAllele.options.axisFont;
-    indivAllele.midgroundLayer.textAlign = 'center'; // alignment is weird with <canvas>
-    for (var i = 0; i < parameters.numOfPop; i++) {
-        indivAllele.popPosition.push(60 + i * howMuch);
-        indivAllele.midgroundLayer.fillText(
-            '#' + (i + 1),
-            indivAllele.popPosition[i] + indivAllele.rectWidth, // x co-ordinate.
-            indivAllele.options.height - 19 // y co-ordinate.
-        );
-    };
-    i = null, howMuch = null;
-
-    // Y-axis gridlines and 'ticks'.
-    indivAllele.midgroundLayer.textAlign = 'right';
-    indivAllele.midgroundLayer.textBaseline = 'middle';
-    var whereToPlot = 0;
-    for (var i = 0; i <= 1.0; i += 0.25) {
-        whereToPlot = Math.floor(parameters.popSize * i);
-        indivAllele.midgroundLayer.fillStyle = 'black';
-        indivAllele.midgroundLayer.fillText(
-            whereToPlot,
-            45, // x co-ordinate.
-            indivAllele.options.height - 35 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
-        );
-        if (i > 0) {
-            indivAllele.midgroundLayer.fillStyle = 'gray';
-            indivAllele.midgroundLayer.beginPath();
-            indivAllele.midgroundLayer.lineWidth = 0.1;
-            indivAllele.midgroundLayer.moveTo(
-                50, // x co-ordinate.
-                indivAllele.options.height - 35 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
-            );
-            indivAllele.midgroundLayer.lineTo(
-                indivAllele.options.width - 60, // x co-ordinate.
-                indivAllele.options.height - 35 - indivAllele.rectHeight * whereToPlot // y co-ordinate.
-            );
-            indivAllele.midgroundLayer.closePath();
-            indivAllele.midgroundLayer.stroke();
-            };
-    };
-    i = null, whereToPlot = null;
-};
-
-indivAllele_initialise = function () {
-    // Setup the size of the visualisation object.
-    $('#output_iacBackground')[0].height = indivAllele.options.height;
-    $('#output_iacBackground')[0].width = indivAllele.options.width;
-    $('#output_iacMidground')[0].height = indivAllele.options.height;
-    $('#output_iacMidground')[0].width = indivAllele.options.width;
-    $('#output_iacForeground')[0].height = indivAllele.options.height;
-    $('#output_iacForeground')[0].width = indivAllele.options.width;
-    
-    // Colour in the background with css.
-    $('#output_iacBackground').css('background', indivAllele.options.backgroundColor);
-
-    // Draw the axes, axis titles, and the graph title.
-        // Title.
-        indivAllele.backgroundLayer.font = indivAllele.options.titleFont;
-        indivAllele.backgroundLayer.fillText(
-            'Individual Alleles (Parent Generation)', 
-            75, // x co-ordinate.
-            20 // y co-ordinate.
-        );
-
-        // X-axis title.
-        indivAllele.backgroundLayer.font = indivAllele.options.axisTitleFont;
-        indivAllele.backgroundLayer.textAlign = 'center';
-        indivAllele.backgroundLayer.fillText(
-            'Population', 
-            (indivAllele.options.width - 30)/2, // x co-ordinate.
-            indivAllele.options.height - 5 // y co-ordinate.
-        );
-
-        // X-axis line.
-        indivAllele.backgroundLayer.beginPath();
-        indivAllele.backgroundLayer.lineWidth = 0.25;
-        indivAllele.backgroundLayer.moveTo(
-            50, // x co-ordinate.
-            indivAllele.options.height - 35 // y co-ordinate.
-        );
-        indivAllele.backgroundLayer.lineTo(
-            indivAllele.options.width - 60, // x co-ordinate.
-            indivAllele.options.height - 35 // y co-ordinate.
-        );
-        indivAllele.backgroundLayer.closePath();
-        indivAllele.backgroundLayer.stroke();
-
-        // Y-axis title.
-        indivAllele.backgroundLayer.save();
-        indivAllele.backgroundLayer.translate(0, indivAllele.options.height);
-        indivAllele.backgroundLayer.rotate(-Math.PI/2);
-        indivAllele.backgroundLayer.textAlign = 'center';
-        indivAllele.backgroundLayer.fillText(
-            'Member Number', 
-             indivAllele.options.height/2, // x co-ordinate.
-             15 // y co-ordinate.
-        );
-        indivAllele.backgroundLayer.restore();
-        
-        // Y-axis line.
-        indivAllele.backgroundLayer.beginPath();
-        indivAllele.backgroundLayer.lineWidth = 0.25;
-        indivAllele.backgroundLayer.moveTo(
-            50, // x co-ordinate.
-            30 // y co-ordinate.
-        );
-        indivAllele.backgroundLayer.lineTo(
-            50, // x co-ordinate.
-            indivAllele.options.height - 35 // y co-ordinate.
-        );
-        indivAllele.backgroundLayer.closePath();
-        indivAllele.backgroundLayer.stroke();
 };
