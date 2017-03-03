@@ -440,7 +440,7 @@ function output_Interval() {
         fst.dashboard.draw(fst.view);
 
         // Draw the indivAllele chart...
-        indivAllele.chart.draw();
+        indivAllele.chart.draw(allSpecies.previousIndex);
 
         // Manipulate the controls here to include the most recent FST calculations.
         fst.control.getState().range.end = allSpecies.genNumber - 1;
@@ -614,8 +614,6 @@ function output_Initialise(resetTrue = false) {
         };
         indivAllele.data.addRows(fill);
 
-        indivAllele.view = new google.visualization.DataView(indivAllele.data);
-
         webpageLive = true; // The webpage has loaded, so no more initilisation code
                                 // is required.
 
@@ -637,10 +635,6 @@ function output_Initialise(resetTrue = false) {
           alleleFreqChild.view.setRows(0, parameters.numOfPop - 1);
         
     toView.length = 0; //Flush the 'toView' array.
-
-    // Subset the DataTable in 'indivAllele.data' to visualise what is in the
-        // simulation routine. 
-    indivAllele.view.setRows(0, parameters.numOfPop * parameters.popSize - 1);
 
     // Draw the charts.
     alleleFreq.options.colors = alleles.getColors();

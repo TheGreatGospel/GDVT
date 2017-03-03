@@ -170,77 +170,70 @@ function indivAlleleChart(backgroundCanvas, midgroundCanvas, foregroundCanvas) {
       
       i = null, howMuch = null, trueWorkingWidth = null, whereToPlot = null;
     };
-    
-  this.draw = function () {
-    
-  };
-
-};
-
-indivAllele_drawChild = function () {
-    // Shift to zero-indexed land.
-    var zeroIndex = indivAllele.tickTock.ticks() - 1;
-
-    // Drawing a memeber's alleles...
-    // Begin by locating where in the DataView should we look.
-    var memNo = indivAllele.view.getValue(zeroIndex, 0),
-        popNo = indivAllele.view.getValue(zeroIndex, 1),
-        posOne = indivAllele.view.getValue(zeroIndex, 2),
-        posTwo = indivAllele.view.getValue(zeroIndex, 3),
-
-        x = indivAllele.popPosition[popNo],
-        y = indivAllele.options.height - 35 - memNo * indivAllele.rectHeight;
-    
-    indivAllele.foregroundLayer.fillStyle = indivAllele.currentColors[posOne];
-    indivAllele.foregroundLayer.fillRect(
-        x, // x co-ordinate.
-        y, // y co-ordinate.
-        indivAllele.rectWidth, // width of rect.
-        indivAllele.rectHeight); // height of rect.
-    indivAllele.foregroundLayer.fillStyle = indivAllele.currentColors[posTwo];
-    indivAllele.foregroundLayer.fillRect(
-        x + indivAllele.rectWidth, // x co-ordinate.
-        y, // y co-ordinate.
-        indivAllele.rectWidth, // width of rect.
-        indivAllele.rectHeight); // height of rect.
-
-    // Stop the timer when we reach the final iteration.
-    if (indivAllele.tickTock.ticks() == indivAllele.view.getNumberOfRows()) {
-        indivAllele.tickTock.stop();
-        
-    };
-
-    // Clean-up
-    zeroIndex = null;    
-};
-
-indivAllele_draw = function() {
+  
+  this.draw = function (whichIndex = 0) {
     // Refresh the foreground canvas.
-    $('#output_iacForeground')[0].width += 0;
-
+    layer[2].width += 0;
+    
     // Pause any current drawing of the indivAllele Chart.
     if (indivAllele.tickTock.running()) {
         indivAllele.tickTock.stop();
     };
     
     // Populate the DataTable//DataView with the most recent information.
-    var i = 0,
-        temp = [];
-    for (var j = 0; j < allSpecies.length; j++) {
-        for (var k = 0; k < allSpecies[j].populations[allSpecies.previousIndex].length; k++) {
-            indivAllele.data.setValue(i, 0, k + 1); // Member Number.
-            indivAllele.data.setValue(i, 1, j); // Population Number.
-            temp = allelesUnpack(allSpecies[j].populations[allSpecies.previousIndex][k]);
-            indivAllele.data.setValue(i, 2, temp[0]);
-            indivAllele.data.setValue(i, 3, temp[1]);
-            i++;
-        };
+    var i = 0, alleles = [];
+    for (var j = 0; j < allSpecies.numOfPop; j++) {
+      for (var k = 0; k < allSpecies[j].popSize; k++) {
+        indivAllele.data.setValue(i, 0, k + 1); // Member Number.
+        indivAllele.data.setValue(i, 1, j); // Population Number.
+        alleles = allelesUnpack(allSpecies[j].populations[whichIndex][k]);
+        indivAllele.data.setValue(i, 2, alleles[0]);
+        indivAllele.data.setValue(i, 3, alleles[1]);
+            
+        alleles.length = 0;
+        i += 1;
+      };
     };
-    temp.length = 0;
-    temp = null;
-
+    
     // Commence drawing of the indivAllele Chart.
     indivAllele.tickTock.clear();
-    indivAllele.tickTock.bind(2, indivAllele_drawChild);
+    indivAllele.tickTock.bind(2, this.drawChild);
     indivAllele.tickTock.start();
+    
+    i = null, j = null, k = null, alleles = null;
+  };
+  
+  this.drawChild = function () {
+    var popNo = indivAllele.tickTock.ticks() - 1, // Shift to zero-indexed land.
+        memNo = popNo * allSpecies[popNo].popSize, // Starting (zero) index
+        stretchGoal = indivAllele.tickTock.ticks() * allSpecies[popNo].popSize - 1; // End (zero) index
+    
+    // Drawing member alleles within a population...
+    for (memNo; memNo <= stretchGoal; memNo++) {
+      layerContext[2].fillStyle = indivAllele.currentColors[indivAllele.data.getValue(memNo, 2)];
+      layerContext[2].fillRect(
+        indivAllele.popPosition[popNo] - indivAllele.rectWidth, // x co-ordinate.
+        indivAllele.options.height - 30 - 
+          indivAllele.data.getValue(memNo, 0) * indivAllele.rectHeight, // y co-ordinate.
+        indivAllele.rectWidth, // width of rect.
+        indivAllele.rectHeight // height of rect.
+      );
+      layerContext[2].fillStyle = indivAllele.currentColors[indivAllele.data.getValue(memNo, 3)];
+      layerContext[2].fillRect(
+        indivAllele.popPosition[popNo], // x co-ordinate.
+        indivAllele.options.height - 30 - 
+          indivAllele.data.getValue(memNo, 0) * indivAllele.rectHeight, // y co-ordinate.
+        indivAllele.rectWidth, // width of rect.
+        indivAllele.rectHeight // height of rect.
+      );
+    };
+    
+    // Stop the timer when we reach the final iteration.
+    if (indivAllele.tickTock.ticks() == allSpecies.numOfPop) {
+        indivAllele.tickTock.stop();
+    };
+    
+    popNo = null, memNo = null, stretchGoal = null; 
+  };
+
 };
